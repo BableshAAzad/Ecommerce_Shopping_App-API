@@ -10,5 +10,5 @@ public interface CustomerService {
     ResponseEntity<ResponseStructure<UserResponse>> findCustomer(Long customerId);
 
     ResponseEntity<ResponseStructure<List<UserResponse>>> findCustomers();
-//    Demo commit
+//    Demo commit add for testing
 }

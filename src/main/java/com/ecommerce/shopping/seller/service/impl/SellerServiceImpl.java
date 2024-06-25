@@ -6,6 +6,7 @@ import com.ecommerce.shopping.seller.service.SellerService;
 import com.ecommerce.shopping.user.dto.UserResponse;
 import com.ecommerce.shopping.user.mapper.UserMapper;
 import com.ecommerce.shopping.utility.ResponseStructure;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,13 +15,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class SellerServiceImpl implements SellerService {
 
-    @Autowired
-    private SellerRepository sellerRepository;
+    private final SellerRepository sellerRepository;
 
-    @Autowired
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
 
     @Override
     public ResponseEntity<ResponseStructure<UserResponse>> findSeller(Long sellerId) {
@@ -36,7 +36,7 @@ public class SellerServiceImpl implements SellerService {
     public ResponseEntity<ResponseStructure<List<UserResponse>>> findSellers() {
         List<UserResponse> sellerResponseList = sellerRepository.findAll()
                 .stream()
-                .map(seller -> userMapper.mapUserToUserResponse(seller))
+                .map(userMapper::mapUserToUserResponse)
                 .toList();
         return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<List<UserResponse>>()
                 .setMessage("Sellers are Founded")

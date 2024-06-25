@@ -1,6 +1,7 @@
 package com.ecommerce.shopping.user.service;
 
 import com.ecommerce.shopping.enums.UserRole;
+import com.ecommerce.shopping.user.dto.OtpVerificationRequest;
 import com.ecommerce.shopping.user.dto.UserRequest;
 import com.ecommerce.shopping.user.dto.UserResponse;
 import com.ecommerce.shopping.utility.ResponseStructure;
@@ -17,4 +18,7 @@ public interface UserService {
 
     ResponseEntity<ResponseStructure<List<UserResponse>>> findUsers();
 
+    ResponseEntity<ResponseStructure<UserResponse>> saveUser(UserRequest userRequest, UserRole userRole);
+
+    ResponseEntity<ResponseStructure<UserResponse>> verifyUser(OtpVerificationRequest otpVerificationRequest);
 }

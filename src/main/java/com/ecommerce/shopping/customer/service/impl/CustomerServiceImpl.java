@@ -6,7 +6,7 @@ import com.ecommerce.shopping.exception.UserNotExistException;
 import com.ecommerce.shopping.user.dto.UserResponse;
 import com.ecommerce.shopping.user.mapper.UserMapper;
 import com.ecommerce.shopping.utility.ResponseStructure;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -14,13 +14,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
 
-      @Autowired
-      private CustomerRepository customerRepository;
+      private final CustomerRepository customerRepository;
 
-      @Autowired
-      private UserMapper userMapper;
+      private final UserMapper userMapper;
     //------------------------------------------------------------------------------------------------------------------------
 
     @Override
@@ -38,7 +37,7 @@ public class CustomerServiceImpl implements CustomerService {
     public ResponseEntity<ResponseStructure<List<UserResponse>>> findCustomers() {
         List<UserResponse> customerResponseList = customerRepository.findAll()
                 .stream()
-                .map(customer -> userMapper.mapUserToUserResponse(customer))
+                .map(userMapper::mapUserToUserResponse)
                 .toList();
         return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<List<UserResponse>>()
                 .setMessage("Customers are Founded")

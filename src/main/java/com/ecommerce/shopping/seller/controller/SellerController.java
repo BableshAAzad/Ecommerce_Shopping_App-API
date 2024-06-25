@@ -4,7 +4,7 @@ import com.ecommerce.shopping.seller.service.SellerService;
 import com.ecommerce.shopping.user.dto.UserResponse;
 import com.ecommerce.shopping.utility.ResponseStructure;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,9 +15,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
+@AllArgsConstructor
 public class SellerController {
 
-    @Autowired
     private SellerService sellerService;
 
     //------------------------------------------------------------------------------------------------------------------------

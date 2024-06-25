@@ -18,6 +18,7 @@ spring:
   # SMTP configuration
   mail:
     host: smtp.gmail.com
+    port: 587
     username: aazadbablesh@gmail.com
     password: rlza vblt nfpt wdfz
     properties:

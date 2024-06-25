@@ -6,6 +6,8 @@ import com.ecommerce.shopping.customer.repository.CustomerRepository;
 import com.ecommerce.shopping.enums.UserRole;
 import com.ecommerce.shopping.exception.UserAlreadyExistException;
 import com.ecommerce.shopping.exception.UserNotExistException;
+import com.ecommerce.shopping.mail.entity.MessageData;
+import com.ecommerce.shopping.mail.service.MailService;
 import com.ecommerce.shopping.seller.entity.Seller;
 import com.ecommerce.shopping.seller.repository.SellerRepository;
 import com.ecommerce.shopping.user.dto.OtpVerificationRequest;
@@ -22,6 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -42,6 +45,8 @@ public class UserServiceImpl implements UserService {
     private final Cache<String, String> otpCache;
 
     private final Random random;
+
+    private final MailService mailService;
 
     //------------------------------------------------------------------------------------------------------------------------
     @Override
@@ -73,6 +78,7 @@ public class UserServiceImpl implements UserService {
             }
         }
     }
+    //------------------------------------------------------------------------------------------------------------------------
 
     public ResponseEntity<ResponseStructure<UserResponse>> saveUser(UserRequest userRequest, UserRole userRole) {
         User user = null;
@@ -84,12 +90,24 @@ public class UserServiceImpl implements UserService {
             user = userMapper.mapUserRequestToUser(userRequest, user);
             userCache.put(userRequest.getEmail(), user);
             int otp = random.nextInt(100000, 999999);
+
+            MessageData messageData = new MessageData();
+            messageData.setTo(user.getEmail());
+            messageData.setSubject("OTP verification for EcommerceShoppingApp");
+            messageData.setText("Otp : "+otp);
+            messageData.setSendDate(new Date());
+            try {
+                mailService.sendMail(messageData);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
             System.out.println(otp);
             System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++");
             otpCache.put(userRequest.getEmail(), otp + "");
+
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseStructure<UserResponse>()
                     .setStatus(HttpStatus.ACCEPTED.value())
-                    .setMessage("Verify otp")
+                    .setMessage("Otp send")
                     .setData(userMapper.mapUserToUserResponse(user)));
         } else throw new UserAlreadyExistException("Bad Request");
     }

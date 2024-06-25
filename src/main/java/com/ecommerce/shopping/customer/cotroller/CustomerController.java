@@ -4,6 +4,7 @@ import com.ecommerce.shopping.customer.service.CustomerService;
 import com.ecommerce.shopping.user.dto.UserResponse;
 import com.ecommerce.shopping.utility.ResponseStructure;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,10 +16,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
+@AllArgsConstructor
 public class CustomerController {
 
-    @Autowired
-    private CustomerService customerService;
+    private final CustomerService customerService;
 
     //------------------------------------------------------------------------------------------------------------------------
     @GetMapping("/customers/{customerId}")

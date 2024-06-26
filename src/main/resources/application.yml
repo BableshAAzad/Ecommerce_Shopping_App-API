@@ -3,9 +3,9 @@ spring:
     name: Ecommerce_Shopping_App
     #  DataSource configuration
   datasource:
-    url: jdbc:mysql://localhost:3306/ecommerce_shopping_app?createDatabaseIfNotExist=true
-    username: root
-    password: root
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   #      driver-class-name: com.mysql.cj.jdbc.Driver
   #  JPA Configuration
   jpa:
@@ -19,8 +19,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: aazadbablesh@gmail.com
-    password: rlza vblt nfpt wdfz
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
     properties:
       mail:
         smtp:

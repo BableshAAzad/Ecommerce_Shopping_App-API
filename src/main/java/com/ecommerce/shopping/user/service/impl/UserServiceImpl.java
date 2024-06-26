@@ -1,13 +1,11 @@
 package com.ecommerce.shopping.user.service.impl;
 
 import com.ecommerce.shopping.customer.entity.Customer;
-import com.ecommerce.shopping.customer.repository.CustomerRepository;
 import com.ecommerce.shopping.enums.UserRole;
 import com.ecommerce.shopping.exception.*;
 import com.ecommerce.shopping.mail.entity.MessageData;
 import com.ecommerce.shopping.mail.service.MailService;
 import com.ecommerce.shopping.seller.entity.Seller;
-import com.ecommerce.shopping.seller.repository.SellerRepository;
 import com.ecommerce.shopping.user.dto.OtpVerificationRequest;
 import com.ecommerce.shopping.user.dto.UserRequest;
 import com.ecommerce.shopping.user.dto.UserResponse;
@@ -20,6 +18,7 @@ import com.google.common.cache.Cache;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -34,9 +33,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
 
-    private final SellerRepository sellerRepository;
-
-    private final CustomerRepository customerRepository;
+    private final PasswordEncoder passwordEncoder;
 
     private final Cache<String, User> userCache;
 
@@ -66,7 +63,7 @@ public class UserServiceImpl implements UserService {
                 otpCache.put(userRequest.getEmail(), otp + "");
 
 //                Send otp in mail
-                mailSend(user.getEmail(), "OTP verification for EcommerceShoppingApp", "<h3>Welcome to Ecommerce Shopping Applicationa</h3><h4>Otp : " + otp + "</h4>");
+                mailSend(user.getEmail(), "OTP verification for EcommerceShoppingApp", "<h3>Welcome to Ecommerce Shopping Applicationa</h3></br><h4>Otp : " + otp + "</h4>");
 
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseStructure<UserResponse>()
                         .setStatus(HttpStatus.ACCEPTED.value())
@@ -108,7 +105,7 @@ public class UserServiceImpl implements UserService {
 //           Create Dynamic username
             String userGen = usernameGenerate(user.getEmail());
             user.setUsername(userGen);
-
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
             user = userRepository.save(user);
 
 //            Send mail to user for confirmation

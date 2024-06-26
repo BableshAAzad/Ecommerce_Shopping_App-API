@@ -1,11 +1,9 @@
 package com.ecommerce.shopping.user.service.impl;
 
-import com.ecommerce.shopping.config.UtilityBeanConfig;
 import com.ecommerce.shopping.customer.entity.Customer;
 import com.ecommerce.shopping.customer.repository.CustomerRepository;
 import com.ecommerce.shopping.enums.UserRole;
-import com.ecommerce.shopping.exception.UserAlreadyExistException;
-import com.ecommerce.shopping.exception.UserNotExistException;
+import com.ecommerce.shopping.exception.*;
 import com.ecommerce.shopping.mail.entity.MessageData;
 import com.ecommerce.shopping.mail.service.MailService;
 import com.ecommerce.shopping.seller.entity.Seller;
@@ -49,79 +47,100 @@ public class UserServiceImpl implements UserService {
     private final MailService mailService;
 
     //------------------------------------------------------------------------------------------------------------------------
-    @Override
-    public ResponseEntity<ResponseStructure<UserResponse>> addUser(UserRequest userRequest, UserRole userRole) {
+
+    public ResponseEntity<ResponseStructure<UserResponse>> saveUser(UserRequest userRequest, UserRole userRole) {
         boolean emailExist = userRepository.existsByEmail(userRequest.getEmail());
         if (emailExist)
             throw new UserAlreadyExistException("Email : " + userRequest.getEmail() + ", is already exist");
         else {
-            if (userRole.equals(UserRole.CUSTOMER)) {
-                Customer customer = (Customer) userMapper.mapUserRequestToUser(userRequest, new Customer());
-                customer.setUserRole(userRole);
-
-//                TODO logic for username creation
-
-                customer = customerRepository.save(customer);
-                return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<UserResponse>()
-                        .setStatus(HttpStatus.CREATED.value())
-                        .setMessage("Customer Created")
-                        .setData(userMapper.mapUserToUserResponse(customer)));
-            } else {
-                Seller seller = (Seller) userMapper.mapUserRequestToUser(userRequest, new Seller());
-                seller.setUserRole(userRole);
-                seller = sellerRepository.save(seller);
-
-                return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<UserResponse>()
-                        .setStatus(HttpStatus.CREATED.value())
-                        .setMessage("Seller Created")
-                        .setData(userMapper.mapUserToUserResponse(seller)));
+            User user = null;
+            switch (userRole) {
+                case UserRole.SELLER -> user = new Seller();
+                case UserRole.CUSTOMER -> user = new Customer();
             }
+            if (user != null) {
+                user = userMapper.mapUserRequestToUser(userRequest, user);
+                user.setUserRole(userRole);
+                userCache.put(userRequest.getEmail(), user);
+                int otp = random.nextInt(100000, 999999);
+                otpCache.put(userRequest.getEmail(), otp + "");
+
+//                Send otp in mail
+                mailSend(user.getEmail(), "OTP verification for EcommerceShoppingApp", "Otp : " + otp);
+
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseStructure<UserResponse>()
+                        .setStatus(HttpStatus.ACCEPTED.value())
+                        .setMessage("Otp sended")
+                        .setData(userMapper.mapUserToUserResponse(user)));
+            } else throw new UserAlreadyExistException("Bad Request");
         }
     }
+
+    //    Logic for mail generation
+    private void mailSend(String email, String subject, String text) {
+        MessageData messageData = new MessageData();
+        messageData.setTo(email);
+        messageData.setSubject(subject);
+        messageData.setText(text);
+        messageData.setSendDate(new Date());
+        try {
+            mailService.sendMail(messageData);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     //------------------------------------------------------------------------------------------------------------------------
-
-    public ResponseEntity<ResponseStructure<UserResponse>> saveUser(UserRequest userRequest, UserRole userRole) {
-        User user = null;
-        switch (userRole) {
-            case UserRole.SELLER -> user = new Seller();
-            case UserRole.CUSTOMER -> user = new Customer();
-        }
-        if (user != null) {
-            user = userMapper.mapUserRequestToUser(userRequest, user);
-            userCache.put(userRequest.getEmail(), user);
-            int otp = random.nextInt(100000, 999999);
-
-            MessageData messageData = new MessageData();
-            messageData.setTo(user.getEmail());
-            messageData.setSubject("OTP verification for EcommerceShoppingApp");
-            messageData.setText("Otp : "+otp);
-            messageData.setSendDate(new Date());
-            try {
-                mailService.sendMail(messageData);
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-            System.out.println(otp);
-            System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++");
-            otpCache.put(userRequest.getEmail(), otp + "");
-
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseStructure<UserResponse>()
-                    .setStatus(HttpStatus.ACCEPTED.value())
-                    .setMessage("Otp send")
-                    .setData(userMapper.mapUserToUserResponse(user)));
-        } else throw new UserAlreadyExistException("Bad Request");
-    }
-
     @Override
-    public ResponseEntity<ResponseStructure<UserResponse>> verifyUser(OtpVerificationRequest otpVerificationRequest) {
+    public ResponseEntity<ResponseStructure<UserResponse>> verifyUserOtp(OtpVerificationRequest otpVerificationRequest) {
         User user = userCache.getIfPresent(otpVerificationRequest.getEmail());
         String otp = otpCache.getIfPresent(otpVerificationRequest.getEmail());
-        System.out.println(user.getEmail());
-        System.out.println("-------------------------------------------------------------------");
-        System.out.println(otp);
-        return null;
+        if (user == null && otp == null) {
+            throw new IllegalOperationException("Please Enter correct information");
+        } else if (otp == null && user.getEmail().equals(otpVerificationRequest.getEmail())) {
+//            if user otp will be expired
+            throw new OtpExpiredException("Otp is expired");
+        } else if (!otp.equals(otpVerificationRequest.getOtp())) {
+//            oto mismatch with existing otp   or   invalid otp
+            throw new InvalidOtpException("Invalid otp");
+        } else if (otp.equals(otpVerificationRequest.getOtp()) && user != null) {
+//            If user otp and cache otp
+//           Create Dynamic username
+            String userGen = usernameGenerate(user.getEmail());
+            user.setUsername(userGen);
+
+            user = userRepository.save(user);
+
+//            Send mail to user for confirmation
+            mailSend(user.getEmail(), "Email Verification done", "Your account is create in EcommerceShoppingApp</br> Your username is : "+userGen);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<UserResponse>()
+                    .setStatus(HttpStatus.CREATED.value())
+                    .setMessage(user.getUserRole() + " Created")
+                    .setData(userMapper.mapUserToUserResponse(user)));
+        } else {
+            throw new OtpExpiredException("Otp is expired");
+        }
     }
 
+    private String usernameGenerate(String email) {
+        String[] str = email.split("@");
+        String username = str[0];
+        int temp = 0;
+        while (true) {
+            if (userRepository.existsByUsername(username)) {
+                username += temp;
+                temp++;
+                continue;
+            } else
+                break;
+        }
+        if (temp != 0) {
+            return username;
+        } else {
+            return str[0];
+        }
+    }
 
     //------------------------------------------------------------------------------------------------------------------------
     @Override

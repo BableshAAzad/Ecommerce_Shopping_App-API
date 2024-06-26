@@ -1,7 +1,6 @@
 package com.ecommerce.shopping.utility;
 
-import com.ecommerce.shopping.exception.UserAlreadyExistException;
-import com.ecommerce.shopping.exception.UserNotExistException;
+import com.ecommerce.shopping.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -28,8 +27,23 @@ public class ApplicationExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<ErrorStructure<String>>  handleUserNotExist(UserNotExistException ex){
+    public ResponseEntity<ErrorStructure<String>> handleUserNotExist(UserNotExistException ex) {
         return errorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), "User not exist");
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorStructure<String>> handleOtpExpired(OtpExpiredException ex) {
+        return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "Otp is expired");
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorStructure<String>> handleInvalidOpt(InvalidOtpException ex) {
+        return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "Otp Mismatch");
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorStructure<String>> handleIllegalOperation(IllegalOperationException ex) {
+        return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "Illegal Operation ...Please fill correct information");
     }
 
     @ExceptionHandler

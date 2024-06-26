@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface UserService {
-    ResponseEntity<ResponseStructure<UserResponse>> addUser(UserRequest userRequest, UserRole userRole);
 
     ResponseEntity<ResponseStructure<UserResponse>> updateUser(UserRequest userRequest, Long userId);
 
@@ -20,5 +19,5 @@ public interface UserService {
 
     ResponseEntity<ResponseStructure<UserResponse>> saveUser(UserRequest userRequest, UserRole userRole);
 
-    ResponseEntity<ResponseStructure<UserResponse>> verifyUser(OtpVerificationRequest otpVerificationRequest);
+    ResponseEntity<ResponseStructure<UserResponse>> verifyUserOtp(OtpVerificationRequest otpVerificationRequest);
 }

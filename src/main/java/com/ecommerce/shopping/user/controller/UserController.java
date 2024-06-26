@@ -33,10 +33,10 @@ public class UserController {
     }
 
 
-    @PostMapping("/users/otp")
+    @PostMapping("/users/otpVerification")
     public ResponseEntity<ResponseStructure<UserResponse>> verifyUser(
             @RequestBody OtpVerificationRequest otpVerificationRequest){
-        return userService.verifyUser(otpVerificationRequest);
+        return userService.verifyUserOtp(otpVerificationRequest);
     }
     //------------------------------------------------------------------------------------------------------------------------
      @PutMapping("/users/{userId}")

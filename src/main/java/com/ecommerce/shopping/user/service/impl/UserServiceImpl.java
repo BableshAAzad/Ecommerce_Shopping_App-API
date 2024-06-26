@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService {
                 otpCache.put(userRequest.getEmail(), otp + "");
 
 //                Send otp in mail
-                mailSend(user.getEmail(), "OTP verification for EcommerceShoppingApp", "Otp : " + otp);
+                mailSend(user.getEmail(), "OTP verification for EcommerceShoppingApp", "<h3>Welcome to Ecommerce Shopping Applicationa</h3><h4>Otp : " + otp + "</h4>");
 
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseStructure<UserResponse>()
                         .setStatus(HttpStatus.ACCEPTED.value())
@@ -112,7 +112,7 @@ public class UserServiceImpl implements UserService {
             user = userRepository.save(user);
 
 //            Send mail to user for confirmation
-            mailSend(user.getEmail(), "Email Verification done", "Your account is create in EcommerceShoppingApp</br> Your username is : "+userGen);
+            mailSend(user.getEmail(), "Email Verification done", "<h4>Your account is create in EcommerceShoppingApp</h4></br></br> Your username is : " + "<h5>" + userGen + "</h5>");
 
             return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<UserResponse>()
                     .setStatus(HttpStatus.CREATED.value())

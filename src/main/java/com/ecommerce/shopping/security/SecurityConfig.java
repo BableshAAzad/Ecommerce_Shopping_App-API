@@ -1,5 +1,8 @@
 package com.ecommerce.shopping.security;
 
+import com.ecommerce.shopping.filter.ClientApiKeyFilter;
+import com.ecommerce.shopping.user.repositoty.UserRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -7,14 +10,19 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@AllArgsConstructor
 public class SecurityConfig {
+
+    private final UserRepository userRepository;
 
     @Bean
     PasswordEncoder passwordEncoder() {
@@ -24,11 +32,13 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorize-> authorize.requestMatchers("/api/v1/sellers/register",
-                                "/api/v1/customers/register", "/api/v1/users/otpVerification")
-                        .permitAll()
+                .securityMatchers(matcher -> matcher.requestMatchers("/api/v1/sellers/register",
+                        "/api/v1/customers/register", "/api/v1/users/otpVerification"))
+                .authorizeHttpRequests(authorize -> authorize
                         .anyRequest()
                         .authenticated())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                .addFilterBefore(new ClientApiKeyFilter(userRepository), UsernamePasswordAuthenticationFilter.class)
                 .formLogin(Customizer.withDefaults())
                 .build();
     }

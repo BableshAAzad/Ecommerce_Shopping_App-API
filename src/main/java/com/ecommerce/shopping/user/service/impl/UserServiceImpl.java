@@ -6,6 +6,7 @@ import com.ecommerce.shopping.exception.*;
 import com.ecommerce.shopping.mail.entity.MessageData;
 import com.ecommerce.shopping.mail.service.MailService;
 import com.ecommerce.shopping.seller.entity.Seller;
+import com.ecommerce.shopping.user.dto.AuthRequest;
 import com.ecommerce.shopping.user.dto.OtpVerificationRequest;
 import com.ecommerce.shopping.user.dto.UserRequest;
 import com.ecommerce.shopping.user.dto.UserResponse;
@@ -18,7 +19,12 @@ import com.google.common.cache.Cache;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -42,6 +48,8 @@ public class UserServiceImpl implements UserService {
     private final Random random;
 
     private final MailService mailService;
+
+    private final AuthenticationManager authenticationManager;
 
     //------------------------------------------------------------------------------------------------------------------------
 
@@ -174,5 +182,14 @@ public class UserServiceImpl implements UserService {
                     .setData(userMapper.mapUserToUserResponse(user)));
         }).orElseThrow(() -> new UserNotExistException("UserId : " + userId + ", is not exist"));
     }
-//------------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------------
+    public String login(AuthRequest authRequest){
+        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername() , authRequest.getPassword()));
+        UsernamePasswordAuthenticationFilter userPass = new UsernamePasswordAuthenticationFilter();
+        if(authenticate.isAuthenticated()){
+            return "jwt taken will be return";
+        }else throw new BadCredentialsException("Invalid Credential");
+    }
+
+    //------------------------------------------------------------------------------------------------------------------------
 }

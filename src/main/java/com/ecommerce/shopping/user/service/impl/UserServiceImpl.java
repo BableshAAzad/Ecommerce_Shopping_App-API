@@ -121,7 +121,7 @@ public class UserServiceImpl implements UserService {
             user = userRepository.save(user);
 
 //            Send mail to user for confirmation
-            mailSend(user.getEmail(), "Email Verification done", "<h4>Your account is created in EcommerceShoppingApp</h4></br><h5>Your username is : " + userGen + "</h5>");
+            mailSend(user.getEmail(), "Email Verification done", "<h3>Your account is created in EcommerceShoppingApp</h3></br><h4>Your username is : " + userGen + "</h4>");
 
             return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<UserResponse>()
                     .setStatus(HttpStatus.CREATED.value())

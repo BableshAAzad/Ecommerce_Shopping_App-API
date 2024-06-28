@@ -187,30 +187,18 @@ public class UserServiceImpl implements UserService {
         }).orElseThrow(() -> new UserNotExistException("UserId : " + userId + ", is not exist"));
     }
     //------------------------------------------------------------------------------------------------------------------------
-//    @Override
-//    public String login(AuthRequest authRequest){
-//        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername() , authRequest.getPassword()));
-//        UsernamePasswordAuthenticationFilter userPass = new UsernamePasswordAuthenticationFilter();
-//        if(authenticate.isAuthenticated()){
-////            return  jwtService.createJwtToken(authRequest.getUsername(), 1000000l);
-//            return  "Hello Bhai";
-//        }else throw new BadCredentialsException("Invalid Credential");
-//    }
-
     @Override
     public String login(AuthRequest authRequest) {
         try {
             Authentication authenticate = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
             if (authenticate.isAuthenticated())
-//                return jwtService.createJwtToken(authRequest.getUsername(), 1000000L);
-                return "JWT token";
+                return jwtService.createJwtToken(authRequest.getUsername(), 1000000L);
             else
                 throw new BadCredentialsException("Invalid Credentials");
         } catch (AuthenticationException e) {
             throw new BadCredentialsException("Invalid Credentials", e);
         }
     }
-
     //------------------------------------------------------------------------------------------------------------------------
 }

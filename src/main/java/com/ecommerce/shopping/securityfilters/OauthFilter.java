@@ -15,5 +15,7 @@ public class OauthFilter extends OncePerRequestFilter {
       String token =  request.getHeader("Authorization");
         System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
         System.out.println(token);
+
+        filterChain.doFilter(request, response);
     }
 }

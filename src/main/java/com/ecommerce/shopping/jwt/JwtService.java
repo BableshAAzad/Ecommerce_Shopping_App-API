@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -15,7 +16,8 @@ import java.util.Map;
 @Service
 public class JwtService {
 
-private String secret = "cB2d4a60KtbSqSx85awIWt0+kKUrngR9viqlavYnPq3NBwgIBbp3ZFo7rFoM+OSjRBcoO40MxQ0K2mHFJFgDjA==";
+    @Value("${jwt_secret}")
+    private String secretJwt;
 
     public String createJwtToken(String username, long expirationTimeInMillis) {
         return Jwts.builder()
@@ -28,28 +30,28 @@ private String secret = "cB2d4a60KtbSqSx85awIWt0+kKUrngR9viqlavYnPq3NBwgIBbp3ZFo
     }
 
     private Key getSignatureKey() {
-        byte[] key = Decoders.BASE64.decode(secret);
+        byte[] key = Decoders.BASE64.decode(secretJwt);
         return Keys.hmacShaKeyFor(key);
     }
 
-  private Claims passJwtToken(String token){
-      return Jwts.parserBuilder()
-              .setSigningKey(getSignatureKey())
-              .build()
-              .parseClaimsJws(token)
-              .getBody();
-  }
+    private Claims passJwtToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSignatureKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
 
-  public String extractUserName(String token){
-     return passJwtToken(token).getSubject();
-  }
+    public String extractUserName(String token) {
+        return passJwtToken(token).getSubject();
+    }
 
-  public Date extractIssueDate(String token){
+    public Date extractIssueDate(String token) {
         return passJwtToken(token).getIssuedAt();
-  }
+    }
 
-  public Date extractExpirationDate(String token){
+    public Date extractExpirationDate(String token) {
         return passJwtToken(token).getExpiration();
-  }
+    }
 
 }

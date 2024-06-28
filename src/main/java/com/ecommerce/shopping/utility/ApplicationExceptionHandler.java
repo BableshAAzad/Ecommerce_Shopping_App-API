@@ -3,6 +3,7 @@ package com.ecommerce.shopping.utility;
 import com.ecommerce.shopping.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -55,6 +56,11 @@ public class ApplicationExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<ErrorStructure<String>> handleJwtExpired(JwtExpiredException ex) {
         return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "Your Token is expired");
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorStructure<String>> handleInvalidCredential(BadCredentialsException ex){
+        return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "User Not Exist.... Please Provide correct user details");
     }
 
 

@@ -116,11 +116,12 @@ public class UserServiceImpl implements UserService {
 //           Create Dynamic username
             String userGen = usernameGenerate(user.getEmail());
             user.setUsername(userGen);
+            user.setEmailVerified(true);
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             user = userRepository.save(user);
 
 //            Send mail to user for confirmation
-            mailSend(user.getEmail(), "Email Verification done", "<h4>Your account is create in EcommerceShoppingApp</h4></br></br> Your username is : " + "<h5>" + userGen + "</h5>");
+            mailSend(user.getEmail(), "Email Verification done", "<h4>Your account is created in EcommerceShoppingApp</h4></br><h5>Your username is : " + userGen + "</h5>");
 
             return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<UserResponse>()
                     .setStatus(HttpStatus.CREATED.value())
@@ -185,6 +186,7 @@ public class UserServiceImpl implements UserService {
                     .setData(userMapper.mapUserToUserResponse(user)));
         }).orElseThrow(() -> new UserNotExistException("UserId : " + userId + ", is not exist"));
     }
+
     //------------------------------------------------------------------------------------------------------------------------
     @Override
     public String login(AuthRequest authRequest) {

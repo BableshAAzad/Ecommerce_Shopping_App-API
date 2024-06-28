@@ -46,6 +46,19 @@ public class ApplicationExceptionHandler {
         return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "Illegal Operation ...Please fill correct information");
     }
 
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorStructure<String>> handleInvalidToken(InvalidJwtTokenException ex) {
+        return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "Invalid Token");
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorStructure<String>> handleJwtExpired(JwtExpiredException ex) {
+        return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "Your Token is expired");
+    }
+
+
+
     @ExceptionHandler
     public ResponseEntity<ErrorStructure<Map<String, String>>> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex) {

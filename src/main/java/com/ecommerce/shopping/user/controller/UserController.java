@@ -40,16 +40,18 @@ public class UserController {
 
     @PostMapping("/users/otpVerification")
     public ResponseEntity<ResponseStructure<UserResponse>> verifyUser(
-            @RequestBody OtpVerificationRequest otpVerificationRequest){
+            @RequestBody OtpVerificationRequest otpVerificationRequest) {
         return userService.verifyUserOtp(otpVerificationRequest);
     }
+
     //------------------------------------------------------------------------------------------------------------------------
-     @PutMapping("/users/{userId}")
-     public ResponseEntity<ResponseStructure<UserResponse>> updateUser(
+    @PutMapping("/users/{userId}")
+    public ResponseEntity<ResponseStructure<UserResponse>> updateUser(
             @Valid @RequestBody UserRequest userRequest,
-            @Valid @PathVariable Long userId){
+            @Valid @PathVariable Long userId) {
         return userService.updateUser(userRequest, userId);
-     }
+    }
+
     //------------------------------------------------------------------------------------------------------------------------
     @GetMapping("/users/{userId}")
     public ResponseEntity<ResponseStructure<UserResponse>> findUser(@Valid @PathVariable Long userId) {
@@ -62,23 +64,17 @@ public class UserController {
         return userService.findUsers();
     }
 
-//    @PostMapping("/createJwtToken")
-//    public String generateJWT(@RequestBody AuthRequest authRequest){
-//      return  jwtService.createJwtToken(authRequest.getUsername(), 1000000l);
-//    }
-
+    //------------------------------------------------------------------------------------------------------------------------
     @PostMapping("/login")
-    public String login(@RequestBody AuthRequest authRequest){
-        return  userService.login(authRequest);
+    public String login(@RequestBody AuthRequest authRequest) {
+        return userService.login(authRequest);
     }
 
+    //------------------------------------------------------------------------------------------------------------------------
     @GetMapping("/test")
-    public String test(){
+    public String test() {
         return "Success";
     }
 
-//------------------------------------------------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------------------------------------------------
 
 }

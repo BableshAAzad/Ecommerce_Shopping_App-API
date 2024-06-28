@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.Date;
 
 @AllArgsConstructor
-public class JwtOauthFilter extends OncePerRequestFilter {
+public class JwtSecurityFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
 
@@ -40,6 +40,7 @@ public class JwtOauthFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(upat);
                 }
             } catch (JwtException e) {
+                e.fillInStackTrace();
                 throw new InvalidJwtTokenException("Invalid Jwt Token Exception");
             }
 
@@ -47,10 +48,10 @@ public class JwtOauthFilter extends OncePerRequestFilter {
             try {
                 Date expireDate = jwtService.extractExpirationDate(token);
             } catch (ExpiredJwtException e) {
+                e.fillInStackTrace();
                 throw new JwtExpiredException("Token has been expired");
             }
         }
-
         filterChain.doFilter(request, response);
     }
 }

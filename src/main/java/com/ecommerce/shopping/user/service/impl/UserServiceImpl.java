@@ -3,6 +3,7 @@ package com.ecommerce.shopping.user.service.impl;
 import com.ecommerce.shopping.customer.entity.Customer;
 import com.ecommerce.shopping.enums.UserRole;
 import com.ecommerce.shopping.exception.*;
+import com.ecommerce.shopping.jwt.JwtService;
 import com.ecommerce.shopping.mail.entity.MessageData;
 import com.ecommerce.shopping.mail.service.MailService;
 import com.ecommerce.shopping.seller.entity.Seller;
@@ -23,6 +24,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Service;
@@ -50,6 +52,8 @@ public class UserServiceImpl implements UserService {
     private final MailService mailService;
 
     private final AuthenticationManager authenticationManager;
+
+    private final JwtService jwtService;
 
     //------------------------------------------------------------------------------------------------------------------------
 
@@ -183,12 +187,29 @@ public class UserServiceImpl implements UserService {
         }).orElseThrow(() -> new UserNotExistException("UserId : " + userId + ", is not exist"));
     }
     //------------------------------------------------------------------------------------------------------------------------
-    public String login(AuthRequest authRequest){
-        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername() , authRequest.getPassword()));
-        UsernamePasswordAuthenticationFilter userPass = new UsernamePasswordAuthenticationFilter();
-        if(authenticate.isAuthenticated()){
-            return "jwt taken will be return";
-        }else throw new BadCredentialsException("Invalid Credential");
+//    @Override
+//    public String login(AuthRequest authRequest){
+//        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername() , authRequest.getPassword()));
+//        UsernamePasswordAuthenticationFilter userPass = new UsernamePasswordAuthenticationFilter();
+//        if(authenticate.isAuthenticated()){
+////            return  jwtService.createJwtToken(authRequest.getUsername(), 1000000l);
+//            return  "Hello Bhai";
+//        }else throw new BadCredentialsException("Invalid Credential");
+//    }
+
+    @Override
+    public String login(AuthRequest authRequest) {
+        try {
+            Authentication authenticate = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+            if (authenticate.isAuthenticated())
+//                return jwtService.createJwtToken(authRequest.getUsername(), 1000000L);
+                return "JWT token";
+            else
+                throw new BadCredentialsException("Invalid Credentials");
+        } catch (AuthenticationException e) {
+            throw new BadCredentialsException("Invalid Credentials", e);
+        }
     }
 
     //------------------------------------------------------------------------------------------------------------------------

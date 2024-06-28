@@ -1,5 +1,7 @@
 package com.ecommerce.shopping.jwt;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -13,8 +15,7 @@ import java.util.Map;
 @Service
 public class JwtService {
 
-//    private String secret = "hIzFEyWuntUij2Z5xparLC7epKalTAwj/CjwbUkPDRA5ovkGH9tKMaeYwwA8MNzq29TXbRQGZ1/w\nYKtiO1OrNA==";
-private String secret = "6rOtQA19omYEnaf5Hb3bjxetQX/7S0ZkA4lVdFOxGMLTI4QPFhFtnHQpSxr5IrsLcrvNJL/8Y8Ht\nvhlGnW67Qg==";
+private String secret = "cB2d4a60KtbSqSx85awIWt0+kKUrngR9viqlavYnPq3NBwgIBbp3ZFo7rFoM+OSjRBcoO40MxQ0K2mHFJFgDjA==";
 
     public String createJwtToken(String username, long expirationTimeInMillis) {
         return Jwts.builder()
@@ -30,5 +31,25 @@ private String secret = "6rOtQA19omYEnaf5Hb3bjxetQX/7S0ZkA4lVdFOxGMLTI4QPFhFtnHQ
         byte[] key = Decoders.BASE64.decode(secret);
         return Keys.hmacShaKeyFor(key);
     }
+
+  private Claims passJwtToken(String token){
+      return Jwts.parserBuilder()
+              .setSigningKey(getSignatureKey())
+              .build()
+              .parseClaimsJws(token)
+              .getBody();
+  }
+
+  public String extractUserName(String token){
+     return passJwtToken(token).getSubject();
+  }
+
+  public Date extractIssueDate(String token){
+        return passJwtToken(token).getIssuedAt();
+  }
+
+  public Date extractExpirationDate(String token){
+        return passJwtToken(token).getExpiration();
+  }
 
 }

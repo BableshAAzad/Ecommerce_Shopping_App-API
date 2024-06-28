@@ -23,7 +23,7 @@ public class UserController {
 
     private final UserService userService;
 
-    private final JwtService jwtService;
+//    private final JwtService jwtService;
 
     //------------------------------------------------------------------------------------------------------------------------
     @PostMapping("/sellers/register")
@@ -62,9 +62,19 @@ public class UserController {
         return userService.findUsers();
     }
 
-    @PostMapping("/createJwtToken")
-    public String generateJWT(@RequestBody AuthRequest authRequest){
-      return  jwtService.createJwtToken(authRequest.getUsername(), 100000l);
+//    @PostMapping("/createJwtToken")
+//    public String generateJWT(@RequestBody AuthRequest authRequest){
+//      return  jwtService.createJwtToken(authRequest.getUsername(), 1000000l);
+//    }
+
+    @PostMapping("/login")
+    public String login(@RequestBody AuthRequest authRequest){
+        return  userService.login(authRequest);
+    }
+
+    @GetMapping("/test")
+    public String test(){
+        return "Success";
     }
 
 //------------------------------------------------------------------------------------------------------------------------

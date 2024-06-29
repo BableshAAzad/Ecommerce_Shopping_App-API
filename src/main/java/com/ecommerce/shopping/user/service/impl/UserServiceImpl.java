@@ -3,9 +3,11 @@ package com.ecommerce.shopping.user.service.impl;
 import com.ecommerce.shopping.customer.entity.Customer;
 import com.ecommerce.shopping.enums.UserRole;
 import com.ecommerce.shopping.exception.*;
+import com.ecommerce.shopping.jwt.JwtService;
 import com.ecommerce.shopping.mail.entity.MessageData;
 import com.ecommerce.shopping.mail.service.MailService;
 import com.ecommerce.shopping.seller.entity.Seller;
+import com.ecommerce.shopping.user.dto.AuthRequest;
 import com.ecommerce.shopping.user.dto.OtpVerificationRequest;
 import com.ecommerce.shopping.user.dto.UserRequest;
 import com.ecommerce.shopping.user.dto.UserResponse;
@@ -18,6 +20,11 @@ import com.google.common.cache.Cache;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +49,10 @@ public class UserServiceImpl implements UserService {
     private final Random random;
 
     private final MailService mailService;
+
+    private final AuthenticationManager authenticationManager;
+
+    private final JwtService jwtService;
 
     //------------------------------------------------------------------------------------------------------------------------
 
@@ -105,11 +116,12 @@ public class UserServiceImpl implements UserService {
 //           Create Dynamic username
             String userGen = usernameGenerate(user.getEmail());
             user.setUsername(userGen);
+            user.setEmailVerified(true);
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             user = userRepository.save(user);
 
 //            Send mail to user for confirmation
-            mailSend(user.getEmail(), "Email Verification done", "<h4>Your account is create in EcommerceShoppingApp</h4></br></br> Your username is : " + "<h5>" + userGen + "</h5>");
+            mailSend(user.getEmail(), "Email Verification done", "<h3>Your account is created in EcommerceShoppingApp</h3></br><h4>Your username is : " + userGen + "</h4>");
 
             return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<UserResponse>()
                     .setStatus(HttpStatus.CREATED.value())
@@ -174,5 +186,24 @@ public class UserServiceImpl implements UserService {
                     .setData(userMapper.mapUserToUserResponse(user)));
         }).orElseThrow(() -> new UserNotExistException("UserId : " + userId + ", is not exist"));
     }
-//------------------------------------------------------------------------------------------------------------------------
+
+    //------------------------------------------------------------------------------------------------------------------------
+    @Override
+    public String login(AuthRequest authRequest) {
+        try {
+            Authentication authenticate = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+            if (authenticate.isAuthenticated())
+                return jwtService.createJwtToken(authRequest.getUsername(), 1000000L);
+            else
+                throw new BadCredentialsException("Invalid Credentials");
+        } catch (AuthenticationException e) {
+            throw new BadCredentialsException("Invalid Credentials", e);
+        }
+    }
+    //------------------------------------------------------------------------------------------------------------------------
+
+    //------------------------------------------------------------------------------------------------------------------------
+
+    //------------------------------------------------------------------------------------------------------------------------
 }

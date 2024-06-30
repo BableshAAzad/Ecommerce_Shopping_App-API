@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.Date;
 
 @AllArgsConstructor
-public class JwtSecurityFilter extends OncePerRequestFilter {
+public class JwtOauthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
 
@@ -43,7 +43,6 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
                 e.fillInStackTrace();
                 throw new InvalidJwtTokenException("Invalid Jwt Token Exception");
             }
-
 
             try {
                 Date expireDate = jwtService.extractExpirationDate(token);

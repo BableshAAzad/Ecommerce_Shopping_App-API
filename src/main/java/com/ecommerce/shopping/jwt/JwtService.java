@@ -1,7 +1,6 @@
 package com.ecommerce.shopping.jwt;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -16,7 +15,7 @@ import java.util.Map;
 @Service
 public class JwtService {
 
-    @Value("${jwt_secret}")
+    @Value("${application.jwt.secrete}")
     private String secretJwt;
 
     public String createJwtToken(String username, long expirationTimeInMillis) {

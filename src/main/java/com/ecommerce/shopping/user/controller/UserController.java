@@ -1,16 +1,11 @@
 package com.ecommerce.shopping.user.controller;
 
 import com.ecommerce.shopping.enums.UserRole;
-import com.ecommerce.shopping.jwt.JwtService;
-import com.ecommerce.shopping.user.dto.AuthRequest;
-import com.ecommerce.shopping.user.dto.OtpVerificationRequest;
-import com.ecommerce.shopping.user.dto.UserRequest;
-import com.ecommerce.shopping.user.dto.UserResponse;
+import com.ecommerce.shopping.user.dto.*;
 import com.ecommerce.shopping.user.service.UserService;
 import com.ecommerce.shopping.utility.ResponseStructure;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,7 +61,7 @@ public class UserController {
 
     //------------------------------------------------------------------------------------------------------------------------
     @PostMapping("/login")
-    public String login(@RequestBody AuthRequest authRequest) {
+    public ResponseEntity<ResponseStructure<AuthResponse>> login(@RequestBody AuthRequest authRequest) {
         return userService.login(authRequest);
     }
 

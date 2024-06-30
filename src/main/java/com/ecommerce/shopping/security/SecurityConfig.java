@@ -1,7 +1,7 @@
 package com.ecommerce.shopping.security;
 
 import com.ecommerce.shopping.jwt.JwtService;
-import com.ecommerce.shopping.securityfilters.JwtSecurityFilter;
+import com.ecommerce.shopping.securityfilters.JwtOauthFilter;
 import com.ecommerce.shopping.user.repositoty.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -37,15 +37,15 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
-                .sessionManagement(session-> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(new JwtSecurityFilter(jwtService), UsernamePasswordAuthenticationFilter.class)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(new JwtOauthFilter(jwtService), UsernamePasswordAuthenticationFilter.class)
 //                .formLogin(Customizer.withDefaults())
                 .build();
     }
+
     @Bean
     AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-
 
 }

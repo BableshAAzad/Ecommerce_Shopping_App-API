@@ -240,15 +240,17 @@ public class UserServiceImpl implements UserService {
                 grantAccessToken(httpHeaders, existUser);
                 grantRefreshToken(httpHeaders, existUser);
 
-                return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<AuthResponse>()
-                        .setStatus(HttpStatus.OK.value())
-                        .setMessage("User Verified")
-                        .setData(AuthResponse.builder()
-                                .userId(existUser.getUserId())
-                                .username(existUser.getUsername())
-                                .accessExpiration(accessExpirySeconds)
-                                .refreshExpiration(refreshExpireSeconds)
-                                .build()));
+                return ResponseEntity.status(HttpStatus.OK)
+                        .headers(httpHeaders)
+                        .body(new ResponseStructure<AuthResponse>()
+                                .setStatus(HttpStatus.OK.value())
+                                .setMessage("User Verified")
+                                .setData(AuthResponse.builder()
+                                        .userId(existUser.getUserId())
+                                        .username(existUser.getUsername())
+                                        .accessExpiration(accessExpirySeconds)
+                                        .refreshExpiration(refreshExpireSeconds)
+                                        .build()));
             }).orElseThrow(() -> new UserNotExistException("Username : " + authRequest.getUsername() + ", is not found"));
         } catch (AuthenticationException e) {
             throw new BadCredentialsException("Invalid Credentials", e);

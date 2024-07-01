@@ -35,7 +35,6 @@ public class JwtOauthFilter extends OncePerRequestFilter {
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     UsernamePasswordAuthenticationToken upat = new UsernamePasswordAuthenticationToken(username, null, null);
                     upat.setDetails(new WebAuthenticationDetails(request));
-
 //              we store inside security context holder
                     SecurityContextHolder.getContext().setAuthentication(upat);
                 }

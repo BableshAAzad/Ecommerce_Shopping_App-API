@@ -5,6 +5,7 @@ import com.ecommerce.shopping.exception.InvalidJwtTokenException;
 import com.ecommerce.shopping.exception.JwtExpiredException;
 import com.ecommerce.shopping.jwt.JwtService;
 import com.ecommerce.shopping.utility.ErrorStructure;
+import com.ecommerce.shopping.utility.FilterExceptionHandle;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -28,6 +29,7 @@ import java.util.List;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
+    private final FilterExceptionHandle filterExceptionHandle;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -58,16 +60,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             } catch (ExpiredJwtException e) {
 //                e.fillInStackTrace();
 //                throw new JwtExpiredException("Token has been expired");
-                response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                response.getWriter().write(new ErrorStructure<String>()
-                        .setStatus(HttpStatus.UNAUTHORIZED.value())
-                        .setMessage("Token has Expired")
-                        .setRootCause("Token has expired please generate login again")
-                        .toString());
+                filterExceptionHandle.handleJwtExpire(response,
+                        HttpStatus.UNAUTHORIZED.value(),
+                        "Failed to authenticate",
+                        "Token has already expired");
                 return;
             } catch (JwtException e) {
-                e.fillInStackTrace();
-                throw new InvalidJwtTokenException("Invalid Jwt Token Exception");
+                filterExceptionHandle.handleJwtExpire(response,
+                        HttpStatus.UNAUTHORIZED.value(),
+                        "Failed to authenticate",
+                        "Invalid token");
             }
         }
 

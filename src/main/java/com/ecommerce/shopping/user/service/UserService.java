@@ -19,5 +19,5 @@ public interface UserService {
 
     ResponseEntity<ResponseStructure<UserResponse>> verifyUserOtp(OtpVerificationRequest otpVerificationRequest);
 
-    ResponseEntity<ResponseStructure<AuthResponse>> login(AuthRequest authRequest);
+    ResponseEntity<ResponseStructure<AuthResponse>> login(AuthRequest authRequest, String refreshToken, String accessToken);
 }

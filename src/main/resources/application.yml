@@ -35,7 +35,7 @@ spring:
 application:
   jwt:
     secrete: ${JWT_SECRET}
-    access_expiry_seconds: 120000
+    access_expiry_seconds: 3600000
     refresh_expiry_seconds: 1296000000
   cookie:
     domain: localhost

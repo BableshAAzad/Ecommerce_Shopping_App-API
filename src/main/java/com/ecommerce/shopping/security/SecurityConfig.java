@@ -2,10 +2,12 @@ package com.ecommerce.shopping.security;
 
 import com.ecommerce.shopping.jwt.JwtService;
 import com.ecommerce.shopping.securityfilters.JwtAuthFilter;
+import com.ecommerce.shopping.securityfilters.LoginFilter;
 import com.ecommerce.shopping.user.repositoty.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -24,8 +26,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @AllArgsConstructor
 public class SecurityConfig {
 
-    private final UserRepository userRepository;
-
     private final JwtService jwtService;
 
     @Bean
@@ -34,13 +34,24 @@ public class SecurityConfig {
     }
 
     @Bean
+    @Order(2)
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.csrf(AbstractHttpConfigurer::disable)
+                .securityMatchers(match-> match.requestMatchers("/api/v1/**"))
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
-//                .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new JwtAuthFilter(jwtService), UsernamePasswordAuthenticationFilter.class)
-//                .formLogin(Customizer.withDefaults())
+                .build();
+    }
+
+    @Bean
+    @Order(1)
+    SecurityFilterChain securityFilterChainCheckLogin(HttpSecurity httpSecurity) throws Exception {
+        return httpSecurity.csrf(AbstractHttpConfigurer::disable)
+                .securityMatchers(match-> match.requestMatchers("/api/v1/login/**"))
+                .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(new LoginFilter(), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

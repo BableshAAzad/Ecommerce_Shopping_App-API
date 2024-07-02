@@ -60,8 +60,10 @@ public class UserController {
 
     //------------------------------------------------------------------------------------------------------------------------
     @PostMapping("/login")
-    public ResponseEntity<ResponseStructure<AuthResponse>> login(@RequestBody AuthRequest authRequest) {
-        return userService.login(authRequest);
+    public ResponseEntity<ResponseStructure<AuthResponse>> login(@RequestBody AuthRequest authRequest,
+                                                                 @CookieValue(value="rt", required = false) String refreshToken,
+                                                                 @CookieValue(value="at", required = false) String accessToken) {
+        return userService.login(authRequest, refreshToken, accessToken);
     }
 
     //------------------------------------------------------------------------------------------------------------------------

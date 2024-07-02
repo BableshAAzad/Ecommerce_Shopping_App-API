@@ -1,10 +1,7 @@
 package com.ecommerce.shopping.securityfilters;
 
 import com.ecommerce.shopping.enums.UserRole;
-import com.ecommerce.shopping.exception.InvalidJwtTokenException;
-import com.ecommerce.shopping.exception.JwtExpiredException;
 import com.ecommerce.shopping.jwt.JwtService;
-import com.ecommerce.shopping.utility.ErrorStructure;
 import com.ecommerce.shopping.utility.FilterExceptionHandle;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -58,8 +55,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(upat);
                 }
             } catch (ExpiredJwtException e) {
-//                e.fillInStackTrace();
-//                throw new JwtExpiredException("Token has been expired");
                 filterExceptionHandle.handleJwtExpire(response,
                         HttpStatus.UNAUTHORIZED.value(),
                         "Failed to authenticate",
@@ -70,9 +65,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                         HttpStatus.UNAUTHORIZED.value(),
                         "Failed to authenticate",
                         "Invalid token");
+                return;
             }
         }
-
         filterChain.doFilter(request, response);
     }
 }

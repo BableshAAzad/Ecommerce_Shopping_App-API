@@ -7,6 +7,7 @@ import com.ecommerce.shopping.utility.ResponseStructure;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,8 +18,6 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-
-//    private final JwtService jwtService;
 
     //------------------------------------------------------------------------------------------------------------------------
     @PostMapping("/sellers/register")
@@ -67,9 +66,9 @@ public class UserController {
 
     //------------------------------------------------------------------------------------------------------------------------
     @GetMapping("/test")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
     public String test() {
         return "Success";
     }
-
 
 }

@@ -26,7 +26,6 @@ import java.util.List;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final FilterExceptionHandle filterExceptionHandle;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -55,13 +54,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(upat);
                 }
             } catch (ExpiredJwtException e) {
-                filterExceptionHandle.handleJwtExpire(response,
+                FilterExceptionHandle.handleJwtExpire(response,
                         HttpStatus.UNAUTHORIZED.value(),
                         "Failed to authenticate",
                         "Token has already expired");
                 return;
             } catch (JwtException e) {
-                filterExceptionHandle.handleJwtExpire(response,
+                FilterExceptionHandle.handleJwtExpire(response,
                         HttpStatus.UNAUTHORIZED.value(),
                         "Failed to authenticate",
                         "Invalid token");

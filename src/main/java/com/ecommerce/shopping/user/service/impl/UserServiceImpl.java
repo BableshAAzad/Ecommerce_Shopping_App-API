@@ -231,27 +231,25 @@ public class UserServiceImpl implements UserService {
             Authentication authenticate = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
             if (authenticate.isAuthenticated()) {
-                jwtService.createJwtToken(authRequest.getUsername(), 1000000L);
+                return userRepository.findByUsername(authRequest.getUsername()).map(existUser -> {
+                    HttpHeaders httpHeaders = new HttpHeaders();
+                    grantAccessToken(httpHeaders, existUser);
+                    grantRefreshToken(httpHeaders, existUser);
+
+                    return ResponseEntity.status(HttpStatus.OK)
+                            .headers(httpHeaders)
+                            .body(new ResponseStructure<AuthResponse>()
+                                    .setStatus(HttpStatus.OK.value())
+                                    .setMessage("User Verified")
+                                    .setData(AuthResponse.builder()
+                                            .userId(existUser.getUserId())
+                                            .username(existUser.getUsername())
+                                            .accessExpiration(accessExpirySeconds)
+                                            .refreshExpiration(refreshExpireSeconds)
+                                            .build()));
+                }).orElseThrow(() -> new UserNotExistException("Username : " + authRequest.getUsername() + ", is not found"));
             } else
                 throw new BadCredentialsException("Invalid Credentials");
-
-            return userRepository.findByUsername(authRequest.getUsername()).map(existUser -> {
-                HttpHeaders httpHeaders = new HttpHeaders();
-                grantAccessToken(httpHeaders, existUser);
-                grantRefreshToken(httpHeaders, existUser);
-
-                return ResponseEntity.status(HttpStatus.OK)
-                        .headers(httpHeaders)
-                        .body(new ResponseStructure<AuthResponse>()
-                                .setStatus(HttpStatus.OK.value())
-                                .setMessage("User Verified")
-                                .setData(AuthResponse.builder()
-                                        .userId(existUser.getUserId())
-                                        .username(existUser.getUsername())
-                                        .accessExpiration(accessExpirySeconds)
-                                        .refreshExpiration(refreshExpireSeconds)
-                                        .build()));
-            }).orElseThrow(() -> new UserNotExistException("Username : " + authRequest.getUsername() + ", is not found"));
         } catch (AuthenticationException e) {
             throw new BadCredentialsException("Invalid Credentials", e);
         }
@@ -259,22 +257,22 @@ public class UserServiceImpl implements UserService {
 
     //------------------------------------------------------------------------------------------------------------------------
     public void grantAccessToken(HttpHeaders httpHeaders, User user) {
-        String token = jwtService.createJwtToken(user.getUsername(), accessExpirySeconds);
+        String token = jwtService.createJwtToken(user.getUsername(), user.getUserRole(), accessExpirySeconds); // 1 hour in ms
 
         AccessToken accessToken = AccessToken.builder()
                 .accessToken(token)
-                .expiration(LocalDateTime.now().plusSeconds(accessExpirySeconds))
+                .expiration(LocalDateTime.now().plusSeconds(accessExpirySeconds)) //convert ms to sec
                 .user(user)
                 .build();
         accessTokenRepository.save(accessToken);
 
-        httpHeaders.add(HttpHeaders.SET_COOKIE, generateCookie("ar", token, accessExpirySeconds));
+        httpHeaders.add(HttpHeaders.SET_COOKIE, generateCookie("ar", token, accessExpirySeconds / 1000));
     }
 
     //------------------------------------------------------------------------------------------------------------------------
     public void grantRefreshToken(HttpHeaders httpHeaders, User user) {
 
-        String token = jwtService.createJwtToken(user.getUsername(), refreshExpireSeconds);
+        String token = jwtService.createJwtToken(user.getUsername(), user.getUserRole(), refreshExpireSeconds);
 
         RefreshToken refreshToken = RefreshToken.builder()
                 .refreshToken(token)
@@ -283,7 +281,7 @@ public class UserServiceImpl implements UserService {
                 .build();
         refreshTokenRepository.save(refreshToken);
 
-        httpHeaders.add(HttpHeaders.SET_COOKIE, generateCookie("rt", token, refreshExpireSeconds));
+        httpHeaders.add(HttpHeaders.SET_COOKIE, generateCookie("rt", token, refreshExpireSeconds / 1000));
     }
 
     //------------------------------------------------------------------------------------------------------------------------

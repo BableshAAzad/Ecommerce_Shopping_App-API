@@ -1,17 +1,13 @@
 package com.ecommerce.shopping.user.controller;
 
 import com.ecommerce.shopping.enums.UserRole;
-import com.ecommerce.shopping.jwt.JwtService;
-import com.ecommerce.shopping.user.dto.AuthRequest;
-import com.ecommerce.shopping.user.dto.OtpVerificationRequest;
-import com.ecommerce.shopping.user.dto.UserRequest;
-import com.ecommerce.shopping.user.dto.UserResponse;
+import com.ecommerce.shopping.user.dto.*;
 import com.ecommerce.shopping.user.service.UserService;
 import com.ecommerce.shopping.utility.ResponseStructure;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,8 +18,6 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-
-//    private final JwtService jwtService;
 
     //------------------------------------------------------------------------------------------------------------------------
     @PostMapping("/sellers/register")
@@ -66,15 +60,15 @@ public class UserController {
 
     //------------------------------------------------------------------------------------------------------------------------
     @PostMapping("/login")
-    public String login(@RequestBody AuthRequest authRequest) {
+    public ResponseEntity<ResponseStructure<AuthResponse>> login(@RequestBody AuthRequest authRequest) {
         return userService.login(authRequest);
     }
 
     //------------------------------------------------------------------------------------------------------------------------
     @GetMapping("/test")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
     public String test() {
         return "Success";
     }
-
 
 }

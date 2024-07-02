@@ -1,7 +1,7 @@
 package com.ecommerce.shopping.jwt;
 
+import com.ecommerce.shopping.enums.UserRole;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -16,12 +16,14 @@ import java.util.Map;
 @Service
 public class JwtService {
 
-    @Value("${jwt_secret}")
+    @Value("${application.jwt.secrete}")
     private String secretJwt;
 
-    public String createJwtToken(String username, long expirationTimeInMillis) {
+    private static final String ROLE = "role";
+
+    public String createJwtToken(String username, UserRole role, long expirationTimeInMillis) {
         return Jwts.builder()
-                .setClaims(Map.of())
+                .setClaims(Map.of(ROLE, role))
                 .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTimeInMillis))
@@ -54,4 +56,8 @@ public class JwtService {
         return passJwtToken(token).getExpiration();
     }
 
+    public UserRole extractUserRole(String token){
+        String role = passJwtToken(token).get(ROLE, String.class);
+        return UserRole.valueOf(role);
+    }
 }

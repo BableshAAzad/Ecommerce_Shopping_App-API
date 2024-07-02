@@ -7,18 +7,21 @@ import com.ecommerce.shopping.jwt.JwtService;
 import com.ecommerce.shopping.mail.entity.MessageData;
 import com.ecommerce.shopping.mail.service.MailService;
 import com.ecommerce.shopping.seller.entity.Seller;
-import com.ecommerce.shopping.user.dto.AuthRequest;
-import com.ecommerce.shopping.user.dto.OtpVerificationRequest;
-import com.ecommerce.shopping.user.dto.UserRequest;
-import com.ecommerce.shopping.user.dto.UserResponse;
+import com.ecommerce.shopping.user.dto.*;
+import com.ecommerce.shopping.user.entity.AccessToken;
+import com.ecommerce.shopping.user.entity.RefreshToken;
 import com.ecommerce.shopping.user.entity.User;
 import com.ecommerce.shopping.user.mapper.UserMapper;
+import com.ecommerce.shopping.user.repositoty.AccessTokenRepository;
+import com.ecommerce.shopping.user.repositoty.RefreshTokenRepository;
 import com.ecommerce.shopping.user.repositoty.UserRepository;
 import com.ecommerce.shopping.user.service.UserService;
 import com.ecommerce.shopping.utility.ResponseStructure;
 import com.google.common.cache.Cache;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -28,31 +31,65 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
-@AllArgsConstructor
 public class UserServiceImpl implements UserService {
-
     private final UserRepository userRepository;
-
     private final UserMapper userMapper;
-
     private final PasswordEncoder passwordEncoder;
-
     private final Cache<String, User> userCache;
-
     private final Cache<String, String> otpCache;
-
     private final Random random;
-
     private final MailService mailService;
-
     private final AuthenticationManager authenticationManager;
-
     private final JwtService jwtService;
+    private final AccessTokenRepository accessTokenRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
+
+    @Value("${application.jwt.access_expiry_seconds}")
+    private long accessExpirySeconds;
+
+    @Value("${application.jwt.refresh_expiry_seconds}")
+    private long refreshExpireSeconds;
+
+    @Value("${application.cookie.domain}")
+    private String domain;
+
+    @Value("${application.cookie.same_site}")
+    private String sameSite;
+
+    @Value("${application.cookie.secure}")
+    private boolean secure;
+
+
+    public UserServiceImpl(UserRepository userRepository,
+                           UserMapper userMapper,
+                           PasswordEncoder passwordEncoder,
+                           Cache<String, User> userCache,
+                           Cache<String, String> otpCache,
+                           Random random,
+                           MailService mailService,
+                           AuthenticationManager authenticationManager,
+                           JwtService jwtService,
+                           AccessTokenRepository accessTokenRepository,
+                           RefreshTokenRepository refreshTokenRepository) {
+        this.userRepository = userRepository;
+        this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
+        this.userCache = userCache;
+        this.otpCache = otpCache;
+        this.random = random;
+        this.mailService = mailService;
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
+        this.accessTokenRepository = accessTokenRepository;
+        this.refreshTokenRepository = refreshTokenRepository;
+    }
 
     //------------------------------------------------------------------------------------------------------------------------
 
@@ -189,21 +226,75 @@ public class UserServiceImpl implements UserService {
 
     //------------------------------------------------------------------------------------------------------------------------
     @Override
-    public String login(AuthRequest authRequest) {
+    public ResponseEntity<ResponseStructure<AuthResponse>> login(AuthRequest authRequest) {
         try {
             Authentication authenticate = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
-            if (authenticate.isAuthenticated())
-                return jwtService.createJwtToken(authRequest.getUsername(), 1000000L);
-            else
+            if (authenticate.isAuthenticated()) {
+                return userRepository.findByUsername(authRequest.getUsername()).map(existUser -> {
+                    HttpHeaders httpHeaders = new HttpHeaders();
+                    grantAccessToken(httpHeaders, existUser);
+                    grantRefreshToken(httpHeaders, existUser);
+
+                    return ResponseEntity.status(HttpStatus.OK)
+                            .headers(httpHeaders)
+                            .body(new ResponseStructure<AuthResponse>()
+                                    .setStatus(HttpStatus.OK.value())
+                                    .setMessage("User Verified")
+                                    .setData(AuthResponse.builder()
+                                            .userId(existUser.getUserId())
+                                            .username(existUser.getUsername())
+                                            .accessExpiration(accessExpirySeconds)
+                                            .refreshExpiration(refreshExpireSeconds)
+                                            .build()));
+                }).orElseThrow(() -> new UserNotExistException("Username : " + authRequest.getUsername() + ", is not found"));
+            } else
                 throw new BadCredentialsException("Invalid Credentials");
         } catch (AuthenticationException e) {
             throw new BadCredentialsException("Invalid Credentials", e);
         }
     }
-    //------------------------------------------------------------------------------------------------------------------------
 
     //------------------------------------------------------------------------------------------------------------------------
+    public void grantAccessToken(HttpHeaders httpHeaders, User user) {
+        String token = jwtService.createJwtToken(user.getUsername(), user.getUserRole(), accessExpirySeconds); // 1 hour in ms
 
+        AccessToken accessToken = AccessToken.builder()
+                .accessToken(token)
+                .expiration(LocalDateTime.now().plusSeconds(accessExpirySeconds)) //convert ms to sec
+                .user(user)
+                .build();
+        accessTokenRepository.save(accessToken);
+
+        httpHeaders.add(HttpHeaders.SET_COOKIE, generateCookie("ar", token, accessExpirySeconds / 1000));
+    }
+
+    //------------------------------------------------------------------------------------------------------------------------
+    public void grantRefreshToken(HttpHeaders httpHeaders, User user) {
+
+        String token = jwtService.createJwtToken(user.getUsername(), user.getUserRole(), refreshExpireSeconds);
+
+        RefreshToken refreshToken = RefreshToken.builder()
+                .refreshToken(token)
+                .expiration(LocalDateTime.now().plusSeconds(refreshExpireSeconds))
+                .user(user)
+                .build();
+        refreshTokenRepository.save(refreshToken);
+
+        httpHeaders.add(HttpHeaders.SET_COOKIE, generateCookie("rt", token, refreshExpireSeconds / 1000));
+    }
+
+    //------------------------------------------------------------------------------------------------------------------------
+    private String generateCookie(String name, String tokenValue, long maxAge) {
+        return ResponseCookie.from(name, tokenValue)
+                .domain(domain)
+                .path("/")
+                .maxAge(maxAge)
+                .sameSite(sameSite)
+                .httpOnly(true)
+                .secure(secure)
+                .build()
+                .toString();
+    }
     //------------------------------------------------------------------------------------------------------------------------
 }

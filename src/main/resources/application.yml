@@ -1,12 +1,14 @@
 spring:
   application:
     name: Ecommerce_Shopping_App
+
     #  DataSource configuration
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
   #      driver-class-name: com.mysql.cj.jdbc.Driver
+
   #  JPA Configuration
   jpa:
     show-sql: true
@@ -15,6 +17,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
   # SMTP configuration
   mail:
     host: smtp.gmail.com
@@ -28,4 +31,13 @@ spring:
             enable: true
             required: true
 
-jwt_secret: ${JWT_SECRET}
+# Application Custom configuration    3600000 = 1hour and 1296000000 = 15days
+application:
+  jwt:
+    secrete: ${JWT_SECRET}
+    access_expiry_seconds: 120000
+    refresh_expiry_seconds: 1296000000
+  cookie:
+    domain: localhost
+    same_site: Lax
+    secure: false

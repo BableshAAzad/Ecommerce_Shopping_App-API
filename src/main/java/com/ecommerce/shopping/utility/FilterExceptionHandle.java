@@ -17,5 +17,6 @@ public class FilterExceptionHandle {
                 .setRootCause(rootCause);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.writeValue(response.getOutputStream(), errorStructure);
+//        test commit
     }
 }

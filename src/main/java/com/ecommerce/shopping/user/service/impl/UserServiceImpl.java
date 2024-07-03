@@ -299,8 +299,10 @@ public class UserServiceImpl implements UserService {
     //------------------------------------------------------------------------------------------------------------------------
     @Override
     public ResponseEntity<ResponseStructure<AuthResponse>> refreshLogin(String refreshToken) {
-        Date expiryDate = jwtService.extractExpirationDate(refreshToken);
+        if(refreshToken == null)
+            throw new UserNotLoggedInException("Please login first");
 
+        Date expiryDate = jwtService.extractExpirationDate(refreshToken);
         if (expiryDate.getTime() < new Date().getTime()) {
             throw new TokenExpiredException("Refresh token was expired, Please make a new SignIn request");
         } else {
@@ -320,7 +322,7 @@ public class UserServiceImpl implements UserService {
                                     .userId(user.getUserId())
                                     .username(user.getUsername())
                                     .accessExpiration(accessExpirySeconds)
-                                    .refreshExpiration(expiryDate.getTime()/1000)
+                                    .refreshExpiration((expiryDate.getTime() - new Date().getTime())/1000)
                                     .build()));
         }
     }

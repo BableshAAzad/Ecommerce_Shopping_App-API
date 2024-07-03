@@ -40,6 +40,7 @@ public class UserController {
 
     //------------------------------------------------------------------------------------------------------------------------
     @PutMapping("/users/{userId}")
+    @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")
     public ResponseEntity<ResponseStructure<UserResponse>> updateUser(
             @Valid @RequestBody UserRequest userRequest,
             @Valid @PathVariable Long userId) {
@@ -48,12 +49,14 @@ public class UserController {
 
     //------------------------------------------------------------------------------------------------------------------------
     @GetMapping("/users/{userId}")
+    @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")
     public ResponseEntity<ResponseStructure<UserResponse>> findUser(@Valid @PathVariable Long userId) {
         return userService.findUser(userId);
     }
 
     //------------------------------------------------------------------------------------------------------------------------
     @GetMapping("/users")
+    @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")
     public ResponseEntity<ResponseStructure<List<UserResponse>>> findUsers() {
         return userService.findUsers();
     }
@@ -66,13 +69,14 @@ public class UserController {
 
     //------------------------------------------------------------------------------------------------------------------------
     @PostMapping("/refreshLogin")
+    @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")
     public ResponseEntity<ResponseStructure<AuthResponse>> refreshLogin(@CookieValue(value="rt", required = false) String refreshToken){
       return userService.refreshLogin(refreshToken);
     }
 
     //------------------------------------------------------------------------------------------------------------------------
     @GetMapping("/test")
-    @PreAuthorize("hasAuthority('CUSTOMER')")
+    @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")
     public String test() {
         return "Success";
     }

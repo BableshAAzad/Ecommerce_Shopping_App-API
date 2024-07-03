@@ -57,6 +57,10 @@ public class ApplicationExceptionHandler {
         return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "Token Expired");
     }
 
+    public ResponseEntity<ErrorStructure<String>>  handleUserNotLoggedIn(UserNotLoggedInException ex){
+        return errorResponse(HttpStatus.UNAUTHORIZED, ex.getMessage(), "User is not loggedIn");
+    }
+
     @ExceptionHandler
     public ResponseEntity<ErrorStructure<Map<String, String>>> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex) {

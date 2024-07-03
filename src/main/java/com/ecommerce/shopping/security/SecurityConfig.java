@@ -3,6 +3,8 @@ package com.ecommerce.shopping.security;
 import com.ecommerce.shopping.jwt.JwtService;
 import com.ecommerce.shopping.securityfilters.JwtAuthFilter;
 import com.ecommerce.shopping.securityfilters.LoginFilter;
+import com.ecommerce.shopping.securityfilters.RefreshFilter;
+import com.ecommerce.shopping.user.repositoty.RefreshTokenRepository;
 import com.ecommerce.shopping.user.repositoty.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -27,6 +29,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtService jwtService;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Bean
     PasswordEncoder passwordEncoder() {
@@ -34,10 +37,10 @@ public class SecurityConfig {
     }
 
     @Bean
-    @Order(2)
+    @Order(3)
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.csrf(AbstractHttpConfigurer::disable)
-                .securityMatchers(match-> match.requestMatchers("/api/v1/**"))
+                .securityMatchers(match -> match.requestMatchers("/api/v1/**"))
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new JwtAuthFilter(jwtService), UsernamePasswordAuthenticationFilter.class)
@@ -45,10 +48,21 @@ public class SecurityConfig {
     }
 
     @Bean
+    @Order(2)
+    SecurityFilterChain securityFilterChainRefreshFilter(HttpSecurity httpSecurity) throws Exception {
+        return httpSecurity.csrf(AbstractHttpConfigurer::disable)
+                .securityMatchers(match -> match.requestMatchers("/api/v1/refreshLogin"))
+                .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(new RefreshFilter(jwtService, refreshTokenRepository), UsernamePasswordAuthenticationFilter.class)
+                .build();
+    }
+
+    @Bean
     @Order(1)
     SecurityFilterChain securityFilterChainCheckLogin(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.csrf(AbstractHttpConfigurer::disable)
-                .securityMatchers(match-> match.requestMatchers("/api/v1/login/**"))
+                .securityMatchers(match -> match.requestMatchers("/api/v1/login/**"))
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new LoginFilter(), UsernamePasswordAuthenticationFilter.class)

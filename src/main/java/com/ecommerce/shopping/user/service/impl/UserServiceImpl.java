@@ -256,31 +256,31 @@ public class UserServiceImpl implements UserService {
 
     //------------------------------------------------------------------------------------------------------------------------
     public void grantAccessToken(HttpHeaders httpHeaders, User user) {
-        String token = jwtService.createJwtToken(user.getUsername(), user.getUserRole(), accessExpirySeconds); // 1 hour in ms
+        String token = jwtService.createJwtToken(user.getUsername(), user.getUserRole(), (accessExpirySeconds*1000)); // 1 hour in ms
 
         AccessToken accessToken = AccessToken.builder()
                 .accessToken(token)
-                .expiration(LocalDateTime.now().plusSeconds(accessExpirySeconds)) //convert ms to sec
+                .expiration(LocalDateTime.now().plusSeconds(accessExpirySeconds*1000)) //convert ms to sec
                 .user(user)
                 .build();
         accessTokenRepository.save(accessToken);
 
-        httpHeaders.add(HttpHeaders.SET_COOKIE, generateCookie("at", token, accessExpirySeconds / 1000));
+        httpHeaders.add(HttpHeaders.SET_COOKIE, generateCookie("at", token, accessExpirySeconds));
     }
 
     //------------------------------------------------------------------------------------------------------------------------
     public void grantRefreshToken(HttpHeaders httpHeaders, User user) {
 
-        String token = jwtService.createJwtToken(user.getUsername(), user.getUserRole(), refreshExpireSeconds);
+        String token = jwtService.createJwtToken(user.getUsername(), user.getUserRole(), (refreshExpireSeconds*1000));
 
         RefreshToken refreshToken = RefreshToken.builder()
                 .refreshToken(token)
-                .expiration(LocalDateTime.now().plusSeconds(refreshExpireSeconds))
+                .expiration(LocalDateTime.now().plusSeconds(refreshExpireSeconds*1000))
                 .user(user)
                 .build();
         refreshTokenRepository.save(refreshToken);
 
-        httpHeaders.add(HttpHeaders.SET_COOKIE, generateCookie("rt", token, refreshExpireSeconds / 1000));
+        httpHeaders.add(HttpHeaders.SET_COOKIE, generateCookie("rt", token, refreshExpireSeconds));
     }
 
     //------------------------------------------------------------------------------------------------------------------------
@@ -299,21 +299,14 @@ public class UserServiceImpl implements UserService {
     //------------------------------------------------------------------------------------------------------------------------
     @Override
     public ResponseEntity<ResponseStructure<AuthResponse>> refreshLogin(String refreshToken) {
-        Date date = jwtService.extractExpirationDate(refreshToken);
+        Date expiryDate = jwtService.extractExpirationDate(refreshToken);
 
-        if (date.getTime() < new Date().getTime()) {
+        if (expiryDate.getTime() < new Date().getTime()) {
             throw new TokenExpiredException("Refresh token was expired, Please make a new SignIn request");
         } else {
             String username = jwtService.extractUserName(refreshToken);
 //            UserRole userRole = jwtService.extractUserRole(refreshToken);
             User user = userRepository.findByUsername(username).get();
-
-            List<AccessToken> allAT = accessTokenRepository.findAll();
-            for (AccessToken at : allAT) {
-                if (at.getExpiration().getSecond() < new Date().getTime()) {
-                    accessTokenRepository.delete(at);
-                }
-            }
 
             HttpHeaders httpHeaders = new HttpHeaders();
             grantAccessToken(httpHeaders, user);
@@ -327,9 +320,12 @@ public class UserServiceImpl implements UserService {
                                     .userId(user.getUserId())
                                     .username(user.getUsername())
                                     .accessExpiration(accessExpirySeconds)
-                                    .refreshExpiration(date.getTime())
+                                    .refreshExpiration(expiryDate.getTime()/1000)
                                     .build()));
         }
     }
+    //------------------------------------------------------------------------------------------------------------------------
+
+
     //------------------------------------------------------------------------------------------------------------------------
 }

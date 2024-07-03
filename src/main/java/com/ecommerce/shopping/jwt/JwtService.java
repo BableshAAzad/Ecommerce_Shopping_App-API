@@ -60,4 +60,5 @@ public class JwtService {
         String role = passJwtToken(token).get(ROLE, String.class);
         return UserRole.valueOf(role);
     }
+
 }

@@ -50,7 +50,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     UsernamePasswordAuthenticationToken upat = new UsernamePasswordAuthenticationToken(username, null, List.of(new SimpleGrantedAuthority(userRole.name())));
                     upat.setDetails(new WebAuthenticationDetails(request));
-//              we store inside security context holder
+//              we store inside security context holder // test commit
                     SecurityContextHolder.getContext().setAuthentication(upat);
                 }
             } catch (ExpiredJwtException e) {

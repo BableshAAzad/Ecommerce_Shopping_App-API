@@ -4,6 +4,7 @@ import com.ecommerce.shopping.jwt.JwtService;
 import com.ecommerce.shopping.securityfilters.JwtAuthFilter;
 import com.ecommerce.shopping.securityfilters.LoginFilter;
 import com.ecommerce.shopping.securityfilters.RefreshFilter;
+import com.ecommerce.shopping.user.repositoty.AccessTokenRepository;
 import com.ecommerce.shopping.user.repositoty.RefreshTokenRepository;
 import com.ecommerce.shopping.user.repositoty.UserRepository;
 import lombok.AllArgsConstructor;
@@ -30,6 +31,7 @@ public class SecurityConfig {
 
     private final JwtService jwtService;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final AccessTokenRepository accessTokenRepository;
 
     @Bean
     PasswordEncoder passwordEncoder() {
@@ -50,7 +52,7 @@ public class SecurityConfig {
 //                        .authenticated())
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(new JwtAuthFilter(jwtService), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthFilter(jwtService, refreshTokenRepository, accessTokenRepository), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

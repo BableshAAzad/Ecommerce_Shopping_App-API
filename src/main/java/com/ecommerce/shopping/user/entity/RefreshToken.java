@@ -17,6 +17,7 @@ public class RefreshToken {
     private Long refreshTokenId;
     private String refreshToken;
     private LocalDateTime expiration;
+    private boolean isBlocked;
 
     @ManyToOne
     private User user;

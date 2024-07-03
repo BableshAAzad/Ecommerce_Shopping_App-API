@@ -53,6 +53,11 @@ public class ApplicationExceptionHandler {
     }
 
     @ExceptionHandler
+    public ResponseEntity<ErrorStructure<String>> handleTokenExpired(TokenExpiredException ex){
+        return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "Token Expired");
+    }
+
+    @ExceptionHandler
     public ResponseEntity<ErrorStructure<Map<String, String>>> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex) {
         List<ObjectError> objErrors = ex.getAllErrors();

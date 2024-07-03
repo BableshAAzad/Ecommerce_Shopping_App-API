@@ -17,6 +17,7 @@ public class AccessToken {
     private Long accessTokenId;
     private String accessToken;
     private LocalDateTime expiration;
+    private boolean isBlocked;
 
     @ManyToOne
     private User user;

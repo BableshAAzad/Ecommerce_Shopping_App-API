@@ -63,7 +63,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 FilterExceptionHandle.handleJwtExpire(response,
                         HttpStatus.UNAUTHORIZED.value(),
                         "Failed to authenticate",
-                        "Invalid token");
+                        "you are not allowed to access this resource");
                 return;
             }
         }

@@ -76,7 +76,7 @@ public class UserController {
 
     //------------------------------------------------------------------------------------------------------------------------
     @GetMapping("/test")
-    @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")
+//    @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")
     public String test() {
         return "Success";
     }

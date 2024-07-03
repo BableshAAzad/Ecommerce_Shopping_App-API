@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 public class LoginFilter extends OncePerRequestFilter {
 

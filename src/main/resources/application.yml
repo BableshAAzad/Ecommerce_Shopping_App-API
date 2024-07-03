@@ -31,12 +31,13 @@ spring:
             enable: true
             required: true
 
-# Application Custom configuration    3600000 = 1hour and 1296000000 = 15days
+# Application Custom configuration    (3600000 = 1hour and 1296000000 = 15days) in milli
+# (3600 = 1hour and 1296000 = 15days) in seconds
 application:
   jwt:
     secrete: ${JWT_SECRET}
-    access_expiry_seconds: 3000
-    refresh_expiry_seconds: 1296000000
+    access_expiry_seconds: 3600
+    refresh_expiry_seconds: 1296000
   cookie:
     domain: localhost
     same_site: Lax

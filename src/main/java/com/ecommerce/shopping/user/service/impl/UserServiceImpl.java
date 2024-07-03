@@ -18,6 +18,7 @@ import com.ecommerce.shopping.user.repositoty.UserRepository;
 import com.ecommerce.shopping.user.service.UserService;
 import com.ecommerce.shopping.utility.ResponseStructure;
 import com.google.common.cache.Cache;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,6 +29,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -222,10 +225,7 @@ public class UserServiceImpl implements UserService {
 
     //------------------------------------------------------------------------------------------------------------------------
     @Override
-    public ResponseEntity<ResponseStructure<AuthResponse>> login(AuthRequest authRequest, String refreshToken, String accessToken) {
-        System.out.println("---------------------------------------------");
-        System.out.println(refreshToken);
-        System.out.println(accessToken);
+    public ResponseEntity<ResponseStructure<AuthResponse>> login(AuthRequest authRequest) {
         try {
             Authentication authenticate = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
@@ -294,6 +294,42 @@ public class UserServiceImpl implements UserService {
                 .secure(secure)
                 .build()
                 .toString();
+    }
+
+    //------------------------------------------------------------------------------------------------------------------------
+    @Override
+    public ResponseEntity<ResponseStructure<AuthResponse>> refreshLogin(String refreshToken) {
+        Date date = jwtService.extractExpirationDate(refreshToken);
+
+        if (date.getTime() < new Date().getTime()) {
+            throw new TokenExpiredException("Refresh token was expired, Please make a new SignIn request");
+        } else {
+            String username = jwtService.extractUserName(refreshToken);
+//            UserRole userRole = jwtService.extractUserRole(refreshToken);
+            User user = userRepository.findByUsername(username).get();
+
+            List<AccessToken> allAT = accessTokenRepository.findAll();
+            for (AccessToken at : allAT) {
+                if (at.getExpiration().getSecond() < new Date().getTime()) {
+                    accessTokenRepository.delete(at);
+                }
+            }
+
+            HttpHeaders httpHeaders = new HttpHeaders();
+            grantAccessToken(httpHeaders, user);
+
+            return ResponseEntity.status(HttpStatus.OK)
+                    .headers(httpHeaders)
+                    .body(new ResponseStructure<AuthResponse>()
+                            .setStatus(HttpStatus.OK.value())
+                            .setMessage("Access Toke renewed")
+                            .setData(AuthResponse.builder()
+                                    .userId(user.getUserId())
+                                    .username(user.getUsername())
+                                    .accessExpiration(accessExpirySeconds)
+                                    .refreshExpiration(date.getTime())
+                                    .build()));
+        }
     }
     //------------------------------------------------------------------------------------------------------------------------
 }

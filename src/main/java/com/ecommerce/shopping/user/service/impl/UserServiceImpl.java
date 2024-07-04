@@ -34,6 +34,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -256,11 +257,11 @@ public class UserServiceImpl implements UserService {
 
     //------------------------------------------------------------------------------------------------------------------------
     public void grantAccessToken(HttpHeaders httpHeaders, User user) {
-        String token = jwtService.createJwtToken(user.getUsername(), user.getUserRole(), (accessExpirySeconds*1000)); // 1 hour in ms
+        String token = jwtService.createJwtToken(user.getUsername(), user.getUserRole(), (accessExpirySeconds * 1000)); // 1 hour in ms
 
         AccessToken accessToken = AccessToken.builder()
                 .accessToken(token)
-                .expiration(LocalDateTime.now().plusSeconds(accessExpirySeconds*1000)) //convert ms to sec
+                .expiration(LocalDateTime.now().plusSeconds(accessExpirySeconds * 1000)) //convert ms to sec
                 .user(user)
                 .build();
         accessTokenRepository.save(accessToken);
@@ -271,11 +272,11 @@ public class UserServiceImpl implements UserService {
     //------------------------------------------------------------------------------------------------------------------------
     public void grantRefreshToken(HttpHeaders httpHeaders, User user) {
 
-        String token = jwtService.createJwtToken(user.getUsername(), user.getUserRole(), (refreshExpireSeconds*1000));
+        String token = jwtService.createJwtToken(user.getUsername(), user.getUserRole(), (refreshExpireSeconds * 1000));
 
         RefreshToken refreshToken = RefreshToken.builder()
                 .refreshToken(token)
-                .expiration(LocalDateTime.now().plusSeconds(refreshExpireSeconds*1000))
+                .expiration(LocalDateTime.now().plusSeconds(refreshExpireSeconds * 1000))
                 .user(user)
                 .build();
         refreshTokenRepository.save(refreshToken);
@@ -299,7 +300,7 @@ public class UserServiceImpl implements UserService {
     //------------------------------------------------------------------------------------------------------------------------
     @Override
     public ResponseEntity<ResponseStructure<AuthResponse>> refreshLogin(String refreshToken) {
-        if(refreshToken == null)
+        if (refreshToken == null)
             throw new UserNotLoggedInException("Please login first");
 
         Date expiryDate = jwtService.extractExpirationDate(refreshToken);
@@ -322,12 +323,47 @@ public class UserServiceImpl implements UserService {
                                     .userId(user.getUserId())
                                     .username(user.getUsername())
                                     .accessExpiration(accessExpirySeconds)
-                                    .refreshExpiration((expiryDate.getTime() - new Date().getTime())/1000)
+                                    .refreshExpiration((expiryDate.getTime() - new Date().getTime()) / 1000)
+                                    .build()));
+        }
+    }
+
+    //------------------------------------------------------------------------------------------------------------------------
+    @Override
+    public ResponseEntity<ResponseStructure<AuthResponse>> logout(String refreshToken, String accessToken) {
+        if (refreshToken == null || accessToken == null)
+            throw new UserNotLoggedInException("Please login first");
+        else { //refreshToken != null && accessToken != null
+            Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByRefreshToken(refreshToken);
+            Optional<AccessToken> optionalAccessToken = accessTokenRepository.findByAccessToken(accessToken);
+            RefreshToken existRefreshToken = optionalRefreshToken.get();
+            AccessToken existAccessToken = optionalAccessToken.get();
+
+            existRefreshToken.setBlocked(true);
+            existAccessToken.setBlocked(true);
+            refreshTokenRepository.save(existRefreshToken);
+            accessTokenRepository.save(existAccessToken);
+
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.add(HttpHeaders.SET_COOKIE, generateCookie("rt", null, 0));
+            httpHeaders.add(HttpHeaders.SET_COOKIE, generateCookie("at", null, 0));
+
+            User user = existRefreshToken.getUser();
+            return ResponseEntity.status(HttpStatus.OK)
+                    .headers(httpHeaders)
+                    .body(new ResponseStructure<AuthResponse>()
+                            .setStatus(HttpStatus.OK.value())
+                            .setMessage("User logout done")
+                            .setData(AuthResponse.builder()
+                                    .userId(user.getUserId())
+                                    .username(user.getUsername())
+                                    .accessExpiration(0)
+                                    .refreshExpiration(0)
                                     .build()));
         }
     }
     //------------------------------------------------------------------------------------------------------------------------
 
-
+    //------------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------------
 }

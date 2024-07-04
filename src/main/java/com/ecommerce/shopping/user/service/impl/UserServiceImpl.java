@@ -398,22 +398,18 @@ public class UserServiceImpl implements UserService {
         if (refreshToken == null || accessToken == null)
             throw new UserNotLoggedInException("Please login first");
         else {
-            List<RefreshToken> listNotBlockedRT = refreshTokenRepository.findByIsBlockedFalse();
-            List<AccessToken> listNotBlockedAT = accessTokenRepository.findByIsBlockedFalse();
+            List<RefreshToken> listRT = refreshTokenRepository.findAll();
+            List<AccessToken> listAT = accessTokenRepository.findAll();
 
             String username = jwtService.extractUserName(refreshToken);
-            for (RefreshToken rt : listNotBlockedRT) {
+            for (RefreshToken rt : listRT) {
                 if (rt.getUser().getUsername().equals(username)) {
-                    rt.setBlocked(true);
-                    refreshTokenRepository.save(rt);
-//                    refreshTokenRepository.delete(rt); // based on fetch all data first
+                    refreshTokenRepository.delete(rt);
                 }
             }
-            for (AccessToken at : listNotBlockedAT) {
+            for (AccessToken at : listAT) {
                 if (at.getUser().getUsername().equals(username)) {
-                    at.setBlocked(true);
-                    accessTokenRepository.save(at);
-//                    accessTokenRepository.delete(at); // based on fetch all data first
+                    accessTokenRepository.delete(at);
                 }
             }
             HttpHeaders httpHeaders = new HttpHeaders();

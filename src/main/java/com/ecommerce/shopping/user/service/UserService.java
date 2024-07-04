@@ -22,4 +22,6 @@ public interface UserService {
     ResponseEntity<ResponseStructure<AuthResponse>> login(AuthRequest authRequest);
 
     ResponseEntity<ResponseStructure<AuthResponse>> refreshLogin(String refreshToken);
+
+    ResponseEntity<ResponseStructure<AuthResponse>> logout(String refreshToken, String accessToken);
 }

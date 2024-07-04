@@ -362,8 +362,78 @@ public class UserServiceImpl implements UserService {
                                     .build()));
         }
     }
-    //------------------------------------------------------------------------------------------------------------------------
 
     //------------------------------------------------------------------------------------------------------------------------
+    @Override
+    public ResponseEntity<ResponseStructure<String>> logoutFromOtherDevices(String refreshToken, String accessToken) {
+        if (refreshToken == null || accessToken == null)
+            throw new UserNotLoggedInException("Please login first");
+        else {
+            List<RefreshToken> listNotBlockedRT = refreshTokenRepository.findByIsBlockedFalse();
+            List<AccessToken> listNotBlockedAT = accessTokenRepository.findByIsBlockedFalse();
+
+            String username = jwtService.extractUserName(refreshToken);
+            for (RefreshToken rt : listNotBlockedRT) {
+                if (!rt.getRefreshToken().equals(refreshToken) && rt.getUser().getUsername().equals(username)) {
+                    rt.setBlocked(true);
+                    refreshTokenRepository.save(rt);
+                }
+            }
+            for (AccessToken at : listNotBlockedAT) {
+                if (!at.getAccessToken().equals(accessToken) && at.getUser().getUsername().equals(username)) {
+                    at.setBlocked(true);
+                    accessTokenRepository.save(at);
+                }
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<String>()
+                    .setStatus(HttpStatus.OK.value())
+                    .setMessage("Other Devices Logout done")
+                    .setData("All other device are logged out"));
+        }
+    }
+
+    //------------------------------------------------------------------------------------------------------------------------
+    @Override
+    public ResponseEntity<ResponseStructure<AuthResponse>> logoutFromAllDevices(String refreshToken, String accessToken) {
+        if (refreshToken == null || accessToken == null)
+            throw new UserNotLoggedInException("Please login first");
+        else {
+            List<RefreshToken> listNotBlockedRT = refreshTokenRepository.findByIsBlockedFalse();
+            List<AccessToken> listNotBlockedAT = accessTokenRepository.findByIsBlockedFalse();
+
+            String username = jwtService.extractUserName(refreshToken);
+            for (RefreshToken rt : listNotBlockedRT) {
+                if (rt.getUser().getUsername().equals(username)) {
+                    rt.setBlocked(true);
+                    refreshTokenRepository.save(rt);
+//                    refreshTokenRepository.delete(rt); // based on fetch all data first
+                }
+            }
+            for (AccessToken at : listNotBlockedAT) {
+                if (at.getUser().getUsername().equals(username)) {
+                    at.setBlocked(true);
+                    accessTokenRepository.save(at);
+//                    accessTokenRepository.delete(at); // based on fetch all data first
+                }
+            }
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.add(HttpHeaders.SET_COOKIE, generateCookie("rt", null, 0));
+            httpHeaders.add(HttpHeaders.SET_COOKIE, generateCookie("at", null, 0));
+
+            User user = userRepository.findByUsername(username).get();
+            return ResponseEntity.status(HttpStatus.OK)
+                    .headers(httpHeaders)
+                    .body(new ResponseStructure<AuthResponse>()
+                            .setStatus(HttpStatus.OK.value())
+                            .setMessage("Logout successfully done from all devices")
+                            .setData(AuthResponse.builder()
+                                    .userId(user.getUserId())
+                                    .username(user.getUsername())
+                                    .accessExpiration(0)
+                                    .refreshExpiration(0)
+                                    .build()));
+        }
+    }
+
     //------------------------------------------------------------------------------------------------------------------------
 }

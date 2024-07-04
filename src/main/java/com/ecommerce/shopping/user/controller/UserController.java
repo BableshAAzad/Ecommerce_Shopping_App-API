@@ -70,19 +70,39 @@ public class UserController {
     //------------------------------------------------------------------------------------------------------------------------
     @PostMapping("/refreshLogin")
     @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")
-    public ResponseEntity<ResponseStructure<AuthResponse>> refreshLogin(@CookieValue(value="rt", required = false) String refreshToken){
-      return userService.refreshLogin(refreshToken);
+    public ResponseEntity<ResponseStructure<AuthResponse>> refreshLogin(@CookieValue(value = "rt", required = false) String refreshToken) {
+        return userService.refreshLogin(refreshToken);
     }
+
     //------------------------------------------------------------------------------------------------------------------------
     @PostMapping("/logout")
     @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")
-    public ResponseEntity<ResponseStructure<AuthResponse>> logout(@CookieValue(value="rt", required = false) String refreshToken,
-                                                                  @CookieValue(value="at", required = false) String accessToken){
+    public ResponseEntity<ResponseStructure<AuthResponse>> logout(@CookieValue(value = "rt", required = false) String refreshToken,
+                                                                  @CookieValue(value = "at", required = false) String accessToken) {
         return userService.logout(refreshToken, accessToken);
     }
+
+    //------------------------------------------------------------------------------------------------------------------------
+    @PostMapping("/logoutFromOtherDevices")
+    @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")
+    public ResponseEntity<ResponseStructure<String>> logoutFromOtherDevices(@CookieValue(value = "rt", required = false) String refreshToken,
+                                                                            @CookieValue(value = "at", required = false) String accessToken) {
+        return userService.logoutFromOtherDevices(refreshToken, accessToken);
+    }
+
+    //------------------------------------------------------------------------------------------------------------------------
+    @PostMapping("/logoutFromAllDevices")
+    @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")
+    public ResponseEntity<ResponseStructure<AuthResponse>> logoutFromAllDevices(@CookieValue(value = "rt", required = false) String refreshToken,
+                                                                                @CookieValue(value = "at", required = false) String accessToken) {
+        return userService.logoutFromAllDevices(refreshToken, accessToken);
+    }
+
+    //------------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------------
     @GetMapping("/test")
-//    @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")
+    @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")
     public String test() {
         return "Success";
     }

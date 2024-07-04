@@ -23,11 +23,13 @@ public class LoginFilter extends OncePerRequestFilter {
                     loggedIn = true;
             }
 
-        if (loggedIn)
+        if (loggedIn) {
             FilterExceptionHandle.handleJwtExpire(response,
                     HttpStatus.UNAUTHORIZED.value(),
                     "Failed to Login",
                     "Please Logout first");
+            return;
+        }
         else
             filterChain.doFilter(request, response);
     }

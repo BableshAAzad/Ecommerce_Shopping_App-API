@@ -300,9 +300,6 @@ public class UserServiceImpl implements UserService {
     //------------------------------------------------------------------------------------------------------------------------
     @Override
     public ResponseEntity<ResponseStructure<AuthResponse>> refreshLogin(String refreshToken) {
-        if (refreshToken == null)
-            throw new UserNotLoggedInException("Please login first");
-
         Date expiryDate = jwtService.extractExpirationDate(refreshToken);
         if (expiryDate.getTime() < new Date().getTime()) {
             throw new TokenExpiredException("Refresh token was expired, Please make a new SignIn request");
@@ -330,10 +327,7 @@ public class UserServiceImpl implements UserService {
 
     //------------------------------------------------------------------------------------------------------------------------
     @Override
-    public ResponseEntity<ResponseStructure<AuthResponse>> logout(String refreshToken, String accessToken) {
-        if (refreshToken == null || accessToken == null)
-            throw new UserNotLoggedInException("Please login first");
-        else { //refreshToken != null && accessToken != null
+    public ResponseEntity<LogoutResponse> logout(String refreshToken, String accessToken) {
             Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByRefreshToken(refreshToken);
             Optional<AccessToken> optionalAccessToken = accessTokenRepository.findByAccessToken(accessToken);
             RefreshToken existRefreshToken = optionalRefreshToken.get();
@@ -348,22 +342,63 @@ public class UserServiceImpl implements UserService {
             httpHeaders.add(HttpHeaders.SET_COOKIE, generateCookie("rt", null, 0));
             httpHeaders.add(HttpHeaders.SET_COOKIE, generateCookie("at", null, 0));
 
-            User user = existRefreshToken.getUser();
             return ResponseEntity.status(HttpStatus.OK)
                     .headers(httpHeaders)
-                    .body(new ResponseStructure<AuthResponse>()
-                            .setStatus(HttpStatus.OK.value())
-                            .setMessage("User logout done")
-                            .setData(AuthResponse.builder()
-                                    .userId(user.getUserId())
-                                    .username(user.getUsername())
-                                    .accessExpiration(0)
-                                    .refreshExpiration(0)
-                                    .build()));
-        }
+                    .body(LogoutResponse.builder()
+                            .status(HttpStatus.OK.value())
+                            .message("User logout done")
+                            .build());
     }
-    //------------------------------------------------------------------------------------------------------------------------
 
     //------------------------------------------------------------------------------------------------------------------------
+    @Override
+    public ResponseEntity<LogoutResponse> logoutFromOtherDevices(String refreshToken, String accessToken) {
+            String username = jwtService.extractUserName(refreshToken);
+            User user = userRepository.findByUsername(username).get();
+
+            List<RefreshToken> listRT = refreshTokenRepository.findByUserAndIsBlockedAndRefreshTokenNot(user, false, refreshToken);
+            List<AccessToken> listAT = accessTokenRepository.findByUserAndIsBlockedAndAccessTokenNot(user, false, accessToken);
+            listRT.forEach(rt->{
+                rt.setBlocked(true);
+                refreshTokenRepository.save(rt);
+            });
+            listAT.forEach(at->{
+                at.setBlocked(true);
+                accessTokenRepository.save(at);
+            });
+            return ResponseEntity.status(HttpStatus.OK).body(LogoutResponse.builder()
+                    .status(HttpStatus.OK.value())
+                    .message("Other Devices Logout done")
+                    .build());
+    }
+
+    //------------------------------------------------------------------------------------------------------------------------
+    @Override
+    public ResponseEntity<LogoutResponse> logoutFromAllDevices(String refreshToken, String accessToken) {
+           String username = jwtService.extractUserName(refreshToken);
+           User user = userRepository.findByUsername(username).get();
+
+            List<RefreshToken> listRT = refreshTokenRepository.findByUserAndIsBlocked(user, false);
+            List<AccessToken> listAT = accessTokenRepository.findByUserAndIsBlocked(user, false);
+            listRT.forEach(rt->{
+                rt.setBlocked(true);
+                refreshTokenRepository.save(rt);
+            });
+            listAT.forEach(at->{
+                at.setBlocked(true);
+                accessTokenRepository.save(at);
+            });
+
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.add(HttpHeaders.SET_COOKIE, generateCookie("rt", null, 0));
+            httpHeaders.add(HttpHeaders.SET_COOKIE, generateCookie("at", null, 0));
+
+            return ResponseEntity.status(HttpStatus.OK)
+                    .headers(httpHeaders)
+                    .body(LogoutResponse.builder()
+                            .status(HttpStatus.OK.value())
+                            .message("Logout successfully done from all devices")
+                            .build());
+    }
     //------------------------------------------------------------------------------------------------------------------------
 }

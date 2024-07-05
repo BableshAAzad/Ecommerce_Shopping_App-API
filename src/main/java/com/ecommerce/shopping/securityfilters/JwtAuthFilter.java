@@ -1,7 +1,6 @@
 package com.ecommerce.shopping.securityfilters;
 
 import com.ecommerce.shopping.enums.UserRole;
-import com.ecommerce.shopping.exception.TokenExpiredException;
 import com.ecommerce.shopping.jwt.JwtService;
 import com.ecommerce.shopping.user.entity.AccessToken;
 import com.ecommerce.shopping.user.entity.RefreshToken;
@@ -50,33 +49,37 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             }
         }
         if (at != null && rt != null) {
-            Optional<RefreshToken> refreshToken = refreshTokenRepository.findByRefreshToken(rt);
-            Optional<AccessToken> accessToken = accessTokenRepository.findByAccessToken(at);
+            Optional<RefreshToken> optionalRT = refreshTokenRepository.findByRefreshToken(rt);
+            Optional<AccessToken> optionalAT = accessTokenRepository.findByAccessToken(at);
 
-            if (!refreshToken.get().isBlocked() && !accessToken.get().isBlocked()) {
-                try {
-                    Date expireDate = jwtService.extractExpirationDate(at);
-                    String username = jwtService.extractUserName(at);
-                    UserRole userRole = jwtService.extractUserRole(at);
+            if (optionalRT.isPresent() && optionalAT.isPresent()) {
+                RefreshToken refreshToken = optionalRT.get();
+                AccessToken accessToken = optionalAT.get();
+                if (!refreshToken.isBlocked() & !accessToken.isBlocked()) {
+                    try {
+                        Date expireDate = jwtService.extractExpirationDate(at);
+                        String username = jwtService.extractUserName(at);
+                        UserRole userRole = jwtService.extractUserRole(at);
 
-                    if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                        UsernamePasswordAuthenticationToken upat = new UsernamePasswordAuthenticationToken(username, null, List.of(new SimpleGrantedAuthority(userRole.name())));
-                        upat.setDetails(new WebAuthenticationDetails(request));
+                        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                            UsernamePasswordAuthenticationToken upat = new UsernamePasswordAuthenticationToken(username, null, List.of(new SimpleGrantedAuthority(userRole.name())));
+                            upat.setDetails(new WebAuthenticationDetails(request));
 //              we store inside security context holder // test commit
-                        SecurityContextHolder.getContext().setAuthentication(upat);
+                            SecurityContextHolder.getContext().setAuthentication(upat);
+                        }
+                    } catch (ExpiredJwtException e) {
+                        FilterExceptionHandle.handleJwtExpire(response,
+                                HttpStatus.UNAUTHORIZED.value(),
+                                "Failed to authenticate",
+                                "Token has already expired");
+                        return;
+                    } catch (JwtException e) {
+                        FilterExceptionHandle.handleJwtExpire(response,
+                                HttpStatus.UNAUTHORIZED.value(),
+                                "Failed to authenticate",
+                                "you are not allowed to access this resource");
+                        return;
                     }
-                } catch (ExpiredJwtException e) {
-                    FilterExceptionHandle.handleJwtExpire(response,
-                            HttpStatus.UNAUTHORIZED.value(),
-                            "Failed to authenticate",
-                            "Token has already expired");
-                    return;
-                } catch (JwtException e) {
-                    FilterExceptionHandle.handleJwtExpire(response,
-                            HttpStatus.UNAUTHORIZED.value(),
-                            "Failed to authenticate",
-                            "you are not allowed to access this resource");
-                    return;
                 }
             } else {
                 FilterExceptionHandle.handleJwtExpire(response,

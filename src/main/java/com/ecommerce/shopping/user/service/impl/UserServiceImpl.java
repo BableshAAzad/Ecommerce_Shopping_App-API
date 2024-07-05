@@ -261,7 +261,7 @@ public class UserServiceImpl implements UserService {
 
         AccessToken accessToken = AccessToken.builder()
                 .accessToken(token)
-                .expiration(LocalDateTime.now().plusSeconds(accessExpirySeconds * 1000)) //convert ms to sec
+                .expiration(LocalDateTime.now().plusSeconds(accessExpirySeconds))
                 .user(user)
                 .build();
         accessTokenRepository.save(accessToken);
@@ -276,7 +276,7 @@ public class UserServiceImpl implements UserService {
 
         RefreshToken refreshToken = RefreshToken.builder()
                 .refreshToken(token)
-                .expiration(LocalDateTime.now().plusSeconds(refreshExpireSeconds * 1000))
+                .expiration(LocalDateTime.now().plusSeconds(refreshExpireSeconds))
                 .user(user)
                 .build();
         refreshTokenRepository.save(refreshToken);

@@ -77,7 +77,7 @@ public class UserController {
     //------------------------------------------------------------------------------------------------------------------------
     @PostMapping("/logout")
     @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")
-    public ResponseEntity<ResponseStructure<AuthResponse>> logout(@CookieValue(value = "rt", required = false) String refreshToken,
+    public ResponseEntity<LogoutResponse> logout(@CookieValue(value = "rt", required = false) String refreshToken,
                                                                   @CookieValue(value = "at", required = false) String accessToken) {
         return userService.logout(refreshToken, accessToken);
     }
@@ -85,7 +85,7 @@ public class UserController {
     //------------------------------------------------------------------------------------------------------------------------
     @PostMapping("/logoutFromOtherDevices")
     @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")
-    public ResponseEntity<ResponseStructure<String>> logoutFromOtherDevices(@CookieValue(value = "rt", required = false) String refreshToken,
+    public ResponseEntity<LogoutResponse> logoutFromOtherDevices(@CookieValue(value = "rt", required = false) String refreshToken,
                                                                             @CookieValue(value = "at", required = false) String accessToken) {
         return userService.logoutFromOtherDevices(refreshToken, accessToken);
     }
@@ -93,7 +93,7 @@ public class UserController {
     //------------------------------------------------------------------------------------------------------------------------
     @PostMapping("/logoutFromAllDevices")
     @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")
-    public ResponseEntity<ResponseStructure<AuthResponse>> logoutFromAllDevices(@CookieValue(value = "rt", required = false) String refreshToken,
+    public ResponseEntity<LogoutResponse> logoutFromAllDevices(@CookieValue(value = "rt", required = false) String refreshToken,
                                                                                 @CookieValue(value = "at", required = false) String accessToken) {
         return userService.logoutFromAllDevices(refreshToken, accessToken);
     }

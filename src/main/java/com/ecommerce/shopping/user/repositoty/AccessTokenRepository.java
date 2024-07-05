@@ -1,6 +1,7 @@
 package com.ecommerce.shopping.user.repositoty;
 
 import com.ecommerce.shopping.user.entity.AccessToken;
+import com.ecommerce.shopping.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -10,5 +11,7 @@ public interface AccessTokenRepository extends JpaRepository<AccessToken, Long> 
 
     Optional<AccessToken> findByAccessToken(String at);
 
-    List<AccessToken> findByIsBlockedFalse();
+    List<AccessToken> findByUserAndIsBlockedAndAccessTokenNot(User user, boolean b, String accessToken);
+
+    List<AccessToken> findByUserAndIsBlocked(User user, boolean b);
 }

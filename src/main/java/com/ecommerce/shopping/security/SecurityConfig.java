@@ -43,14 +43,7 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .securityMatchers(match -> match.requestMatchers("/api/v1/**"))
-//                .authorizeHttpRequests(authorize -> authorize.requestMatchers(
-//                                "api/v1/users/otpVerification/**",
-//                                "api/v1/sellers/register/**",
-//                                "api/v1/customers/register/**")
-//                        .permitAll()
-//                        .anyRequest()
-//                        .authenticated())
-                .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
+                .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new JwtAuthFilter(jwtService, refreshTokenRepository, accessTokenRepository), UsernamePasswordAuthenticationFilter.class)
                 .build();
@@ -71,7 +64,10 @@ public class SecurityConfig {
     @Order(1)
     SecurityFilterChain securityFilterChainCheckLogin(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.csrf(AbstractHttpConfigurer::disable)
-                .securityMatchers(match -> match.requestMatchers("/api/v1/login/**"))
+                .securityMatchers(match -> match.requestMatchers("/api/v1/login/**",
+                        "api/v1/users/otpVerification/**",
+                        "api/v1/sellers/register/**",
+                        "api/v1/customers/register/**"))
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new LoginFilter(), UsernamePasswordAuthenticationFilter.class)

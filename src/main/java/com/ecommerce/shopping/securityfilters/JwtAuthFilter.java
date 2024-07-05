@@ -1,7 +1,6 @@
 package com.ecommerce.shopping.securityfilters;
 
 import com.ecommerce.shopping.enums.UserRole;
-import com.ecommerce.shopping.exception.TokenExpiredException;
 import com.ecommerce.shopping.jwt.JwtService;
 import com.ecommerce.shopping.user.entity.AccessToken;
 import com.ecommerce.shopping.user.entity.RefreshToken;

@@ -65,9 +65,9 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChainCheckLogin(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .securityMatchers(match -> match.requestMatchers("/api/v1/login/**",
-                        "api/v1/users/otpVerification/**",
-                        "api/v1/sellers/register/**",
-                        "api/v1/customers/register/**"))
+                        "/api/v1/users/otpVerification/**",
+                        "/api/v1/sellers/register/**",
+                        "/api/v1/customers/register/**"))
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new LoginFilter(), UsernamePasswordAuthenticationFilter.class)

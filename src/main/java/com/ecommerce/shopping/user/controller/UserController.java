@@ -64,6 +64,8 @@ public class UserController {
     //------------------------------------------------------------------------------------------------------------------------
     @PostMapping("/login")
     public ResponseEntity<ResponseStructure<AuthResponse>> login(@RequestBody AuthRequest authRequest) {
+        System.out.println("----------------------------------------------------");
+        System.out.println(authRequest);
         return userService.login(authRequest);
     }
 

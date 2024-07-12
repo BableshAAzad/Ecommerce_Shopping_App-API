@@ -244,6 +244,7 @@ public class UserServiceImpl implements UserService {
                                     .setData(AuthResponse.builder()
                                             .userId(existUser.getUserId())
                                             .username(existUser.getUsername())
+                                            .userRole(existUser.getUserRole())
                                             .accessExpiration(accessExpirySeconds)
                                             .refreshExpiration(refreshExpireSeconds)
                                             .build()));
@@ -319,6 +320,7 @@ public class UserServiceImpl implements UserService {
                             .setData(AuthResponse.builder()
                                     .userId(user.getUserId())
                                     .username(user.getUsername())
+                                    .userRole(user.getUserRole())
                                     .accessExpiration(accessExpirySeconds)
                                     .refreshExpiration((expiryDate.getTime() - new Date().getTime()) / 1000)
                                     .build()));

@@ -28,4 +28,6 @@ public interface UserService {
     ResponseEntity<LogoutResponse> logoutFromOtherDevices(String refreshToken, String accessToken);
 
     ResponseEntity<LogoutResponse> logoutFromAllDevices(String refreshToken, String accessToken);
+
+    ResponseEntity<ResponseStructure<UserResponse>> resendOtp(UserRequest userRequest);
 }

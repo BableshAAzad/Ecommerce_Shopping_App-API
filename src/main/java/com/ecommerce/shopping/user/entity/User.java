@@ -11,6 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @Inheritance(strategy = InheritanceType.JOINED)
+@ToString
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

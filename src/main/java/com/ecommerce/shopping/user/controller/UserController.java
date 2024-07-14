@@ -40,6 +40,12 @@ public class UserController {
     }
 
     //------------------------------------------------------------------------------------------------------------------------
+    @PostMapping("/users/resendOtp")
+    public ResponseEntity<ResponseStructure<UserResponse>> resendOtp(@Valid @RequestBody UserRequest userRequest) {
+        return userService.resendOtp(userRequest);
+    }
+
+    //------------------------------------------------------------------------------------------------------------------------
     @PutMapping("/users/{userId}")
     @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")
     public ResponseEntity<ResponseStructure<UserResponse>> updateUser(
@@ -65,7 +71,6 @@ public class UserController {
     //------------------------------------------------------------------------------------------------------------------------
     @PostMapping("/login")
     public ResponseEntity<ResponseStructure<AuthResponse>> login(@RequestBody AuthRequest authRequest) {
-        System.out.println("----------------------------------------------------");
         System.out.println(authRequest);
         return userService.login(authRequest);
     }
@@ -103,12 +108,7 @@ public class UserController {
 
     //------------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------------
-    //------------------------------------------------------------------------------------------------------------------------
-//    @GetMapping("/test")
-//    @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")
-//    public String testing() {
-//        return "Success";
-//    }
+
 
     @GetMapping("/test")
     public String test() {

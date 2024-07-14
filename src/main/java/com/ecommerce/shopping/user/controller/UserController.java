@@ -1,5 +1,6 @@
 package com.ecommerce.shopping.user.controller;
 
+import com.ecommerce.shopping.config.RestTemplateProvider;
 import com.ecommerce.shopping.enums.UserRole;
 import com.ecommerce.shopping.user.dto.*;
 import com.ecommerce.shopping.user.service.UserService;
@@ -80,7 +81,7 @@ public class UserController {
     @PostMapping("/logout")
     @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")
     public ResponseEntity<LogoutResponse> logout(@CookieValue(value = "rt", required = false) String refreshToken,
-                                                                  @CookieValue(value = "at", required = false) String accessToken) {
+                                                 @CookieValue(value = "at", required = false) String accessToken) {
         return userService.logout(refreshToken, accessToken);
     }
 
@@ -88,7 +89,7 @@ public class UserController {
     @PostMapping("/logoutFromOtherDevices")
     @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")
     public ResponseEntity<LogoutResponse> logoutFromOtherDevices(@CookieValue(value = "rt", required = false) String refreshToken,
-                                                                            @CookieValue(value = "at", required = false) String accessToken) {
+                                                                 @CookieValue(value = "at", required = false) String accessToken) {
         return userService.logoutFromOtherDevices(refreshToken, accessToken);
     }
 
@@ -96,17 +97,23 @@ public class UserController {
     @PostMapping("/logoutFromAllDevices")
     @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")
     public ResponseEntity<LogoutResponse> logoutFromAllDevices(@CookieValue(value = "rt", required = false) String refreshToken,
-                                                                                @CookieValue(value = "at", required = false) String accessToken) {
+                                                               @CookieValue(value = "at", required = false) String accessToken) {
         return userService.logoutFromAllDevices(refreshToken, accessToken);
     }
 
     //------------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------------
+//    @GetMapping("/test")
+//    @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")
+//    public String testing() {
+//        return "Success";
+//    }
+
     @GetMapping("/test")
-    @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")
     public String test() {
-        return "Success";
+        RestTemplateProvider restTemplate = new RestTemplateProvider();
+        return restTemplate.getStoreHouse();
     }
 
 }

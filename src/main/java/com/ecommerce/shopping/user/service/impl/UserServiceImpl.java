@@ -29,9 +29,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -110,8 +108,9 @@ public class UserServiceImpl implements UserService {
                 int otp = random.nextInt(100000, 999999);
                 otpCache.put(userRequest.getEmail(), otp + "");
 
+                String otpExpired = otpExpirationTimeCalculate(5);
 //                Send otp in mail
-                mailSend(user.getEmail(), "OTP verification for EcommerceShoppingApp", "<h3>Welcome to Ecommerce Shopping Applicationa</h3></br><h4>Otp : " + otp + "</h4>");
+                mailSend(user.getEmail(), "OTP verification for EcommerceShoppingApp", "<h3>Welcome to Ecommerce Shopping Applicationa</h3></br><h4>Otp : " + otp + "</h4></br><p>" + otpExpired + "</p>");
 
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseStructure<UserResponse>()
                         .setStatus(HttpStatus.ACCEPTED.value())
@@ -121,6 +120,27 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    //------------------------------------------------------------------------------------------------------------------------
+    @Override
+    public ResponseEntity<ResponseStructure<UserResponse>> resendOtp(UserRequest userRequest) {
+        User user = userCache.getIfPresent(userRequest.getEmail());
+        System.out.println(user);
+        if (user != null) {
+            int otp = random.nextInt(100000, 999999);
+            otpCache.put(userRequest.getEmail(), otp + "");
+
+            String otpExpired = otpExpirationTimeCalculate(5);
+//          Re-Send otp in mail
+            mailSend(user.getEmail(), "OTP verification for EcommerceShoppingApp", "<h3>Welcome to Ecommerce Shopping Applicationa</h3></br><h4>Regenerated Otp : " + otp + "</h4></br><p>" + otpExpired + "</p>");
+
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseStructure<UserResponse>()
+                    .setStatus(HttpStatus.ACCEPTED.value())
+                    .setMessage("Otp sended")
+                    .setData(userMapper.mapUserToUserResponse(user)));
+        } else throw new UserNotExistException("Email : " + userRequest.getEmail() + ", is not exist");
+    }
+
+    //------------------------------------------------------------------------------------------------------------------------
     //    Logic for mail generation
     private void mailSend(String email, String subject, String text) {
         MessageData messageData = new MessageData();
@@ -133,6 +153,21 @@ public class UserServiceImpl implements UserService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    //------------------------------------------------------------------------------------------------------------------------
+    private String otpExpirationTimeCalculate(int expired) {
+        // Get the current time
+        LocalDateTime currentTime = LocalDateTime.now();
+
+        // Add 5 minutes to the current time
+        LocalDateTime timeAfterFiveMinutes = currentTime.plusMinutes(expired);
+
+        // Convert LocalDateTime to Date
+        ZonedDateTime zonedDateTime = timeAfterFiveMinutes.atZone(ZoneId.systemDefault());
+        Date dateAfterFiveMinutes = Date.from(zonedDateTime.toInstant());
+
+        return "Otp will be expired after 5 minutes: " + dateAfterFiveMinutes;
     }
 
     //------------------------------------------------------------------------------------------------------------------------
@@ -168,6 +203,7 @@ public class UserServiceImpl implements UserService {
             throw new OtpExpiredException("Otp is expired");
         }
     }
+    //------------------------------------------------------------------------------------------------------------------------
 
     private String usernameGenerate(String email) {
         String[] str = email.split("@");
@@ -330,77 +366,78 @@ public class UserServiceImpl implements UserService {
     //------------------------------------------------------------------------------------------------------------------------
     @Override
     public ResponseEntity<LogoutResponse> logout(String refreshToken, String accessToken) {
-            Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByRefreshToken(refreshToken);
-            Optional<AccessToken> optionalAccessToken = accessTokenRepository.findByAccessToken(accessToken);
-            RefreshToken existRefreshToken = optionalRefreshToken.get();
-            AccessToken existAccessToken = optionalAccessToken.get();
+        Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByRefreshToken(refreshToken);
+        Optional<AccessToken> optionalAccessToken = accessTokenRepository.findByAccessToken(accessToken);
+        RefreshToken existRefreshToken = optionalRefreshToken.get();
+        AccessToken existAccessToken = optionalAccessToken.get();
 
-            existRefreshToken.setBlocked(true);
-            existAccessToken.setBlocked(true);
-            refreshTokenRepository.save(existRefreshToken);
-            accessTokenRepository.save(existAccessToken);
+        existRefreshToken.setBlocked(true);
+        existAccessToken.setBlocked(true);
+        refreshTokenRepository.save(existRefreshToken);
+        accessTokenRepository.save(existAccessToken);
 
-            HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.add(HttpHeaders.SET_COOKIE, generateCookie("rt", null, 0));
-            httpHeaders.add(HttpHeaders.SET_COOKIE, generateCookie("at", null, 0));
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(HttpHeaders.SET_COOKIE, generateCookie("rt", null, 0));
+        httpHeaders.add(HttpHeaders.SET_COOKIE, generateCookie("at", null, 0));
 
-            return ResponseEntity.status(HttpStatus.OK)
-                    .headers(httpHeaders)
-                    .body(LogoutResponse.builder()
-                            .status(HttpStatus.OK.value())
-                            .message("User logout done")
-                            .build());
+        return ResponseEntity.status(HttpStatus.OK)
+                .headers(httpHeaders)
+                .body(LogoutResponse.builder()
+                        .status(HttpStatus.OK.value())
+                        .message("User logout done")
+                        .build());
     }
 
     //------------------------------------------------------------------------------------------------------------------------
     @Override
     public ResponseEntity<LogoutResponse> logoutFromOtherDevices(String refreshToken, String accessToken) {
-            String username = jwtService.extractUserName(refreshToken);
-            User user = userRepository.findByUsername(username).get();
+        String username = jwtService.extractUserName(refreshToken);
+        User user = userRepository.findByUsername(username).get();
 
-            List<RefreshToken> listRT = refreshTokenRepository.findByUserAndIsBlockedAndRefreshTokenNot(user, false, refreshToken);
-            List<AccessToken> listAT = accessTokenRepository.findByUserAndIsBlockedAndAccessTokenNot(user, false, accessToken);
-            listRT.forEach(rt->{
-                rt.setBlocked(true);
-                refreshTokenRepository.save(rt);
-            });
-            listAT.forEach(at->{
-                at.setBlocked(true);
-                accessTokenRepository.save(at);
-            });
-            return ResponseEntity.status(HttpStatus.OK).body(LogoutResponse.builder()
-                    .status(HttpStatus.OK.value())
-                    .message("Other Devices Logout done")
-                    .build());
+        List<RefreshToken> listRT = refreshTokenRepository.findByUserAndIsBlockedAndRefreshTokenNot(user, false, refreshToken);
+        List<AccessToken> listAT = accessTokenRepository.findByUserAndIsBlockedAndAccessTokenNot(user, false, accessToken);
+        listRT.forEach(rt -> {
+            rt.setBlocked(true);
+            refreshTokenRepository.save(rt);
+        });
+        listAT.forEach(at -> {
+            at.setBlocked(true);
+            accessTokenRepository.save(at);
+        });
+        return ResponseEntity.status(HttpStatus.OK).body(LogoutResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message("Other Devices Logout done")
+                .build());
     }
 
     //------------------------------------------------------------------------------------------------------------------------
     @Override
     public ResponseEntity<LogoutResponse> logoutFromAllDevices(String refreshToken, String accessToken) {
-           String username = jwtService.extractUserName(refreshToken);
-           User user = userRepository.findByUsername(username).get();
+        String username = jwtService.extractUserName(refreshToken);
+        User user = userRepository.findByUsername(username).get();
 
-            List<RefreshToken> listRT = refreshTokenRepository.findByUserAndIsBlocked(user, false);
-            List<AccessToken> listAT = accessTokenRepository.findByUserAndIsBlocked(user, false);
-            listRT.forEach(rt->{
-                rt.setBlocked(true);
-                refreshTokenRepository.save(rt);
-            });
-            listAT.forEach(at->{
-                at.setBlocked(true);
-                accessTokenRepository.save(at);
-            });
+        List<RefreshToken> listRT = refreshTokenRepository.findByUserAndIsBlocked(user, false);
+        List<AccessToken> listAT = accessTokenRepository.findByUserAndIsBlocked(user, false);
+        listRT.forEach(rt -> {
+            rt.setBlocked(true);
+            refreshTokenRepository.save(rt);
+        });
+        listAT.forEach(at -> {
+            at.setBlocked(true);
+            accessTokenRepository.save(at);
+        });
 
-            HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.add(HttpHeaders.SET_COOKIE, generateCookie("rt", null, 0));
-            httpHeaders.add(HttpHeaders.SET_COOKIE, generateCookie("at", null, 0));
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(HttpHeaders.SET_COOKIE, generateCookie("rt", null, 0));
+        httpHeaders.add(HttpHeaders.SET_COOKIE, generateCookie("at", null, 0));
 
-            return ResponseEntity.status(HttpStatus.OK)
-                    .headers(httpHeaders)
-                    .body(LogoutResponse.builder()
-                            .status(HttpStatus.OK.value())
-                            .message("Logout successfully done from all devices")
-                            .build());
+        return ResponseEntity.status(HttpStatus.OK)
+                .headers(httpHeaders)
+                .body(LogoutResponse.builder()
+                        .status(HttpStatus.OK.value())
+                        .message("Logout successfully done from all devices")
+                        .build());
     }
+
     //------------------------------------------------------------------------------------------------------------------------
 }

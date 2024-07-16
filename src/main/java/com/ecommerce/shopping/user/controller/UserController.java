@@ -1,5 +1,6 @@
 package com.ecommerce.shopping.user.controller;
 
+import com.ecommerce.shopping.config.RestTemplateProvider;
 import com.ecommerce.shopping.enums.UserRole;
 import com.ecommerce.shopping.user.dto.*;
 import com.ecommerce.shopping.user.service.UserService;
@@ -39,7 +40,14 @@ public class UserController {
     }
 
     //------------------------------------------------------------------------------------------------------------------------
+    @PostMapping("/users/resendOtp")
+    public ResponseEntity<ResponseStructure<UserResponse>> resendOtp(@Valid @RequestBody UserRequest userRequest) {
+        return userService.resendOtp(userRequest);
+    }
+
+    //------------------------------------------------------------------------------------------------------------------------
     @PutMapping("/users/{userId}")
+    @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")
     public ResponseEntity<ResponseStructure<UserResponse>> updateUser(
             @Valid @RequestBody UserRequest userRequest,
             @Valid @PathVariable Long userId) {
@@ -48,12 +56,14 @@ public class UserController {
 
     //------------------------------------------------------------------------------------------------------------------------
     @GetMapping("/users/{userId}")
+    @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")
     public ResponseEntity<ResponseStructure<UserResponse>> findUser(@Valid @PathVariable Long userId) {
         return userService.findUser(userId);
     }
 
     //------------------------------------------------------------------------------------------------------------------------
     @GetMapping("/users")
+    @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")
     public ResponseEntity<ResponseStructure<List<UserResponse>>> findUsers() {
         return userService.findUsers();
     }
@@ -61,14 +71,49 @@ public class UserController {
     //------------------------------------------------------------------------------------------------------------------------
     @PostMapping("/login")
     public ResponseEntity<ResponseStructure<AuthResponse>> login(@RequestBody AuthRequest authRequest) {
+        System.out.println(authRequest);
         return userService.login(authRequest);
     }
 
     //------------------------------------------------------------------------------------------------------------------------
-    @GetMapping("/test")
-    @PreAuthorize("hasAuthority('CUSTOMER')")
-    public String test() {
-        return "Success";
+    @PostMapping("/refreshLogin")
+    @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")
+    public ResponseEntity<ResponseStructure<AuthResponse>> refreshLogin(@CookieValue(value = "rt", required = false) String refreshToken) {
+        return userService.refreshLogin(refreshToken);
     }
+
+    //------------------------------------------------------------------------------------------------------------------------
+    @PostMapping("/logout")
+    @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")
+    public ResponseEntity<LogoutResponse> logout(@CookieValue(value = "rt", required = false) String refreshToken,
+                                                 @CookieValue(value = "at", required = false) String accessToken) {
+        return userService.logout(refreshToken, accessToken);
+    }
+
+    //------------------------------------------------------------------------------------------------------------------------
+    @PostMapping("/logoutFromOtherDevices")
+    @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")
+    public ResponseEntity<LogoutResponse> logoutFromOtherDevices(@CookieValue(value = "rt", required = false) String refreshToken,
+                                                                 @CookieValue(value = "at", required = false) String accessToken) {
+        return userService.logoutFromOtherDevices(refreshToken, accessToken);
+    }
+
+    //------------------------------------------------------------------------------------------------------------------------
+    @PostMapping("/logoutFromAllDevices")
+    @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")
+    public ResponseEntity<LogoutResponse> logoutFromAllDevices(@CookieValue(value = "rt", required = false) String refreshToken,
+                                                               @CookieValue(value = "at", required = false) String accessToken) {
+        return userService.logoutFromAllDevices(refreshToken, accessToken);
+    }
+
+    //------------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------------
+
+
+//    @GetMapping("/test")
+//    public String test() {
+//        RestTemplateProvider restTemplate = new RestTemplateProvider();
+//        return restTemplate.getTest();
+//    }
 
 }

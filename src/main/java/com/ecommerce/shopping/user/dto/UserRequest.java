@@ -8,10 +8,7 @@ import lombok.Getter;
 
 @Getter
 public class UserRequest {
-//    @NotNull(message = "Username can not be null")
-//    @NotBlank(message = "Username can not be blank")
-//    private String username;
-
+    
     @NotBlank(message = "Email can not be blank")
     @NotNull(message = "Email can not be null")
     @Email(regexp = "[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\\.[a-z]{2,}", message = "invalid email ")

@@ -20,4 +20,14 @@ public interface UserService {
     ResponseEntity<ResponseStructure<UserResponse>> verifyUserOtp(OtpVerificationRequest otpVerificationRequest);
 
     ResponseEntity<ResponseStructure<AuthResponse>> login(AuthRequest authRequest);
+
+    ResponseEntity<ResponseStructure<AuthResponse>> refreshLogin(String refreshToken);
+
+    ResponseEntity<LogoutResponse> logout(String refreshToken, String accessToken);
+
+    ResponseEntity<LogoutResponse> logoutFromOtherDevices(String refreshToken, String accessToken);
+
+    ResponseEntity<LogoutResponse> logoutFromAllDevices(String refreshToken, String accessToken);
+
+    ResponseEntity<ResponseStructure<UserResponse>> resendOtp(UserRequest userRequest);
 }

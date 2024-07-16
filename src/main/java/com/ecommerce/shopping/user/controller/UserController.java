@@ -110,10 +110,10 @@ public class UserController {
     //------------------------------------------------------------------------------------------------------------------------
 
 
-    @GetMapping("/test")
-    public String test() {
-        RestTemplateProvider restTemplate = new RestTemplateProvider();
-        return restTemplate.getStoreHouse();
-    }
+//    @GetMapping("/test")
+//    public String test() {
+//        RestTemplateProvider restTemplate = new RestTemplateProvider();
+//        return restTemplate.getTest();
+//    }
 
 }

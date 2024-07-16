@@ -34,7 +34,7 @@ public class ApplicationExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<ErrorStructure<String>> handleOtpExpired(OtpExpiredException ex) {
-        return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "Otp is expired");
+        return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "Session expired try again...");
     }
 
     @ExceptionHandler

@@ -11,6 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @Inheritance(strategy = InheritanceType.JOINED)
+@ToString
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,4 +23,5 @@ public class User {
     private UserRole userRole;
     private boolean isEmailVerified;
     private boolean isDeleted;
+
 }

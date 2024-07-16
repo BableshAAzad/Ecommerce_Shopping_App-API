@@ -1,10 +1,7 @@
 package com.ecommerce.shopping.user.service;
 
 import com.ecommerce.shopping.enums.UserRole;
-import com.ecommerce.shopping.user.dto.AuthRequest;
-import com.ecommerce.shopping.user.dto.OtpVerificationRequest;
-import com.ecommerce.shopping.user.dto.UserRequest;
-import com.ecommerce.shopping.user.dto.UserResponse;
+import com.ecommerce.shopping.user.dto.*;
 import com.ecommerce.shopping.utility.ResponseStructure;
 import org.springframework.http.ResponseEntity;
 
@@ -22,5 +19,15 @@ public interface UserService {
 
     ResponseEntity<ResponseStructure<UserResponse>> verifyUserOtp(OtpVerificationRequest otpVerificationRequest);
 
-    String login(AuthRequest authRequest);
+    ResponseEntity<ResponseStructure<AuthResponse>> login(AuthRequest authRequest);
+
+    ResponseEntity<ResponseStructure<AuthResponse>> refreshLogin(String refreshToken);
+
+    ResponseEntity<LogoutResponse> logout(String refreshToken, String accessToken);
+
+    ResponseEntity<LogoutResponse> logoutFromOtherDevices(String refreshToken, String accessToken);
+
+    ResponseEntity<LogoutResponse> logoutFromAllDevices(String refreshToken, String accessToken);
+
+    ResponseEntity<ResponseStructure<UserResponse>> resendOtp(UserRequest userRequest);
 }

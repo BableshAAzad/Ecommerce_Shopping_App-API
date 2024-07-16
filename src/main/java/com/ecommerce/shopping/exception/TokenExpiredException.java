@@ -5,6 +5,6 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class JwtExpiredException extends RuntimeException{
+public class TokenExpiredException extends RuntimeException {
     private String message;
 }

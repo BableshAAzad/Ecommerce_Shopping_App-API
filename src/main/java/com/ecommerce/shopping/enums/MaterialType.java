@@ -1,4 +1,4 @@
-package com.ecommerce.shopping.product.dto;
+package com.ecommerce.shopping.enums;
 
 public enum MaterialType {
     SOLID,

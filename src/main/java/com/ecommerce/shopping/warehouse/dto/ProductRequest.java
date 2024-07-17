@@ -12,12 +12,15 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Storage {
-    private Long storageId;
-    private String blockName;
-    private String section;
+public class ProductRequest {
+    private Long sellerId;
+    private String productTitle;
+    private double lengthInMeters;
+    private double breadthInMeters;
+    private double heightInMeters;
+    private double weightInKg;
+    private double price;
+    private String description;
+    private String productImage;
     private List<MaterialType> materialTypes;
-    private Double maxAdditionalWeightInKg;
-    private Double availableArea;
-    private Long storeHouseId;
 }

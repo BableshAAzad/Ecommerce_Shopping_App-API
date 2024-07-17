@@ -12,12 +12,8 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Storage {
-    private Long storageId;
+public class StorageRequest {
     private String blockName;
     private String section;
     private List<MaterialType> materialTypes;
-    private Double maxAdditionalWeightInKg;
-    private Double availableArea;
-    private Long storeHouseId;
 }

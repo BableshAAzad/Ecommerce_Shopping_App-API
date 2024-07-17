@@ -221,6 +221,23 @@ public class RestTemplateProvider {
     }
 
     //---------------------------------------------------------------------------------------------------
+    public Storage addStorage(Long wareHouseId, Long storageTypeId, int noOfStorageUnites, StorageRequest storageRequest) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("API-KEY", apiKey);
+        headers.set("USERNAME", username);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<StorageRequest> entity = new HttpEntity<>(storageRequest, headers);
+        ResponseEntity<ResponseStructure<Storage>> responseEntity = restTemplate.exchange(
+                "http://localhost:8081/api/v1/storehouses/"+wareHouseId+"/storageTypes/"+storageTypeId+"/storages?no_of_storage_units="+noOfStorageUnites,
+                HttpMethod.POST,
+                entity,
+                new ParameterizedTypeReference<ResponseStructure<Storage>>() {
+                }
+        );
+        ResponseStructure<Storage> responseStructure = responseEntity.getBody();
+        return responseStructure.getData();
+    }
+    //---------------------------------------------------------------------------------------------------
     public Address getAddress(Long addressId) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("API-KEY", apiKey);

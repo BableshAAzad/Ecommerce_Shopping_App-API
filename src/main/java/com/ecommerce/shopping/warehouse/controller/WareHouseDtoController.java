@@ -95,6 +95,16 @@ public class WareHouseDtoController {
     }
 
     //---------------------------------------------------------------------------------------------------
+    @PostMapping("/wareHouses/{wareHouseId}/storageTypes/{storageTypeId}/storages")
+    public ResponseEntity<Storage> addStorage(@PathVariable Long wareHouseId,
+                                              @PathVariable Long storageTypeId,
+                                              @RequestParam int no_of_storage_units,
+                                              @RequestBody StorageRequest storageRequest) {
+        Storage storage = restTemplateProvider.addStorage(wareHouseId, storageTypeId, no_of_storage_units, storageRequest);
+        return ResponseEntity.ok(storage);
+    }
+
+    //---------------------------------------------------------------------------------------------------
     @GetMapping("/addresses/{addressId}")
     public ResponseEntity<Address> findAddress(@PathVariable Long addressId) {
         Address address = restTemplateProvider.getAddress(addressId);

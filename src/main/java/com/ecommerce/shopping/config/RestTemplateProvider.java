@@ -2,10 +2,11 @@ package com.ecommerce.shopping.config;
 
 import com.ecommerce.shopping.warehouse.dto.*;
 import com.ecommerce.shopping.utility.ResponseStructure;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -14,8 +15,17 @@ import java.util.Map;
 @Component
 public class RestTemplateProvider {
 
+    //    private Logger logger = LoggerFactory.getLogger(RestTemplateProvider.class);
     RestTemplate restTemplate = new RestTemplate();
-//    private Logger logger = LoggerFactory.getLogger(RestTemplateProvider.class);
+
+    @Value("${application.client.api_key}")
+    private String apiKey;
+
+    @Value("${application.client.username}")
+    private String username;
+
+    @Value("${application.client.client_id}")
+    private Long clientId;
 
     public String getTest() {
         return restTemplate.getForObject("http://localhost:8081/api/v1/test", String.class);
@@ -48,11 +58,52 @@ public class RestTemplateProvider {
     }
 
     //---------------------------------------------------------------------------------------------------
+    public List<Product> getProductsBySellerId(Long sellerId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("API-KEY", apiKey);
+        headers.set("USERNAME", username);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<ResponseStructure<List<Product>>> productsResponse = restTemplate.exchange(
+                "http://localhost:8081/api/v1/inventories/sellers/" + sellerId,
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<ResponseStructure<List<Product>>>() {
+                }
+        );
+        ResponseStructure<List<Product>> responseStructure = productsResponse.getBody();
+        return responseStructure.getData();
+    }
+
+    //---------------------------------------------------------------------------------------------------
+    public Product addProduct(Long storageId, int quantity, ProductRequest productRequest) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("API-KEY", apiKey);
+        headers.set("USERNAME", username);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<ProductRequest> entity = new HttpEntity<>(productRequest, headers);
+        ResponseEntity<ResponseStructure<Product>> responseEntity = restTemplate.exchange(
+                "http://localhost:8081/api/v1/clients/1/storages/" + storageId + "/inventories?quantity=" + quantity,
+                HttpMethod.POST,
+                entity,
+                new ParameterizedTypeReference<ResponseStructure<Product>>() {
+                }
+        );
+        ResponseStructure<Product> responseStructure = responseEntity.getBody();
+        return responseStructure.getData();
+    }
+
+    //---------------------------------------------------------------------------------------------------
     public WareHouse getWareHouse(Long wareHouseId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("API-KEY", apiKey);
+        headers.set("USERNAME", username);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<ResponseStructure<WareHouse>> responseEntity = restTemplate.exchange(
                 "http://localhost:8081/api/v1/storehouses/" + wareHouseId,
                 HttpMethod.GET,
-                null,
+                entity,
                 new ParameterizedTypeReference<ResponseStructure<WareHouse>>() {
                 }
         );
@@ -62,10 +113,16 @@ public class RestTemplateProvider {
 
     //---------------------------------------------------------------------------------------------------
     public List<WareHouse> getWareHouses() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("API-KEY", apiKey);
+        headers.set("USERNAME", username);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
         ResponseEntity<ResponseStructure<List<WareHouse>>> responseEntities = restTemplate.exchange(
                 "http://localhost:8081/api/v1/storehouses",
                 HttpMethod.GET,
-                null,
+                entity,
                 new ParameterizedTypeReference<ResponseStructure<List<WareHouse>>>() {
                 }
         );
@@ -75,10 +132,15 @@ public class RestTemplateProvider {
 
     //---------------------------------------------------------------------------------------------------
     public StorageType getStorageType(Long storageTypeId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("API-KEY", apiKey);
+        headers.set("USERNAME", username);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<ResponseStructure<StorageType>> responseEntity = restTemplate.exchange(
                 "http://localhost:8081/api/v1/storageTypes/" + storageTypeId,
                 HttpMethod.GET,
-                null,
+                entity,
                 new ParameterizedTypeReference<ResponseStructure<StorageType>>() {
                 }
         );
@@ -88,10 +150,15 @@ public class RestTemplateProvider {
 
     //---------------------------------------------------------------------------------------------------
     public List<StorageType> getStorageTypes() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("API-KEY", apiKey);
+        headers.set("USERNAME", username);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<ResponseStructure<List<StorageType>>> responseEntities = restTemplate.exchange(
                 "http://localhost:8081/api/v1/storageTypes",
                 HttpMethod.GET,
-                null,
+                entity,
                 new ParameterizedTypeReference<ResponseStructure<List<StorageType>>>() {
                 }
         );
@@ -101,10 +168,15 @@ public class RestTemplateProvider {
 
     //---------------------------------------------------------------------------------------------------
     public Storage getStorage(Long storageId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("API-KEY", apiKey);
+        headers.set("USERNAME", username);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<ResponseStructure<Storage>> responseEntity = restTemplate.exchange(
                 "http://localhost:8081/api/v1/storages/" + storageId,
                 HttpMethod.GET,
-                null,
+                entity,
                 new ParameterizedTypeReference<ResponseStructure<Storage>>() {
                 }
         );
@@ -114,10 +186,33 @@ public class RestTemplateProvider {
 
     //---------------------------------------------------------------------------------------------------
     public List<Storage> getStorages() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("API-KEY", apiKey);
+        headers.set("USERNAME", username);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<ResponseStructure<List<Storage>>> responseEntities = restTemplate.exchange(
                 "http://localhost:8081/api/v1/storages",
                 HttpMethod.GET,
-                null,
+                entity,
+                new ParameterizedTypeReference<ResponseStructure<List<Storage>>>() {
+                }
+        );
+        ResponseStructure<List<Storage>> responseStructure = responseEntities.getBody();
+        return responseStructure.getData();
+    }
+
+    //---------------------------------------------------------------------------------------------------
+    public List<Storage> getStoragesBySellerId(Long sellerId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("API-KEY", apiKey);
+        headers.set("USERNAME", username);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<ResponseStructure<List<Storage>>> responseEntities = restTemplate.exchange(
+                "http://localhost:8081/api/v1/storages/sellers/" + sellerId,
+                HttpMethod.GET,
+                entity,
                 new ParameterizedTypeReference<ResponseStructure<List<Storage>>>() {
                 }
         );
@@ -127,10 +222,15 @@ public class RestTemplateProvider {
 
     //---------------------------------------------------------------------------------------------------
     public Address getAddress(Long addressId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("API-KEY", apiKey);
+        headers.set("USERNAME", username);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<ResponseStructure<Address>> responseEntity = restTemplate.exchange(
                 "http://localhost:8081/api/v1/addresses/" + addressId,
                 HttpMethod.GET,
-                null,
+                entity,
                 new ParameterizedTypeReference<ResponseStructure<Address>>() {
                 }
         );
@@ -140,10 +240,15 @@ public class RestTemplateProvider {
 
     //---------------------------------------------------------------------------------------------------
     public List<Address> getAddresses() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("API-KEY", apiKey);
+        headers.set("USERNAME", username);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<ResponseStructure<List<Address>>> responseEntities = restTemplate.exchange(
                 "http://localhost:8081/api/v1/addresses",
                 HttpMethod.GET,
-                null,
+                entity,
                 new ParameterizedTypeReference<ResponseStructure<List<Address>>>() {
                 }
         );
@@ -153,10 +258,15 @@ public class RestTemplateProvider {
 
     //---------------------------------------------------------------------------------------------------
     public List<Map<String, Object>> getWareHousesByCity(String city) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("API-KEY", apiKey);
+        headers.set("USERNAME", username);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<ResponseStructure<List<Map<String, Object>>>> responseEntity = restTemplate.exchange(
                 "http://localhost:8081/api/v1/client/cities/" + city + "/storehouses",
                 HttpMethod.GET,
-                null,
+                entity,
                 new ParameterizedTypeReference<ResponseStructure<List<Map<String, Object>>>>() {
                 }
         );

@@ -4,10 +4,7 @@ import com.ecommerce.shopping.config.RestTemplateProvider;
 import com.ecommerce.shopping.warehouse.dto.*;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -30,6 +27,22 @@ public class WareHouseDtoController {
     public ResponseEntity<List<Product>> findProducts() {
         List<Product> products = restTemplateProvider.getProducts();
         return ResponseEntity.ok(products);
+    }
+
+    //---------------------------------------------------------------------------------------------------
+    @GetMapping("/sellers/{sellerId}/products")
+    public ResponseEntity<List<Product>> findProductsBySellerId(@PathVariable Long sellerId) {
+        List<Product> products = restTemplateProvider.getProductsBySellerId(sellerId);
+        return ResponseEntity.ok(products);
+    }
+
+    //---------------------------------------------------------------------------------------------------
+    @PostMapping("/storages/{storageId}/products")
+    public ResponseEntity<Product> addProduct(@PathVariable Long storageId,
+                                              @RequestParam int quantity,
+                                              @RequestBody ProductRequest productRequest) {
+        Product product = restTemplateProvider.addProduct(storageId, quantity, productRequest);
+        return ResponseEntity.ok(product);
     }
 
     //---------------------------------------------------------------------------------------------------
@@ -71,6 +84,13 @@ public class WareHouseDtoController {
     @GetMapping("/storages")
     public ResponseEntity<List<Storage>> findStorages() {
         List<Storage> storages = restTemplateProvider.getStorages();
+        return ResponseEntity.ok(storages);
+    }
+
+    //---------------------------------------------------------------------------------------------------
+    @GetMapping("/storages/sellers/{sellerId}")
+    public ResponseEntity<List<Storage>> findStoragesBySellerId(@PathVariable Long sellerId) {
+        List<Storage> storages = restTemplateProvider.getStoragesBySellerId(sellerId);
         return ResponseEntity.ok(storages);
     }
 

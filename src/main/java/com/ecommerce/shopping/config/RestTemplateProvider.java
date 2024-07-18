@@ -182,22 +182,22 @@ public class RestTemplateProvider {
 //    }
 
     //---------------------------------------------------------------------------------------------------
-    public Storage getStorage(Long storageId) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("API-KEY", apiKey);
-        headers.set("USERNAME", username);
-
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<ResponseStructure<Storage>> responseEntity = restTemplate.exchange(
-                "http://localhost:8081/api/v1/clients/storages/" + storageId,
-                HttpMethod.GET,
-                entity,
-                new ParameterizedTypeReference<ResponseStructure<Storage>>() {
-                }
-        );
-        ResponseStructure<Storage> responseStructure = responseEntity.getBody();
-        return responseStructure.getData();
-    }
+//    public Storage getStorage(Long storageId) {
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.set("API-KEY", apiKey);
+//        headers.set("USERNAME", username);
+//
+//        HttpEntity<String> entity = new HttpEntity<>(headers);
+//        ResponseEntity<ResponseStructure<Storage>> responseEntity = restTemplate.exchange(
+//                "http://localhost:8081/api/v1/clients/storages/" + storageId,
+//                HttpMethod.GET,
+//                entity,
+//                new ParameterizedTypeReference<ResponseStructure<Storage>>() {
+//                }
+//        );
+//        ResponseStructure<Storage> responseStructure = responseEntity.getBody();
+//        return responseStructure.getData();
+//    }
 
     //---------------------------------------------------------------------------------------------------
 //    public List<Storage> getStorages() {

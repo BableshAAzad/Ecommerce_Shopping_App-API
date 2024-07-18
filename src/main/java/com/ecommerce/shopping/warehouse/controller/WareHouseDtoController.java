@@ -45,7 +45,7 @@ public class WareHouseDtoController {
         return ResponseEntity.ok(product);
     }
     //---------------------------------------------------------------------------------------------------
-    @PutMapping("/products/{productId}")
+    @PutMapping("/sellers/products/{productId}")
     public ResponseEntity<Product> updateProduct(@PathVariable Long productId,
                                               @RequestBody ProductRequest productRequest) {
         Product product = restTemplateProvider.updateProduct(productId, productRequest);
@@ -81,11 +81,11 @@ public class WareHouseDtoController {
 //    }
 
     //---------------------------------------------------------------------------------------------------
-    @GetMapping("/storages/{storageId}")
-    public ResponseEntity<Storage> findStorage(@PathVariable Long storageId) {
-        Storage storage = restTemplateProvider.getStorage(storageId);
-        return ResponseEntity.ok(storage);
-    }
+//    @GetMapping("/storages/{storageId}")
+//    public ResponseEntity<Storage> findStorage(@PathVariable Long storageId) {
+//        Storage storage = restTemplateProvider.getStorage(storageId);
+//        return ResponseEntity.ok(storage);
+//    }
 
     //---------------------------------------------------------------------------------------------------
 //    @GetMapping("/storages")
@@ -133,7 +133,7 @@ public class WareHouseDtoController {
 
     //---------------------------------------------------------------------------------------------------
     @GetMapping("/addresses/{city}/wareHouses")
-    public ResponseEntity<List<Map<String, Object>>> findAddresses(@PathVariable String city) {
+    public ResponseEntity<List<Map<String, Object>>> findWareHousesByCity(@PathVariable String city) {
         List<Map<String, Object>> wareHouses = restTemplateProvider.getWareHousesByCity(city);
         return ResponseEntity.ok(wareHouses);
     }

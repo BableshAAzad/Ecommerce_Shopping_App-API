@@ -44,34 +44,41 @@ public class WareHouseDtoController {
         Product product = restTemplateProvider.addProduct(storageId, quantity, productRequest);
         return ResponseEntity.ok(product);
     }
-
     //---------------------------------------------------------------------------------------------------
-    @GetMapping("/wareHouses/{wareHouseId}")
-    public ResponseEntity<WareHouse> findWareHouse(@PathVariable Long wareHouseId) {
-        WareHouse wareHouse = restTemplateProvider.getWareHouse(wareHouseId);
-        return ResponseEntity.ok(wareHouse);
+    @PutMapping("/products/{productId}")
+    public ResponseEntity<Product> updateProduct(@PathVariable Long productId,
+                                              @RequestBody ProductRequest productRequest) {
+        Product product = restTemplateProvider.updateProduct(productId, productRequest);
+        return ResponseEntity.ok(product);
     }
 
     //---------------------------------------------------------------------------------------------------
-    @GetMapping("/wareHouses")
-    public ResponseEntity<List<WareHouse>> findWareHouses() {
-        List<WareHouse> wareHouses = restTemplateProvider.getWareHouses();
-        return ResponseEntity.ok(wareHouses);
-    }
+//    @GetMapping("/wareHouses/{wareHouseId}")
+//    public ResponseEntity<WareHouse> findWareHouse(@PathVariable Long wareHouseId) {
+//        WareHouse wareHouse = restTemplateProvider.getWareHouse(wareHouseId);
+//        return ResponseEntity.ok(wareHouse);
+//    }
 
     //---------------------------------------------------------------------------------------------------
-    @GetMapping("/storageTypes/{storageTypeId}")
-    public ResponseEntity<StorageType> findStorageType(@PathVariable Long storageTypeId) {
-        StorageType storageType = restTemplateProvider.getStorageType(storageTypeId);
-        return ResponseEntity.ok(storageType);
-    }
+//    @GetMapping("/wareHouses")
+//    public ResponseEntity<List<WareHouse>> findWareHouses() {
+//        List<WareHouse> wareHouses = restTemplateProvider.getWareHouses();
+//        return ResponseEntity.ok(wareHouses);
+//    }
 
     //---------------------------------------------------------------------------------------------------
-    @GetMapping("/storageTypes")
-    public ResponseEntity<List<StorageType>> findStorageTypes() {
-        List<StorageType> storageTypes = restTemplateProvider.getStorageTypes();
-        return ResponseEntity.ok(storageTypes);
-    }
+//    @GetMapping("/storageTypes/{storageTypeId}")
+//    public ResponseEntity<StorageType> findStorageType(@PathVariable Long storageTypeId) {
+//        StorageType storageType = restTemplateProvider.getStorageType(storageTypeId);
+//        return ResponseEntity.ok(storageType);
+//    }
+
+    //---------------------------------------------------------------------------------------------------
+//    @GetMapping("/storageTypes")
+//    public ResponseEntity<List<StorageType>> findStorageTypes() {
+//        List<StorageType> storageTypes = restTemplateProvider.getStorageTypes();
+//        return ResponseEntity.ok(storageTypes);
+//    }
 
     //---------------------------------------------------------------------------------------------------
     @GetMapping("/storages/{storageId}")
@@ -81,11 +88,11 @@ public class WareHouseDtoController {
     }
 
     //---------------------------------------------------------------------------------------------------
-    @GetMapping("/storages")
-    public ResponseEntity<List<Storage>> findStorages() {
-        List<Storage> storages = restTemplateProvider.getStorages();
-        return ResponseEntity.ok(storages);
-    }
+//    @GetMapping("/storages")
+//    public ResponseEntity<List<Storage>> findStorages() {
+//        List<Storage> storages = restTemplateProvider.getStorages();
+//        return ResponseEntity.ok(storages);
+//    }
 
     //---------------------------------------------------------------------------------------------------
     @GetMapping("/storages/sellers/{sellerId}")
@@ -93,30 +100,36 @@ public class WareHouseDtoController {
         List<Storage> storages = restTemplateProvider.getStoragesBySellerId(sellerId);
         return ResponseEntity.ok(storages);
     }
-
     //---------------------------------------------------------------------------------------------------
-    @PostMapping("/wareHouses/{wareHouseId}/storageTypes/{storageTypeId}/storages")
-    public ResponseEntity<Storage> addStorage(@PathVariable Long wareHouseId,
-                                              @PathVariable Long storageTypeId,
-                                              @RequestParam int no_of_storage_units,
-                                              @RequestBody StorageRequest storageRequest) {
-        Storage storage = restTemplateProvider.addStorage(wareHouseId, storageTypeId, no_of_storage_units, storageRequest);
-        return ResponseEntity.ok(storage);
+    @GetMapping("/wareHouses/{wareHouseId}/storages")
+    public ResponseEntity<List<Storage>> findStoragesByWareHouseId(@PathVariable Long wareHouseId) {
+        List<Storage> storages = restTemplateProvider.getStoragesByWareHouseId(wareHouseId);
+        return ResponseEntity.ok(storages);
     }
 
     //---------------------------------------------------------------------------------------------------
-    @GetMapping("/addresses/{addressId}")
-    public ResponseEntity<Address> findAddress(@PathVariable Long addressId) {
-        Address address = restTemplateProvider.getAddress(addressId);
-        return ResponseEntity.ok(address);
-    }
+//    @PostMapping("/wareHouses/{wareHouseId}/storageTypes/{storageTypeId}/storages")
+//    public ResponseEntity<Storage> addStorage(@PathVariable Long wareHouseId,
+//                                              @PathVariable Long storageTypeId,
+//                                              @RequestParam int no_of_storage_units,
+//                                              @RequestBody StorageRequest storageRequest) {
+//        Storage storage = restTemplateProvider.addStorage(wareHouseId, storageTypeId, no_of_storage_units, storageRequest);
+//        return ResponseEntity.ok(storage);
+//    }
 
     //---------------------------------------------------------------------------------------------------
-    @GetMapping("/addresses")
-    public ResponseEntity<List<Address>> findAddresses() {
-        List<Address> addresses = restTemplateProvider.getAddresses();
-        return ResponseEntity.ok(addresses);
-    }
+//    @GetMapping("/addresses/{addressId}")
+//    public ResponseEntity<Address> findAddress(@PathVariable Long addressId) {
+//        Address address = restTemplateProvider.getAddress(addressId);
+//        return ResponseEntity.ok(address);
+//    }
+
+    //---------------------------------------------------------------------------------------------------
+//    @GetMapping("/addresses")
+//    public ResponseEntity<List<Address>> findAddresses() {
+//        List<Address> addresses = restTemplateProvider.getAddresses();
+//        return ResponseEntity.ok(addresses);
+//    }
 
     //---------------------------------------------------------------------------------------------------
     @GetMapping("/addresses/{city}/wareHouses")
@@ -125,7 +138,12 @@ public class WareHouseDtoController {
         return ResponseEntity.ok(wareHouses);
     }
     //---------------------------------------------------------------------------------------------------
-
+    //---------------------------------------------------------------------------------------------------
+    @GetMapping("/wareHouses-with-address")
+    public ResponseEntity<List<Map<String, Object>>> findStoreHousesWithAddressForClient() {
+        List<Map<String, Object>> wareHouses = restTemplateProvider.getStoreHousesWithAddressForClient();
+        return ResponseEntity.ok(wareHouses);
+    }
     //---------------------------------------------------------------------------------------------------
 
     //---------------------------------------------------------------------------------------------------

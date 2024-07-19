@@ -48,13 +48,23 @@ public class ApplicationExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<ErrorStructure<String>> handleInvalidCredential(BadCredentialsException ex){
+    public ResponseEntity<ErrorStructure<String>> handleInvalidCredential(BadCredentialsException ex) {
         return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "User Not Exist.... Please Provide correct user details");
     }
 
     @ExceptionHandler
-    public ResponseEntity<ErrorStructure<String>> handleTokenExpired(TokenExpiredException ex){
+    public ResponseEntity<ErrorStructure<String>> handleTokenExpired(TokenExpiredException ex) {
         return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "Token Expired");
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorStructure<String>> handleAlreadyAddressExist(AlreadyAddressExistException ex) {
+        return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "Seller can not be add multiple addresses");
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorStructure<String>> handleAddressNotFound(AddressNotFoundException ex) {
+        return errorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), "Addresses not found");
     }
 
     @ExceptionHandler

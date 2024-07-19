@@ -1,6 +1,6 @@
 package com.ecommerce.shopping.mail.service;
 
-import com.ecommerce.shopping.mail.entity.MessageData;
+import com.ecommerce.shopping.mail.dto.MessageData;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;

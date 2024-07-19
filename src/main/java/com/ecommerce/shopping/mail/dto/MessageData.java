@@ -1,4 +1,4 @@
-package com.ecommerce.shopping.mail.entity;
+package com.ecommerce.shopping.mail.dto;
 
 import lombok.Getter;
 import lombok.Setter;

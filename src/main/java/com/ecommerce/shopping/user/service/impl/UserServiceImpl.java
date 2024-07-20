@@ -185,14 +185,19 @@ public class UserServiceImpl implements UserService {
         } else if (otp.equals(otpVerificationRequest.getOtp()) && user != null) {
 //            If user otp and cache otp
 //           Create Dynamic username
-            String userGen = usernameGenerate(user.getEmail());
-            user.setUsername(userGen);
-            user.setEmailVerified(true);
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            user = userRepository.save(user);
-
-//            Send mail to user for confirmation
-            mailSend(user.getEmail(), "Email Verification done", "<h3>Your account is created in EcommerceShoppingApp</h3></br><h4>Your username is : " + userGen + "</h4>");
+            if (user.getUsername() == null) {
+                String userGen = usernameGenerate(user.getEmail());
+                user.setUsername(userGen);
+                user.setEmailVerified(true);
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+                user = userRepository.save(user);
+                //            Send mail to user for confirmation
+                mailSend(user.getEmail(), "Email Verification done", "<h3>Your account is created in EcommerceShoppingApp</h3></br><h4>Your username is : " + userGen + " and UserRole is : " + user.getUserRole() + "</h4>");
+            } else {
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+                user = userRepository.save(user);
+                mailSend(user.getEmail(), "Profile successfully updated", "<h3>Your account is updated in EcommerceShoppingApp</h3></br><h4>Your username is : " + user.getUsername() + " and UserRole is : " + user.getUserRole() + "</h4>");
+            }
 
             return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<UserResponse>()
                     .setStatus(HttpStatus.CREATED.value())
@@ -227,8 +232,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<ResponseStructure<UserResponse>> findUser(Long userId) {
         return userRepository.findById(userId).map(user -> {
-            return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<UserResponse>()
-                    .setStatus(HttpStatus.FOUND.value())
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<UserResponse>()
+                    .setStatus(HttpStatus.OK.value())
                     .setMessage("User Founded")
                     .setData(userMapper.mapUserToUserResponse(user)));
         }).orElseThrow(() -> new UserNotExistException("UserId : " + userId + ", is not exist"));
@@ -241,7 +246,7 @@ public class UserServiceImpl implements UserService {
                 .stream()
                 .map(userMapper::mapUserToUserResponse)
                 .toList();
-        return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<List<UserResponse>>()
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<List<UserResponse>>()
                 .setMessage("Users are Founded")
                 .setData(userResponseList));
     }
@@ -250,11 +255,38 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<ResponseStructure<UserResponse>> updateUser(UserRequest userRequest, Long userId) {
         return userRepository.findById(userId).map(user -> {
-            user = userMapper.mapUserRequestToUser(userRequest, user);
-            user = userRepository.save(user);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<UserResponse>()
+            if (user.getEmail().equals(userRequest.getEmail())) {
+                user = userMapper.mapUserRequestToUser(userRequest, user);
+                userCache.put(userRequest.getEmail(), user);
+                int otp = random.nextInt(100000, 999999);
+                otpCache.put(userRequest.getEmail(), otp + "");
+
+                String otpExpired = otpExpirationTimeCalculate(5);
+//                Send otp in mail
+                mailSend(user.getEmail(), "OTP verification for EcommerceShoppingApp", "<h3>Welcome to Ecommerce Shopping Applicationa</h3></br><h4>Otp : " + otp + "</h4></br><p>" + otpExpired + "</p>");
+            } else {
+                boolean existEmail = userRepository.existsByEmail(userRequest.getEmail());
+                if (existEmail)
+                    throw new UserAlreadyExistException("Email : " + userRequest.getEmail() + ", is already exist");
+                else {
+                    user = userMapper.mapUserRequestToUser(userRequest, user);
+                    userCache.put(userRequest.getEmail(), user);
+                    int otp = random.nextInt(100000, 999999);
+                    otpCache.put(userRequest.getEmail(), otp + "");
+
+                    String otpExpired = otpExpirationTimeCalculate(5);
+//                Send otp in mail
+                    mailSend(user.getEmail(), "OTP verification for EcommerceShoppingApp", "<h3>Welcome to Ecommerce Shopping Applicationa</h3></br><h4>Otp : " + otp + "</h4></br><p>" + otpExpired + "</p>");
+                }
+            }
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.add(HttpHeaders.SET_COOKIE, generateCookie("rt", null, 0));
+            httpHeaders.add(HttpHeaders.SET_COOKIE, generateCookie("at", null, 0));
+            return ResponseEntity.status(HttpStatus.OK)
+                    .headers(httpHeaders)
+                    .body(new ResponseStructure<UserResponse>()
                     .setStatus(HttpStatus.OK.value())
-                    .setMessage("User Updated")
+                    .setMessage("Otp sended")
                     .setData(userMapper.mapUserToUserResponse(user)));
         }).orElseThrow(() -> new UserNotExistException("UserId : " + userId + ", is not exist"));
     }

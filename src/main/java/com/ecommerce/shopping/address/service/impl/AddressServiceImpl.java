@@ -67,8 +67,8 @@ public class AddressServiceImpl implements AddressService {
         if (user.getUserRole().equals(UserRole.CUSTOMER)) {
             List<Address> addresses = addressRepository.findByCustomer((Customer) user);
             List<AddressResponse> addressResponses = addresses.stream().map(addressMapper::mapAddressToAddressResponse).toList();
-            return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<List<AddressResponse>>()
-                    .setStatus(HttpStatus.FOUND.value())
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<List<AddressResponse>>()
+                    .setStatus(HttpStatus.OK.value())
                     .setMessage("Addresses are founded")
                     .setData(addressResponses));
         } else if (user.getUserRole().equals(UserRole.SELLER)) {
@@ -78,8 +78,8 @@ public class AddressServiceImpl implements AddressService {
                 throw new AddressNotFoundException("Address not found for seller");
             }
             AddressResponse addressResponse = addressMapper.mapAddressToAddressResponse(address);
-            return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<List<AddressResponse>>()
-                    .setStatus(HttpStatus.FOUND.value())
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<List<AddressResponse>>()
+                    .setStatus(HttpStatus.OK.value())
                     .setMessage("Address is founded")
                     .setData(List.of(addressResponse)));
         } else {

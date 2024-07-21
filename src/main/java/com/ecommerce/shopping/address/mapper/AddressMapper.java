@@ -29,6 +29,7 @@ public class AddressMapper {
                 .country(address.getCountry())
                 .pincode(address.getPincode())
                 .addressType(address.getAddressType())
+                .contacts(address.getContacts())
                 .build();
     }
 

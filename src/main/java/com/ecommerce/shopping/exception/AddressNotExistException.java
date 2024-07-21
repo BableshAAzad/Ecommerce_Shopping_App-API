@@ -5,6 +5,6 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class AddressNotFoundException extends RuntimeException {
+public class AddressNotExistException extends RuntimeException {
     private String message;
 }

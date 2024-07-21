@@ -8,7 +8,7 @@ import com.ecommerce.shopping.address.repository.AddressRepository;
 import com.ecommerce.shopping.address.service.AddressService;
 import com.ecommerce.shopping.customer.entity.Customer;
 import com.ecommerce.shopping.enums.UserRole;
-import com.ecommerce.shopping.exception.AddressNotFoundException;
+import com.ecommerce.shopping.exception.AddressNotExistException;
 import com.ecommerce.shopping.exception.AlreadyAddressExistException;
 import com.ecommerce.shopping.exception.UserNotExistException;
 import com.ecommerce.shopping.seller.entity.Seller;
@@ -22,7 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -75,7 +74,7 @@ public class AddressServiceImpl implements AddressService {
             Seller seller = (Seller) user;
             Address address = seller.getAddress();
             if (address == null) {
-                throw new AddressNotFoundException("Address not found for seller");
+                throw new AddressNotExistException("Address not found for seller");
             }
             AddressResponse addressResponse = addressMapper.mapAddressToAddressResponse(address);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<List<AddressResponse>>()
@@ -89,7 +88,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public ResponseEntity<ResponseStructure<AddressResponse>> updateAddress(Long addressId, AddressRequest addressRequest) {
-        Address address = addressRepository.findById(addressId).orElseThrow(() -> new AddressNotFoundException("Address Id : " + addressId + ", is not exist"));
+        Address address = addressRepository.findById(addressId).orElseThrow(() -> new AddressNotExistException("Address Id : " + addressId + ", is not exist"));
         address = addressMapper.mapAddressRequestToAddress(addressRequest, address);
         address = addressRepository.save(address);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<AddressResponse>()

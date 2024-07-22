@@ -20,7 +20,7 @@ public class ContactController {
         return contactService.addContact(contact, addressId);
     }
 
-    @PutMapping("/contacts/{contactId}")
+    @PutMapping("/addresses/contacts/{contactId}")
     public ResponseEntity<ResponseStructure<Contact>> updateContact(@RequestBody Contact contact, @PathVariable Long contactId){
         return contactService.updateContact(contact, contactId);
     }

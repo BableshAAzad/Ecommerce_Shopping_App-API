@@ -74,6 +74,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new LoginFilter(), UsernamePasswordAuthenticationFilter.class)
+//                .oauth2Login(oauth2 -> oauth2
+//                        .loginPage("/api/v1/login")
+//                        .defaultSuccessUrl("/api/v1/login/oauth2/code/google")
+//                        .failureUrl("/api/v1/login/failure"))
                 .build();
     }
 

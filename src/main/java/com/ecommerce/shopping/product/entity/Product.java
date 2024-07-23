@@ -13,8 +13,10 @@ import lombok.*;
 public class Product {
     @Id
     private Long productId;
+    private String productTitle;
     private String productDescription;
-    private int productPrice=0;
+    private double productPrice=0;
     private int productQuantity=0;
+    @Enumerated(EnumType.STRING)
     private AvailabilityStatus availabilityStatus;
 }

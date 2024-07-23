@@ -16,6 +16,7 @@ public class Image {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long imageId;
     private String image;
+    @Enumerated(EnumType.STRING)
     private ImageType imageType;
     @ManyToOne
     private Product product;

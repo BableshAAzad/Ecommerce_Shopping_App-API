@@ -25,8 +25,8 @@ public class Customer extends User {
     @OneToMany
     private List<Order> orders;
 
-    @OneToOne
-    private CartProduct cartProduct;
+    @OneToMany
+    private List<CartProduct> cartProducts;
 
     @OneToOne
     private Wishlist wishlist;

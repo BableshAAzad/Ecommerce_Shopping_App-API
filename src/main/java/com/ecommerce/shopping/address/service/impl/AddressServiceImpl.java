@@ -33,30 +33,35 @@ public class AddressServiceImpl implements AddressService {
     private final AddressMapper addressMapper;
 
     //----------------------------------------------------------------------------------------------------------------------------------------
+
     @Override
     public ResponseEntity<ResponseStructure<AddressResponse>> addAddress(AddressRequest addressRequest, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotExistException("UserId : " + userId + ", is not exist"));
         Address address = addressMapper.mapAddressRequestToAddress(addressRequest, new Address());
 
         if (user.getUserRole().equals(UserRole.CUSTOMER)) {
-            address.setCustomer((Customer) user);
-        } else {
+            Customer customer = (Customer) user;
+            if (customer.getAddresses().size() >= 4) {
+                throw new AlreadyAddressExistException("Customer cannot have more than 4 addresses");
+            }
+            address.setCustomer(customer);
+            address = addressRepository.save(address);
+        } else if (user.getUserRole().equals(UserRole.SELLER)) {
             Seller seller = (Seller) user;
-            Address address1 = seller.getAddress();
-            if (address1 == null) {
-                address = addressRepository.save(address);
-                seller.setAddress(address);
-                sellerRepository.save(seller);
-            } else {
+            if (seller.getAddress() != null) {
                 throw new AlreadyAddressExistException("Address already present, modify existing address");
             }
+            address = addressRepository.save(address);
+            seller.setAddress(address);
+            sellerRepository.save(seller);
         }
-        address = addressRepository.save(address);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<AddressResponse>()
                 .setStatus(HttpStatus.CREATED.value())
                 .setMessage("Address created")
                 .setData(addressMapper.mapAddressToAddressResponse(address)));
     }
+
 
     //----------------------------------------------------------------------------------------------------------------------------------------
     @Override

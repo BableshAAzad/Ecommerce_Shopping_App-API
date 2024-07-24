@@ -46,3 +46,5 @@ application:
     api_key: ${API_KEY}
     username: ${USERNAME}
     client_id: ${CLIENT_ID}
+
+#debug: true

@@ -87,6 +87,10 @@ public class ApplicationExceptionHandler {
         return errorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), "Cart Product not found");
     }
 
+    public ResponseEntity<ErrorStructure<String>> handleOrderNotExist(OrderNotExistException ex){
+        return errorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), "Order not found");
+    }
+
     @ExceptionHandler
     public ResponseEntity<ErrorStructure<Map<String, String>>> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex) {

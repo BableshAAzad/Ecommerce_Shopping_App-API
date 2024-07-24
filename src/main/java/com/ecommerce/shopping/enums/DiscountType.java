@@ -4,5 +4,7 @@ public enum DiscountType {
     NEW,
     SPECIAL,
     DIWALI,
-    NEWYEAR
+    NEWYEAR,
+    PERCENTAGE,
+    FLAT
 }

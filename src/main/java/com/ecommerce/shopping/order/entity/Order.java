@@ -16,7 +16,7 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
-    private int selectedQuantity=0;
+    private int totalQuantity=0;
     private double totalPrice=0.0;
     private double discountPrice=0.0;
     private double totalPayableAmount=0.0;

@@ -4,8 +4,6 @@ import com.ecommerce.shopping.product.entity.Product;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
-
 @Entity
 @Getter
 @Setter

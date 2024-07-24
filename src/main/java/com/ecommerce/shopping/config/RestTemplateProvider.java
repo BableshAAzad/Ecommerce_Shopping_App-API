@@ -1,12 +1,14 @@
 package com.ecommerce.shopping.config;
 
+import com.ecommerce.shopping.order.dto.OrderRequest;
+import com.ecommerce.shopping.order.dto.OrderRequestDto;
+import com.ecommerce.shopping.order.dto.OrderResponseDto;
 import com.ecommerce.shopping.warehouse.dto.*;
 import com.ecommerce.shopping.utility.ResponseStructure;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.client.UnknownContentTypeException;
 
@@ -353,7 +355,38 @@ public class RestTemplateProvider {
     }
     //---------------------------------------------------------------------------------------------------
 
+    public ResponseEntity<ResponseStructure<OrderResponseDto>> generatePurchaseOrder(OrderRequestDto orderRequestDto, Long productId){
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("API-KEY", apiKey);
+            headers.set("USERNAME", username);
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<OrderRequestDto> entity = new HttpEntity<>(orderRequestDto, headers);
+            return restTemplate.exchange(
+                    "http://localhost:8081/api/v1/clients/inventories/"+productId+"/purchase-orders",
+                    HttpMethod.POST,
+                    entity,
+                    new ParameterizedTypeReference<ResponseStructure<OrderResponseDto>>() {
+                    }
+            );
+    }
     //---------------------------------------------------------------------------------------------------
+    public ResponseEntity<ResponseStructure<List<OrderResponseDto>>> getPurchaseOrders(Long customerId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("API-KEY", apiKey);
+        headers.set("USERNAME", username);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        return restTemplate.exchange(
+                "http://localhost:8081/api/v1/clients/purchase-orders/customers/"+customerId,
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<ResponseStructure<List<OrderResponseDto>>>() {
+                }
+        );
+    }
 
     //---------------------------------------------------------------------------------------------------
 

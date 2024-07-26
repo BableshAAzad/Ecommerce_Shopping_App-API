@@ -1,6 +1,5 @@
 package com.ecommerce.shopping.config;
 
-import com.ecommerce.shopping.order.dto.OrderRequest;
 import com.ecommerce.shopping.order.dto.OrderRequestDto;
 import com.ecommerce.shopping.order.dto.OrderResponseDto;
 import com.ecommerce.shopping.warehouse.dto.*;
@@ -355,21 +354,22 @@ public class RestTemplateProvider {
     }
     //---------------------------------------------------------------------------------------------------
 
-    public ResponseEntity<ResponseStructure<OrderResponseDto>> generatePurchaseOrder(OrderRequestDto orderRequestDto, Long productId){
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("API-KEY", apiKey);
-            headers.set("USERNAME", username);
-            headers.setContentType(MediaType.APPLICATION_JSON);
+    public ResponseEntity<ResponseStructure<OrderResponseDto>> generatePurchaseOrder(OrderRequestDto orderRequestDto, Long productId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("API-KEY", apiKey);
+        headers.set("USERNAME", username);
+        headers.setContentType(MediaType.APPLICATION_JSON);
 
-            HttpEntity<OrderRequestDto> entity = new HttpEntity<>(orderRequestDto, headers);
-            return restTemplate.exchange(
-                    "http://localhost:8081/api/v1/clients/inventories/"+productId+"/purchase-orders",
-                    HttpMethod.POST,
-                    entity,
-                    new ParameterizedTypeReference<ResponseStructure<OrderResponseDto>>() {
-                    }
-            );
+        HttpEntity<OrderRequestDto> entity = new HttpEntity<>(orderRequestDto, headers);
+        return restTemplate.exchange(
+                "http://localhost:8081/api/v1/clients/inventories/" + productId + "/purchase-orders",
+                HttpMethod.POST,
+                entity,
+                new ParameterizedTypeReference<ResponseStructure<OrderResponseDto>>() {
+                }
+        );
     }
+
     //---------------------------------------------------------------------------------------------------
     public ResponseEntity<ResponseStructure<List<OrderResponseDto>>> getPurchaseOrders(Long customerId) {
         HttpHeaders headers = new HttpHeaders();
@@ -380,7 +380,7 @@ public class RestTemplateProvider {
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         return restTemplate.exchange(
-                "http://localhost:8081/api/v1/clients/purchase-orders/customers/"+customerId,
+                "http://localhost:8081/api/v1/clients/purchase-orders/customers/" + customerId,
                 HttpMethod.GET,
                 entity,
                 new ParameterizedTypeReference<ResponseStructure<List<OrderResponseDto>>>() {
@@ -388,6 +388,22 @@ public class RestTemplateProvider {
         );
     }
 
+    //---------------------------------------------------------------------------------------------------
+    public ResponseEntity<byte[]> getOrderInvoice(Long orderId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("API-KEY", apiKey);
+        headers.set("USERNAME", username);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        return restTemplate.exchange("http://localhost:8081/api/v1/clients/purchase-orders/invoice/" + orderId,
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<byte[]>() {
+                }
+        );
+    }
     //---------------------------------------------------------------------------------------------------
 
 }

@@ -33,5 +33,11 @@ public class OrderController {
             @PathVariable Long customerId) {
         return restTemplateProvider.getPurchaseOrders(customerId);
     }
+
+    @GetMapping("/customers/purchase-orders/{orderId}")
+    public ResponseEntity<byte[]> getOrderInvoice(
+            @PathVariable Long orderId) {
+        return restTemplateProvider.getOrderInvoice(orderId);
+    }
 }
 

@@ -78,7 +78,7 @@ public class SecurityConfig {
                         .loginPage("/api/v1/login/**"))
 //                        .defaultSuccessUrl("/api/v1/login/oauth2/code/google")
 //                        .failureUrl("/api/v1/login/failure"))
-                .build(); // demo
+                .build(); // demo //demo
     @Bean
     AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();

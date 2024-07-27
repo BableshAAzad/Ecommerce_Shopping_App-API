@@ -48,13 +48,47 @@ public class ApplicationExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<ErrorStructure<String>> handleInvalidCredential(BadCredentialsException ex){
+    public ResponseEntity<ErrorStructure<String>> handleInvalidCredential(BadCredentialsException ex) {
         return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "User Not Exist.... Please Provide correct user details");
     }
 
     @ExceptionHandler
-    public ResponseEntity<ErrorStructure<String>> handleTokenExpired(TokenExpiredException ex){
+    public ResponseEntity<ErrorStructure<String>> handleTokenExpired(TokenExpiredException ex) {
         return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "Token Expired");
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorStructure<String>> handleAlreadyAddressExist(AlreadyAddressExistException ex) {
+        return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "Seller can not be add multiple addresses");
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorStructure<String>> handleAddressNotFound(AddressNotExistException ex) {
+        return errorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), "Addresses not found");
+    }
+
+    @ExceptionHandler
+       public ResponseEntity<ErrorStructure<String>> handleContactNotExist(ContactNotExistException ex){
+        return errorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), "Contact not found");
+    }
+
+    @ExceptionHandler
+        public ResponseEntity<ErrorStructure<String>> handleContactAlreadyExist(ContactAlReadyExistException ex){
+        return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "2 numbers is already exist in this address");
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorStructure<String>> handelCustomerNotExist(CustomerNotExistException ex){
+        return errorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), "Customer not found");
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorStructure<String>> handleCartProductNotExist(CartProductNotExistException ex){
+        return errorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), "Cart Product not found");
+    }
+
+    public ResponseEntity<ErrorStructure<String>> handleOrderNotExist(OrderNotExistException ex){
+        return errorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), "Order not found");
     }
 
     @ExceptionHandler

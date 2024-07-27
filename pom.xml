@@ -53,6 +53,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
+        <!--    Oauth-2    -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
+        </dependency>
 
 
         <dependency>
@@ -127,7 +132,6 @@
             <version>0.11.5</version>
             <scope>runtime</scope>
         </dependency>
-
 
 
     </dependencies>

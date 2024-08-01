@@ -1,3 +1,4 @@
+
 package com.ecommerce.shopping.security;
 
 import com.ecommerce.shopping.jwt.JwtService;
@@ -6,7 +7,6 @@ import com.ecommerce.shopping.securityfilters.LoginFilter;
 import com.ecommerce.shopping.securityfilters.RefreshFilter;
 import com.ecommerce.shopping.user.repositoty.AccessTokenRepository;
 import com.ecommerce.shopping.user.repositoty.RefreshTokenRepository;
-import com.ecommerce.shopping.user.repositoty.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,6 +32,7 @@ public class SecurityConfig {
     private final JwtService jwtService;
     private final RefreshTokenRepository refreshTokenRepository;
     private final AccessTokenRepository accessTokenRepository;
+    private final OauthAuthenticationSuccessHandler oauthAuthenticationSuccessHandler;
 
     @Bean
     PasswordEncoder passwordEncoder() {
@@ -70,15 +71,16 @@ public class SecurityConfig {
                         "/api/v1/sellers/register/**",
                         "/api/v1/customers/register/**",
                         "/api/v1/products/**",
+                        "/login/**",
+                        "/oauth2/**",
                         "/api/v1/test/**"))
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new LoginFilter(), UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oauth2 -> oauth2
-                        .loginPage("/api/v1/login/**"))
-//                        .defaultSuccessUrl("/api/v1/login/oauth2/code/google")
-//                        .failureUrl("/api/v1/login/failure"))
-                .build(); // demo //demo //test // aouth
+                        .loginPage("/api/v1/login")
+                        .successHandler(oauthAuthenticationSuccessHandler))
+                .build();
     }
 
     @Bean

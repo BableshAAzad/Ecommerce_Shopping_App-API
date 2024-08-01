@@ -75,6 +75,15 @@ public class UserController {
         return userService.login(authRequest);
     }
 
+
+//    @PostMapping("/login/oauth2/code/google")
+//    public String loginGoogle(@RequestBody AuthRequest authRequest) {
+//        System.out.println(authRequest);
+//        return authRequest.toString();
+//    }
+
+
+
     //------------------------------------------------------------------------------------------------------------------------
     @PostMapping("/refreshLogin")
     @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")

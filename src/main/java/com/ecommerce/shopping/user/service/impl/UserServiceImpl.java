@@ -209,7 +209,8 @@ public class UserServiceImpl implements UserService {
     }
     //------------------------------------------------------------------------------------------------------------------------
 
-    private String usernameGenerate(String email) {
+    @Override
+    public String usernameGenerate(String email) {
         String[] str = email.split("@");
         String username = str[0];
         int temp = 0;
@@ -285,9 +286,9 @@ public class UserServiceImpl implements UserService {
             return ResponseEntity.status(HttpStatus.OK)
                     .headers(httpHeaders)
                     .body(new ResponseStructure<UserResponse>()
-                    .setStatus(HttpStatus.OK.value())
-                    .setMessage("Otp sended")
-                    .setData(userMapper.mapUserToUserResponse(user)));
+                            .setStatus(HttpStatus.OK.value())
+                            .setMessage("Otp sended")
+                            .setData(userMapper.mapUserToUserResponse(user)));
         }).orElseThrow(() -> new UserNotExistException("UserId : " + userId + ", is not exist"));
     }
 
@@ -324,6 +325,7 @@ public class UserServiceImpl implements UserService {
     }
 
     //------------------------------------------------------------------------------------------------------------------------
+    @Override
     public void grantAccessToken(HttpHeaders httpHeaders, User user) {
         String token = jwtService.createJwtToken(user.getUsername(), user.getUserRole(), (accessExpirySeconds * 1000)); // 1 hour in ms
 
@@ -338,6 +340,7 @@ public class UserServiceImpl implements UserService {
     }
 
     //------------------------------------------------------------------------------------------------------------------------
+    @Override
     public void grantRefreshToken(HttpHeaders httpHeaders, User user) {
 
         String token = jwtService.createJwtToken(user.getUsername(), user.getUserRole(), (refreshExpireSeconds * 1000));
@@ -353,7 +356,7 @@ public class UserServiceImpl implements UserService {
     }
 
     //------------------------------------------------------------------------------------------------------------------------
-    private String generateCookie(String name, String tokenValue, long maxAge) {
+    public String generateCookie(String name, String tokenValue, long maxAge) {
         return ResponseCookie.from(name, tokenValue)
                 .domain(domain)
                 .path("/")

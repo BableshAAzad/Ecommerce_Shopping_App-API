@@ -2,12 +2,20 @@ package com.ecommerce.shopping.user.service;
 
 import com.ecommerce.shopping.enums.UserRole;
 import com.ecommerce.shopping.user.dto.*;
+import com.ecommerce.shopping.user.entity.User;
 import com.ecommerce.shopping.utility.ResponseStructure;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 public interface UserService {
+
+    String usernameGenerate(String email);
+
+    void grantRefreshToken(HttpHeaders httpHeaders, User user);
+
+    public void grantAccessToken(HttpHeaders httpHeaders, User user);
 
     ResponseEntity<ResponseStructure<UserResponse>> updateUser(UserRequest userRequest, Long userId);
 

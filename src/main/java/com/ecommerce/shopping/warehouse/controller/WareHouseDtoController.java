@@ -4,6 +4,7 @@ import com.ecommerce.shopping.config.RestTemplateProvider;
 import com.ecommerce.shopping.utility.ResponseStructure;
 import com.ecommerce.shopping.warehouse.dto.*;
 import lombok.AllArgsConstructor;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,29 +25,38 @@ public class WareHouseDtoController {
     }
 
     //---------------------------------------------------------------------------------------------------
-    @GetMapping("/products")
-    public ResponseEntity<List<Product>> findProducts() {
-        List<Product> products = restTemplateProvider.getProducts();
-        return ResponseEntity.ok(products);
+    @GetMapping("/products") // GET /products?page=0&size=10
+    public ResponseEntity<ResponseStructure<PagedModel<Product>>> findProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        return restTemplateProvider.getProducts(page, size);
     }
 
     //---------------------------------------------------------------------------------------------------
-    @GetMapping("/products/search/{query}")
-    public ResponseEntity<ResponseStructure<List<Product>>> searchProducts(@PathVariable String query) {
-        return restTemplateProvider.searchProducts(query);
-    }
-    //---------------------------------------------------------------------------------------------------
-    @PostMapping("/products/filter")
-    public ResponseEntity<ResponseStructure<List<Product>>> searchProducts(
-            @RequestBody InventorySearchCriteria inventorySearchCriteria) {
-        return restTemplateProvider.filterProducts(inventorySearchCriteria);
+    @GetMapping("/products/search/{query}") //products/search/query?page=0&size=10
+    public ResponseEntity<ResponseStructure<PagedModel<Product>>> searchProducts(
+            @PathVariable String query,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return restTemplateProvider.searchProducts(query, page, size);
     }
 
     //---------------------------------------------------------------------------------------------------
-    @GetMapping("/sellers/{sellerId}/products")
-    public ResponseEntity<List<Product>> findProductsBySellerId(@PathVariable Long sellerId) {
-        List<Product> products = restTemplateProvider.getProductsBySellerId(sellerId);
-        return ResponseEntity.ok(products);
+    @PostMapping("/products/filter") //products/filter?page=0&size=10
+    public ResponseEntity<ResponseStructure<PagedModel<Product>>> filterProducts(
+            @RequestBody InventorySearchCriteria inventorySearchCriteria,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return restTemplateProvider.filterProducts(inventorySearchCriteria, page, size);
+    }
+
+    //---------------------------------------------------------------------------------------------------
+    @GetMapping("/sellers/{sellerId}/products") //sellers/sellerId/products?page=0&size=10
+    public ResponseEntity<ResponseStructure<PagedModel<Product>>> findProductsBySellerId(
+            @PathVariable Long sellerId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return restTemplateProvider.getProductsBySellerId(sellerId, page, size);
     }
 
     //---------------------------------------------------------------------------------------------------

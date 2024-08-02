@@ -6,6 +6,7 @@ import com.ecommerce.shopping.warehouse.dto.*;
 import com.ecommerce.shopping.utility.ResponseStructure;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -43,60 +44,61 @@ public class RestTemplateProvider {
     }
 
     //---------------------------------------------------------------------------------------------------
-    public List<Product> getProducts() {
-        ResponseEntity<ResponseStructure<List<Product>>> productsResponse = restTemplate.exchange(
-                "http://localhost:8081/api/v1/inventories",
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<ResponseStructure<List<Product>>>() {
-                }
-        );
-        ResponseStructure<List<Product>> responseStructure = productsResponse.getBody();
-        return responseStructure.getData();
-    }
-
-    //---------------------------------------------------------------------------------------------------
-    public ResponseEntity<ResponseStructure<List<Product>>> searchProducts(String query) {
+    public ResponseEntity<ResponseStructure<PagedModel<Product>>> getProducts(int page, int size) {
         return restTemplate.exchange(
-                "http://localhost:8081/api/v1/inventories/search/" + query,
+                "http://localhost:8081/api/v1/inventories?page=" + page + "&size=" + size,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<ResponseStructure<List<Product>>>() {
+                new ParameterizedTypeReference<ResponseStructure<PagedModel<Product>>>() {
                 }
         );
     }
 
     //---------------------------------------------------------------------------------------------------
-    public ResponseEntity<ResponseStructure<List<Product>>> filterProducts(
-            InventorySearchCriteria inventorySearchCriteria) {
+    //inventories/search/criteria?page=0&size=10
+    public ResponseEntity<ResponseStructure<PagedModel<Product>>> searchProducts(String query, int page, int size) {
+        return restTemplate.exchange(
+                "http://localhost:8081/api/v1/inventories/search/" + query + "?page=" + page + "&size=" + size,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<ResponseStructure<PagedModel<Product>>>() {
+                }
+        );
+    }
+
+    //---------------------------------------------------------------------------------------------------
+    //inventories/filter?page=0&size=10
+    public ResponseEntity<ResponseStructure<PagedModel<Product>>> filterProducts(
+            InventorySearchCriteria inventorySearchCriteria, int page, int size) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<InventorySearchCriteria> requestEntity = new HttpEntity<>(inventorySearchCriteria, headers);
         return restTemplate.exchange(
-                "http://localhost:8081/api/v1/inventories/filter",
+                "http://localhost:8081/api/v1/inventories/filter" + "?page=" + page + "&size=" + size,
                 HttpMethod.POST,
                 requestEntity,
-                new ParameterizedTypeReference<ResponseStructure<List<Product>>>() {}
+                new ParameterizedTypeReference<ResponseStructure<PagedModel<Product>>>() {
+                }
         );
     }
 
     //---------------------------------------------------------------------------------------------------
-    public List<Product> getProductsBySellerId(Long sellerId) {
+    //inventories/sellers/sellerId?page=0&size=10
+    public ResponseEntity<ResponseStructure<PagedModel<Product>>> getProductsBySellerId(
+            Long sellerId, int page, int size) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("API-KEY", apiKey);
         headers.set("USERNAME", username);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<ResponseStructure<List<Product>>> productsResponse = restTemplate.exchange(
-                "http://localhost:8081/api/v1/inventories/sellers/" + sellerId,
+        return restTemplate.exchange(
+                "http://localhost:8081/api/v1/inventories/sellers/" + sellerId + "?page=" + page + "&size=" + size,
                 HttpMethod.GET,
                 entity,
-                new ParameterizedTypeReference<ResponseStructure<List<Product>>>() {
+                new ParameterizedTypeReference<ResponseStructure<PagedModel<Product>>>() {
                 }
         );
-        ResponseStructure<List<Product>> responseStructure = productsResponse.getBody();
-        return responseStructure.getData();
     }
 
     //---------------------------------------------------------------------------------------------------

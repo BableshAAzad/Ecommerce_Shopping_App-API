@@ -41,6 +41,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final Cache<String, User> userCache;
     private final Cache<String, String> otpCache;
+    private final Cache<String, String> secreteKey;
     private final Random random;
     private final MailService mailService;
     private final AuthenticationManager authenticationManager;
@@ -69,6 +70,7 @@ public class UserServiceImpl implements UserService {
                            PasswordEncoder passwordEncoder,
                            Cache<String, User> userCache,
                            Cache<String, String> otpCache,
+                           Cache<String, String> secreteKey,
                            Random random,
                            MailService mailService,
                            AuthenticationManager authenticationManager,
@@ -80,6 +82,7 @@ public class UserServiceImpl implements UserService {
         this.passwordEncoder = passwordEncoder;
         this.userCache = userCache;
         this.otpCache = otpCache;
+        this.secreteKey = secreteKey;
         this.random = random;
         this.mailService = mailService;
         this.authenticationManager = authenticationManager;
@@ -134,14 +137,15 @@ public class UserServiceImpl implements UserService {
 
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseStructure<UserResponse>()
                     .setStatus(HttpStatus.ACCEPTED.value())
-                    .setMessage("Otp sended")
+                    .setMessage("Otp re-sended")
                     .setData(userMapper.mapUserToUserResponse(user)));
         } else throw new UserNotExistException("Email : " + userRequest.getEmail() + ", is not exist");
     }
 
     //------------------------------------------------------------------------------------------------------------------------
     //    Logic for mail generation
-    private void mailSend(String email, String subject, String text) {
+    @Override
+    public void mailSend(String email, String subject, String text) {
         MessageData messageData = new MessageData();
         messageData.setTo(email);
         messageData.setSubject(subject);
@@ -193,15 +197,20 @@ public class UserServiceImpl implements UserService {
                 user = userRepository.save(user);
                 //            Send mail to user for confirmation
                 mailSend(user.getEmail(), "Email Verification done", "<h3>Your account is created in EcommerceShoppingApp</h3></br><h4>Your username is : " + userGen + " and UserRole is : " + user.getUserRole() + "</h4>");
-            } else {
+            } else if(user.getPassword() != null){
                 user.setPassword(passwordEncoder.encode(user.getPassword()));
                 user = userRepository.save(user);
                 mailSend(user.getEmail(), "Profile successfully updated", "<h3>Your account is updated in EcommerceShoppingApp</h3></br><h4>Your username is : " + user.getUsername() + " and UserRole is : " + user.getUserRole() + "</h4>");
+            }else{
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<UserResponse>()
+                        .setStatus(HttpStatus.OK.value())
+                        .setMessage("User verified")
+                        .setData(userMapper.mapUserToUserResponse(user)));
             }
 
             return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<UserResponse>()
                     .setStatus(HttpStatus.CREATED.value())
-                    .setMessage(user.getUserRole() + " Created")
+                    .setMessage(user.getUserRole() + " Created or Updated")
                     .setData(userMapper.mapUserToUserResponse(user)));
         } else {
             throw new OtpExpiredException("Otp is expired");
@@ -290,6 +299,51 @@ public class UserServiceImpl implements UserService {
                             .setMessage("Otp sended")
                             .setData(userMapper.mapUserToUserResponse(user)));
         }).orElseThrow(() -> new UserNotExistException("UserId : " + userId + ", is not exist"));
+    }
+
+    //------------------------------------------------------------------------------------------------------------------------
+    @Override
+    public ResponseEntity<ResponseStructure<UserResponse>> passwordResetByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotExistException("Email Id : " + email + ", is not exist"));
+        user.setPassword(null);
+        userCache.put(user.getEmail(), user);
+        int otp = random.nextInt(100000, 999999);
+        otpCache.put(user.getEmail(), otp + "");
+        int key = random.nextInt(100000, 999999);
+        secreteKey.put(user.getEmail(), key+"");
+
+        String otpExpired = otpExpirationTimeCalculate(5);
+//                Send otp in mail
+        mailSend(user.getEmail(), "OTP verification for EcommerceShoppingApp",
+                STR."<h3>Welcome to Ecommerce Shopping Application</h3></br><h4>Otp : \{otp}</h4></br><p>\{otpExpired}</p></br><h4>Secret Key for password reset : \{key}</h4>");
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseStructure<UserResponse>()
+                        .setStatus(HttpStatus.OK.value())
+                        .setMessage("Otp sended")
+                        .setData(userMapper.mapUserToUserResponse(user)));
+    }
+    //------------------------------------------------------------------------------------------------------------------------
+
+    @Override
+    public ResponseEntity<ResponseStructure<UserResponse>> passwordResetByEmailVerification(UserRequest userRequest, String secrete) {
+        User cacheUser = userCache.getIfPresent(userRequest.getEmail());
+        User existUser = userRepository.findByEmail(userRequest.getEmail())
+                .orElseThrow(() -> new UserNotExistException(STR."Email Id : \{userRequest.getEmail()}, is not exist"));
+        String key = secreteKey.getIfPresent(userRequest.getEmail());
+        if (cacheUser != null && key != null && key.equals(secrete)) {
+            existUser.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+            existUser = userRepository.save(existUser);
+            mailSend(existUser.getEmail(), "Password reset done at EcommerceShoppingApp",
+                    STR."<h3>Welcome to Ecommerce Shopping Applicationa</h3></br><p>Your password reset successfully done</p></br><h4>Your Username is : \{existUser.getUsername()}</h4>");
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseStructure<UserResponse>()
+                            .setStatus(HttpStatus.OK.value())
+                            .setMessage("Password Reset done")
+                            .setData(userMapper.mapUserToUserResponse(existUser)));
+        } else {
+            throw new IllegalOperationException("Session expired please try again...!!!");
+        }
     }
 
     //------------------------------------------------------------------------------------------------------------------------

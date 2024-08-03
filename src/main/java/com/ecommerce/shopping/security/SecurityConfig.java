@@ -66,6 +66,7 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChainCheckLogin(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .securityMatchers(match -> match.requestMatchers("/api/v1/login/**",
+                        "/api/v1/users/update/**",
                         "/api/v1/users/otpVerification/**",
                         "/api/v1/users/resendOtp/**",
                         "/api/v1/sellers/register/**",

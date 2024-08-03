@@ -54,6 +54,19 @@ public class UserController {
         return userService.updateUser(userRequest, userId);
     }
 
+    @PutMapping("/users/update/{email}")
+    public ResponseEntity<ResponseStructure<UserResponse>> passwordResetByEmail(
+            @PathVariable String email) {
+        return userService.passwordResetByEmail(email);
+    }
+
+    @PutMapping("/users/update")
+    public ResponseEntity<ResponseStructure<UserResponse>> passwordResetByEmailVerification(
+            @RequestBody UserRequest userRequest,
+            @RequestParam String secrete) {
+        return userService.passwordResetByEmailVerification(userRequest, secrete);
+    }
+
     //------------------------------------------------------------------------------------------------------------------------
     @GetMapping("/users/{userId}")
     @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")

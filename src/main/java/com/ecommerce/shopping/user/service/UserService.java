@@ -15,7 +15,9 @@ public interface UserService {
 
     void grantRefreshToken(HttpHeaders httpHeaders, User user);
 
-    public void grantAccessToken(HttpHeaders httpHeaders, User user);
+    void grantAccessToken(HttpHeaders httpHeaders, User user);
+
+    void mailSend(String email, String subject, String text);
 
     ResponseEntity<ResponseStructure<UserResponse>> updateUser(UserRequest userRequest, Long userId);
 
@@ -38,4 +40,8 @@ public interface UserService {
     ResponseEntity<LogoutResponse> logoutFromAllDevices(String refreshToken, String accessToken);
 
     ResponseEntity<ResponseStructure<UserResponse>> resendOtp(UserRequest userRequest);
+
+    ResponseEntity<ResponseStructure<UserResponse>> passwordResetByEmail(String email);
+
+    ResponseEntity<ResponseStructure<UserResponse>> passwordResetByEmailVerification(UserRequest userRequest, String secrete);
 }

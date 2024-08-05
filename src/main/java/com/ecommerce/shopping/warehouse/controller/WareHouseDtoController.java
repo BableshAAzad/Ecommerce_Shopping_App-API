@@ -1,6 +1,7 @@
 package com.ecommerce.shopping.warehouse.controller;
 
 import com.ecommerce.shopping.config.RestTemplateProvider;
+import com.ecommerce.shopping.image.service.ImageService;
 import com.ecommerce.shopping.utility.ResponseStructure;
 import com.ecommerce.shopping.warehouse.dto.*;
 import lombok.AllArgsConstructor;
@@ -16,6 +17,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class WareHouseDtoController {
     private final RestTemplateProvider restTemplateProvider;
+    private final ImageService imageService;
 
     //---------------------------------------------------------------------------------------------------
     @GetMapping("/products/{productId}")
@@ -28,7 +30,7 @@ public class WareHouseDtoController {
     @GetMapping("/products") // GET /products?page=0&size=10
     public ResponseEntity<ResponseStructure<PagedModel<Product>>> findProducts(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size) {
+            @RequestParam(defaultValue = "10") int size) {
         return restTemplateProvider.getProducts(page, size);
     }
 
@@ -57,23 +59,6 @@ public class WareHouseDtoController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         return restTemplateProvider.getProductsBySellerId(sellerId, page, size);
-    }
-
-    //---------------------------------------------------------------------------------------------------
-    @PostMapping("/storages/{storageId}/products")
-    public ResponseEntity<Product> addProduct(@PathVariable Long storageId,
-                                              @RequestParam int quantity,
-                                              @RequestBody ProductRequest productRequest) {
-        Product product = restTemplateProvider.addProduct(storageId, quantity, productRequest);
-        return ResponseEntity.ok(product);
-    }
-
-    //---------------------------------------------------------------------------------------------------
-    @PutMapping("/sellers/products/{productId}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long productId,
-                                                 @RequestBody ProductRequest productRequest) {
-        Product product = restTemplateProvider.updateProduct(productId, productRequest);
-        return ResponseEntity.ok(product);
     }
 
     //---------------------------------------------------------------------------------------------------

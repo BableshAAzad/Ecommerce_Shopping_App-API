@@ -1,16 +1,16 @@
 package com.ecommerce.shopping.warehouse.dto;
 
-import lombok.*;
+import com.ecommerce.shopping.enums.MaterialType;
+import lombok.Builder;
+import lombok.Data;
 
-import java.time.LocalDate;
 import java.util.List;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
-public class Product {
-    private Long inventoryId;
+@Data
+@Builder
+public class ProductRequestDto {
+    private Long productId;
+    private Long sellerId;
     private String productTitle;
     private double lengthInMeters;
     private double breadthInMeters;
@@ -19,9 +19,5 @@ public class Product {
     private double price;
     private String description;
     private String productImage;
-    private List<String> materialTypes;
-    private LocalDate restockedAt;
-    private LocalDate updatedInventoryAt;
-    private Long sellerId;
-    private List<Stock> stocks;
+    private List<MaterialType> materialTypes;
 }

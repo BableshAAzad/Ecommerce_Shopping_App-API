@@ -17,11 +17,12 @@ import java.util.List;
 @Builder
 public class Product {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
     private String productTitle;
     private String productDescription;
-    private double productPrice=0;
-    private int productQuantity=0;
+    private double productPrice = 0;
+    private int productQuantity = 0;
     @Enumerated(EnumType.STRING)
     private AvailabilityStatus availabilityStatus;
 

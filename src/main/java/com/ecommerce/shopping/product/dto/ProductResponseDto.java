@@ -1,15 +1,15 @@
-package com.ecommerce.shopping.warehouse.dto;
+package com.ecommerce.shopping.product.dto;
 
-import lombok.*;
+import com.ecommerce.shopping.warehouse.dto.Stock;
+import lombok.Builder;
+import lombok.Data;
 
 import java.time.LocalDate;
 import java.util.List;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
-public class Product {
+@Data
+@Builder
+public class ProductResponseDto {
     private Long inventoryId;
     private String productTitle;
     private double lengthInMeters;

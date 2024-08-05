@@ -2,6 +2,7 @@ package com.ecommerce.shopping.config;
 
 import com.ecommerce.shopping.order.dto.OrderRequestDto;
 import com.ecommerce.shopping.order.dto.OrderResponseDto;
+import com.ecommerce.shopping.product.dto.ProductResponseDto;
 import com.ecommerce.shopping.warehouse.dto.*;
 import com.ecommerce.shopping.utility.ResponseStructure;
 import org.springframework.beans.factory.annotation.Value;
@@ -102,39 +103,41 @@ public class RestTemplateProvider {
     }
 
     //---------------------------------------------------------------------------------------------------
-    public Product addProduct(Long storageId, int quantity, ProductRequest productRequest) {
+    public ResponseEntity<ResponseStructure<ProductResponseDto>> addProduct(
+            Long storageId,
+            int quantity,
+            ProductRequestDto productRequestDto) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("API-KEY", apiKey);
         headers.set("USERNAME", username);
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<ProductRequest> entity = new HttpEntity<>(productRequest, headers);
-        ResponseEntity<ResponseStructure<Product>> responseEntity = restTemplate.exchange(
+        HttpEntity<ProductRequestDto> entity = new HttpEntity<>(productRequestDto, headers);
+         return restTemplate.exchange(
                 "http://localhost:8081/api/v1/clients/1/storages/" + storageId + "/inventories?quantity=" + quantity,
                 HttpMethod.POST,
                 entity,
-                new ParameterizedTypeReference<ResponseStructure<Product>>() {
+                new ParameterizedTypeReference<ResponseStructure<ProductResponseDto>>() {
                 }
         );
-        ResponseStructure<Product> responseStructure = responseEntity.getBody();
-        return responseStructure.getData();
     }
 
     //---------------------------------------------------------------------------------------------------
-    public Product updateProduct(Long productId, ProductRequest productRequest) {
+    public ResponseEntity<ResponseStructure<ProductResponseDto>> updateProduct(
+            Long productId,
+            ProductRequestDto productRequestDto) {
+
         HttpHeaders headers = new HttpHeaders();
         headers.set("API-KEY", apiKey);
         headers.set("USERNAME", username);
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<ProductRequest> entity = new HttpEntity<>(productRequest, headers);
-        ResponseEntity<ResponseStructure<Product>> responseEntity = restTemplate.exchange(
+        HttpEntity<ProductRequestDto> entity = new HttpEntity<>(productRequestDto, headers);
+        return restTemplate.exchange(
                 "http://localhost:8081/api/v1/clients/inventories/" + productId,
                 HttpMethod.PUT,
                 entity,
-                new ParameterizedTypeReference<ResponseStructure<Product>>() {
+                new ParameterizedTypeReference<ResponseStructure<ProductResponseDto>>() {
                 }
         );
-        ResponseStructure<Product> responseStructure = responseEntity.getBody();
-        return responseStructure.getData();
     }
 
     //---------------------------------------------------------------------------------------------------

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductRequest {
+    private Long productId;
     private Long sellerId;
     private String productTitle;
     private double lengthInMeters;
@@ -21,6 +23,6 @@ public class ProductRequest {
     private double weightInKg;
     private double price;
     private String description;
-    private String productImage;
+    private MultipartFile productImage;
     private List<MaterialType> materialTypes;
 }

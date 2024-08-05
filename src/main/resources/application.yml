@@ -54,6 +54,12 @@ spring:
             authorization-uri: https://accounts.google.com/o/oauth2/auth
             token-uri: https://oauth2.googleapis.com/token
             user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 3MB
+      max-request-size: 3MB
+
 
 # Application Custom configuration    (3600000 = 1hour and 1296000000 = 15days) in milli
 # (3600 = 1hour and 1296000 = 15days) in seconds
@@ -76,3 +82,11 @@ logging:
   level:
     org.springframework.security: DEBUG
     org.springframework.web: DEBUG
+
+#Cloudinary configuration for image upload
+cloudinary:
+  cloud:
+    name: ${CLOUDINARY_CLOUD_NAME}
+  api:
+    key: ${CLOUDINARY_API_KEY}
+    secret: ${CLOUDINARY_API_SECRET}

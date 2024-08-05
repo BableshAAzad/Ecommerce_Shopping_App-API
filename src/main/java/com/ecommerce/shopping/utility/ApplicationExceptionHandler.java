@@ -91,6 +91,10 @@ public class ApplicationExceptionHandler {
         return errorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), "Order not found");
     }
 
+    public ResponseEntity<ErrorStructure<String>> handleProductNotExist(ProductNotExistException ex){
+        return errorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), "Product not found");
+    }
+
     @ExceptionHandler
     public ResponseEntity<ErrorStructure<Map<String, String>>> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex) {

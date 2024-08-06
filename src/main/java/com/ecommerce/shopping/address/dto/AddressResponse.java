@@ -4,7 +4,7 @@ import com.ecommerce.shopping.contact.entity.Contact;
 import com.ecommerce.shopping.enums.AddressType;
 import lombok.*;
 
-import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,5 +20,5 @@ public class AddressResponse {
     private String country;
     private int pincode;
     private AddressType addressType;
-    private List<Contact> contacts;
+    private Set<Contact> contacts;
 }

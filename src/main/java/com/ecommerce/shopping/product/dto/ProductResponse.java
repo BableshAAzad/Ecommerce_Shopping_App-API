@@ -18,4 +18,5 @@ public class ProductResponse {
     private int productQuantity=0;
     @Enumerated(EnumType.STRING)
     private AvailabilityStatus availabilityStatus;
+    private String productImage;
 }

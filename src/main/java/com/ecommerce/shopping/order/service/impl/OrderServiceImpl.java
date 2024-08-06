@@ -23,7 +23,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -61,9 +63,12 @@ public class OrderServiceImpl implements OrderService {
         order.setAddress(address);
         order = orderRepository.save(order);
 
-        List<Contact> contacts = address.getContacts();
-        Contact contact1 = contacts.getFirst();
-        Contact contact2 = contacts.getLast();
+        Set<Contact> contacts = address.getContacts();
+        List<Contact> contactList = new ArrayList<Contact>(contacts);
+        Contact contact1 = contactList.getFirst();
+        Contact contact2 = null;
+        if (contactList.size() == 2)
+            contact2 = contactList.getLast();
 
         AddressDto addressDto = AddressDto.builder()
                 .addressType(address.getAddressType())
@@ -74,8 +79,11 @@ public class OrderServiceImpl implements OrderService {
                 .country(address.getCountry())
                 .pincode(address.getPincode())
                 .contactNumber1(contact1.getPriority() + " : " + contact1.getContactNumber())
-                .contactNumber2(contact2.getPriority() + " : " + contact2.getContactNumber())
                 .build();
+
+        if(contact2 != null)
+            addressDto.setContactNumber2(contact2.getPriority() + " : " + contact2.getContactNumber());
+
         OrderRequestDto orderRequestDto = OrderRequestDto.builder()
                 .orderId(order.getOrderId())
                 .customerId(customerId)

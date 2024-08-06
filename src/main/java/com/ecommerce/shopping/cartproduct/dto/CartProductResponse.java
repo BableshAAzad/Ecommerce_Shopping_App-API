@@ -1,5 +1,6 @@
 package com.ecommerce.shopping.cartproduct.dto;
 
+import com.ecommerce.shopping.product.dto.ProductResponse;
 import com.ecommerce.shopping.product.entity.Product;
 import lombok.*;
 
@@ -11,5 +12,5 @@ import lombok.*;
 public class CartProductResponse {
     private Long cartProductId;
     private int selectedQuantity;
-    private Product product;
+    private ProductResponse product;
 }

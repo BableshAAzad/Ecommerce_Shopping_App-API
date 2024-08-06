@@ -3,6 +3,7 @@ package com.ecommerce.shopping.product.service.impl;
 import com.ecommerce.shopping.config.RestTemplateProvider;
 import com.ecommerce.shopping.enums.AvailabilityStatus;
 import com.ecommerce.shopping.enums.ImageType;
+import com.ecommerce.shopping.exception.ImageNotExistException;
 import com.ecommerce.shopping.exception.ProductNotExistException;
 import com.ecommerce.shopping.image.entity.Image;
 import com.ecommerce.shopping.image.repository.ImageRepository;
@@ -50,17 +51,12 @@ public class ProductServiceImpl implements ProductService {
                     .imageType(ImageType.PNG)
                     .product(product)
                     .build();
-            image = imageRepository.save(image);
-            List<Image> images2 = product.getImages();
-            if (!images2.isEmpty()) {
-            images2.add(image);
-            }
+            imageRepository.save(image);
             productRequestDto.setProductImage(imagePath);
         } else {
-            List<Image> images = product.getImages();
-            if (!images.isEmpty()) {
+            List<Image> images = imageRepository.findByProduct(product);
+            if (!images.isEmpty())
                 productRequestDto.setProductImage(images.getFirst().getImage());
-            }
         }
         productRequestDto.setProductId(productId);
         return restTemplateProvider.updateProduct(productId, productRequestDto);
@@ -89,10 +85,7 @@ public class ProductServiceImpl implements ProductService {
                     .imageType(ImageType.PNG)
                     .product(product)
                     .build();
-            image = imageRepository.save(image);
-        }
-        if (image != null) {
-            product.setImages(List.of(image));
+            imageRepository.save(image);
         }
         productRequestDto.setProductId(product.getProductId());
         return restTemplateProvider.addProduct(storageId, quantity, productRequestDto);

@@ -95,6 +95,9 @@ public class ApplicationExceptionHandler {
         return errorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), "Product not found");
     }
 
+    public ResponseEntity<ErrorStructure<String>> handleImageNotExist(ImageNotExistException ex){
+        return errorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), "Image not found");
+    }
     @ExceptionHandler
     public ResponseEntity<ErrorStructure<Map<String, String>>> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex) {

@@ -19,19 +19,22 @@ public class AddressController {
 
     @PostMapping("/users/{userId}/addresses")
     public ResponseEntity<ResponseStructure<AddressResponse>> addAddress(
-            @RequestBody AddressRequest addressRequest, @PathVariable Long userId) {
+            @RequestBody AddressRequest addressRequest,
+            @PathVariable Long userId) {
         return addressService.addAddress(addressRequest, userId);
     }
 
     @GetMapping("/users/{userId}/addresses")
-    public ResponseEntity<ResponseStructure<List<AddressResponse>>> getAddress(@PathVariable Long userId){
+    public ResponseEntity<ResponseStructure<List<AddressResponse>>> getAddress(@PathVariable Long userId) {
         return addressService.getAddress(userId);
     }
 
-   @PutMapping("/users/addresses/{addressId}")
-    public ResponseEntity<ResponseStructure<AddressResponse>> updateAddress(@PathVariable Long addressId, @RequestBody AddressRequest addressRequest){
+    @PutMapping("/users/addresses/{addressId}")
+    public ResponseEntity<ResponseStructure<AddressResponse>> updateAddress(
+            @PathVariable Long addressId,
+            @RequestBody AddressRequest addressRequest) {
         return addressService.updateAddress(addressId, addressRequest);
-   }
+    }
 
 
 }

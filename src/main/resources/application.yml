@@ -73,8 +73,8 @@ application:
     same_site: Lax
     secure: false
   client:
-    api_key: ${API_KEY}
-    username: ${USERNAME}
+    api_key: ${CLIENT_API_KEY}
+    username: ${CLIENT_USERNAME}
     client_id: ${CLIENT_ID}
 
 #debug: true

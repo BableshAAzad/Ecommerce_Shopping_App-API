@@ -2,6 +2,8 @@ package com.ecommerce.shopping.order.service.impl;
 
 import com.ecommerce.shopping.address.entity.Address;
 import com.ecommerce.shopping.address.repository.AddressRepository;
+import com.ecommerce.shopping.cartproduct.entity.CartProduct;
+import com.ecommerce.shopping.cartproduct.repository.CartProductRepository;
 import com.ecommerce.shopping.config.RestTemplateProvider;
 import com.ecommerce.shopping.contact.entity.Contact;
 import com.ecommerce.shopping.customer.entity.Customer;
@@ -24,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -38,6 +41,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderMapper orderMapper;
     private final RestTemplateProvider restTemplateProvider;
     private final UserService userService;
+    private final CartProductRepository cartProductRepository;
 
     @Override
     public ResponseEntity<ResponseStructure<OrderResponseDto>> generatePurchaseOrder(
@@ -57,6 +61,9 @@ public class OrderServiceImpl implements OrderService {
         Product product = productRepository
                 .findById(productId)
                 .orElseThrow(() -> new CartProductNotExistException("Product id : " + productId + ", is not exist"));
+
+        product.setProductQuantity(product.getProductQuantity() - orderRequest.getTotalQuantity());
+        product = productRepository.save(product);
 
         Order order = orderMapper.mapOrderRequestDtoToOrder(orderRequest, new Order());
         order.setProduct(product);
@@ -81,8 +88,18 @@ public class OrderServiceImpl implements OrderService {
                 .contactNumber1(contact1.getPriority() + " : " + contact1.getContactNumber())
                 .build();
 
-        if(contact2 != null)
+        if (contact2 != null)
             addressDto.setContactNumber2(contact2.getPriority() + " : " + contact2.getContactNumber());
+
+        Iterator<CartProduct> iterator = customer.getCartProducts().iterator();
+        while (iterator.hasNext()) {
+            CartProduct cartProduct = iterator.next();
+            if (cartProduct.getProduct().getProductId().equals(productId)) {
+                iterator.remove();
+                customerRepository.save(customer);
+                cartProductRepository.delete(cartProduct);
+            }
+        }
 
         OrderRequestDto orderRequestDto = OrderRequestDto.builder()
                 .orderId(order.getOrderId())

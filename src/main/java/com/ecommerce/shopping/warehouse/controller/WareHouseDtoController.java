@@ -21,9 +21,8 @@ public class WareHouseDtoController {
 
     //---------------------------------------------------------------------------------------------------
     @GetMapping("/products/{productId}")
-    public ResponseEntity<Product> findProduct(@PathVariable Long productId) {
-        Product product = restTemplateProvider.getProduct(productId);
-        return ResponseEntity.ok(product);
+    public ResponseEntity<ResponseStructure<Product>> findProduct(@PathVariable Long productId) {
+        return restTemplateProvider.getProduct(productId);
     }
 
     //---------------------------------------------------------------------------------------------------
@@ -62,31 +61,42 @@ public class WareHouseDtoController {
     }
 
     //---------------------------------------------------------------------------------------------------
-    @GetMapping("/storages/sellers/{sellerId}")
-    public ResponseEntity<List<Storage>> findStoragesBySellerId(@PathVariable Long sellerId) {
-        List<Storage> storages = restTemplateProvider.getStoragesBySellerId(sellerId);
-        return ResponseEntity.ok(storages);
+    // /storages/sellers/{sellerId}?page=0&size=10
+    @GetMapping("/sellers/{sellerId}/storages")
+    public ResponseEntity<ResponseStructure<PagedModel<Storage>>> findStoragesBySellerId(
+            @PathVariable Long sellerId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return restTemplateProvider.getStoragesBySellerId(sellerId, page, size);
     }
 
     //---------------------------------------------------------------------------------------------------
+//    /wareHouses/{wareHouseId}/storages?page=0&size=10
     @GetMapping("/wareHouses/{wareHouseId}/storages")
-    public ResponseEntity<List<Storage>> findStoragesByWareHouseId(@PathVariable Long wareHouseId) {
-        List<Storage> storages = restTemplateProvider.getStoragesByWareHouseId(wareHouseId);
-        return ResponseEntity.ok(storages);
+    public ResponseEntity<ResponseStructure<PagedModel<Storage>>> findStoragesByWareHouseId(
+            @PathVariable Long wareHouseId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return restTemplateProvider.getStoragesByWareHouseId(wareHouseId, page, size);
     }
 
     //---------------------------------------------------------------------------------------------------
+//  /addresses/{city}/wareHouses?page=0&size=10
     @GetMapping("/addresses/{city}/wareHouses")
-    public ResponseEntity<List<Map<String, Object>>> findWareHousesByCity(@PathVariable String city) {
-        List<Map<String, Object>> wareHouses = restTemplateProvider.getWareHousesByCity(city);
-        return ResponseEntity.ok(wareHouses);
+    public ResponseEntity<ResponseStructure<PagedModel<Map<String, Object>>>> findWareHousesByCity(
+            @PathVariable String city,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return restTemplateProvider.getWareHousesByCity(city, page, size);
     }
 
     //---------------------------------------------------------------------------------------------------
+//    /wareHouses-with-address?page=0&size=10
     @GetMapping("/wareHouses-with-address")
-    public ResponseEntity<List<Map<String, Object>>> findStoreHousesWithAddressForClient() {
-        List<Map<String, Object>> wareHouses = restTemplateProvider.getStoreHousesWithAddressForClient();
-        return ResponseEntity.ok(wareHouses);
+    public ResponseEntity<ResponseStructure<PagedModel<Map<String, Object>>>> findStoreHousesWithAddressForClient(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return restTemplateProvider.getStoreHousesWithAddressForClient(page, size);
     }
     //---------------------------------------------------------------------------------------------------
     //---------------------------------------------------------------------------------------------------

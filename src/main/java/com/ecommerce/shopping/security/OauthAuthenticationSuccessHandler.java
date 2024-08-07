@@ -1,5 +1,6 @@
 package com.ecommerce.shopping.security;
 
+import com.ecommerce.shopping.customer.entity.Customer;
 import com.ecommerce.shopping.enums.UserRole;
 import com.ecommerce.shopping.user.dto.AuthResponse;
 import com.ecommerce.shopping.user.entity.User;
@@ -52,14 +53,14 @@ public class OauthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
         Optional<User> optionalUser = userRepository.findByEmail(email);
         if (optionalUser.isEmpty()) {
             String username = userService.usernameGenerate(email);
-            user = User.builder()
+            Customer customer = (Customer) Customer.builder()
                     .userRole(UserRole.CUSTOMER)
                     .username(username)
                     .isEmailVerified(true)
                     .email(email)
                     .password("Password")
                     .build();
-            user = userRepository.save(user);
+            user = userRepository.save(customer);
         } else {
             user = optionalUser.get();
         }

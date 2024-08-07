@@ -6,11 +6,9 @@ import com.ecommerce.shopping.order.entity.Order;
 import com.ecommerce.shopping.user.entity.User;
 import com.ecommerce.shopping.wishlist.entity.Wishlist;
 import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 

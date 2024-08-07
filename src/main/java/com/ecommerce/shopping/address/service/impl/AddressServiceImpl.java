@@ -33,27 +33,34 @@ public class AddressServiceImpl implements AddressService {
     private final AddressMapper addressMapper;
 
     //----------------------------------------------------------------------------------------------------------------------------------------
-
     @Override
     public ResponseEntity<ResponseStructure<AddressResponse>> addAddress(AddressRequest addressRequest, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotExistException("UserId : " + userId + ", is not exist"));
         Address address = addressMapper.mapAddressRequestToAddress(addressRequest, new Address());
 
         if (user.getUserRole().equals(UserRole.CUSTOMER)) {
-            Customer customer = (Customer) user;
-            if (customer.getAddresses().size() >= 4) {
-                throw new AlreadyAddressExistException("Customer cannot have more than 4 addresses");
+            if (user instanceof Customer) {
+                Customer customer = (Customer) user;
+                if (customer.getAddresses().size() >= 4) {
+                    throw new AlreadyAddressExistException("Customer cannot have more than 4 addresses");
+                }
+                address.setCustomer(customer);
+                address = addressRepository.save(address);
+            } else {
+                throw new ClassCastException("User is not a Customer");
             }
-            address.setCustomer(customer);
-            address = addressRepository.save(address);
         } else if (user.getUserRole().equals(UserRole.SELLER)) {
-            Seller seller = (Seller) user;
-            if (seller.getAddress() != null) {
-                throw new AlreadyAddressExistException("Address already present, modify existing address");
+            if (user instanceof Seller) {
+                Seller seller = (Seller) user;
+                if (seller.getAddress() != null) {
+                    throw new AlreadyAddressExistException("Address already present, modify existing address");
+                }
+                address = addressRepository.save(address);
+                seller.setAddress(address);
+                sellerRepository.save(seller);
+            } else {
+                throw new ClassCastException("User is not a Seller");
             }
-            address = addressRepository.save(address);
-            seller.setAddress(address);
-            sellerRepository.save(seller);
         }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<AddressResponse>()
@@ -61,7 +68,6 @@ public class AddressServiceImpl implements AddressService {
                 .setMessage("Address created")
                 .setData(addressMapper.mapAddressToAddressResponse(address)));
     }
-
 
     //----------------------------------------------------------------------------------------------------------------------------------------
     @Override

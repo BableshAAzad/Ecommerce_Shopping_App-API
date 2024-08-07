@@ -10,6 +10,7 @@ import com.ecommerce.shopping.customer.entity.Customer;
 import com.ecommerce.shopping.customer.repository.CustomerRepository;
 import com.ecommerce.shopping.exception.CartProductNotExistException;
 import com.ecommerce.shopping.exception.CustomerNotExistException;
+import com.ecommerce.shopping.exception.ProductNotExistException;
 import com.ecommerce.shopping.product.entity.Product;
 import com.ecommerce.shopping.product.repository.ProductRepository;
 import com.ecommerce.shopping.utility.ResponseStructure;
@@ -19,7 +20,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -53,8 +56,10 @@ public class CartProductServiceImpl implements CartProductService {
 
         if (existingCartProduct != null) {
             // Update the quantity of the existing cart product
-            existingCartProduct.setSelectedQuantity(existingCartProduct.getSelectedQuantity() + cartProductRequest.getSelectedQuantity());
-            cartProductRepository.save(existingCartProduct);
+            if (existingCartProduct.getSelectedQuantity() < cartProductRequest.getSelectedQuantity()) {
+                existingCartProduct.setSelectedQuantity(existingCartProduct.getSelectedQuantity() + cartProductRequest.getSelectedQuantity());
+                cartProductRepository.save(existingCartProduct);
+            }
         } else {
             // Add a new cart product
             newCartProduct = cartProductMapper.mapCartProductRequestToCartProduct(cartProductRequest, new CartProduct());
@@ -68,13 +73,10 @@ public class CartProductServiceImpl implements CartProductService {
                 cartProducts.add(newCartProduct);
             }
         }
-
         customerRepository.save(customer);
-
         CartProductResponse cartProductResponse = cartProductMapper.mapCartProductToCartProductResponse(
                 existingCartProduct != null ? existingCartProduct : newCartProduct
         );
-
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<CartProductResponse>()
                 .setStatus(HttpStatus.CREATED.value())
                 .setMessage("Cart Product is created or updated")
@@ -136,17 +138,35 @@ public class CartProductServiceImpl implements CartProductService {
     //----------------------------------------------------------------------------------------------------------------------------
     @Override
     public ResponseEntity<ResponseStructure<List<CartProductResponse>>> getCartProducts(Long customerId) {
-        Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new CustomerNotExistException(
-                "Customer Id : " + customerId + ", is not exist"));
-        List<CartProductResponse> cartProductResponses = customer.getCartProducts()
-                .stream()
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new CustomerNotExistException("Customer Id : " + customerId + " does not exist"));
+
+        List<CartProduct> cartProducts = customer.getCartProducts();
+
+        if (cartProducts.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<List<CartProductResponse>>()
+                    .setStatus(HttpStatus.OK.value())
+                    .setMessage("No cart products found")
+                    .setData(Collections.emptyList()));
+        }
+
+        List<CartProduct> cartProductsUpdated = cartProducts.stream().map(cartProduct -> {
+            Product product = productRepository.findById(cartProduct.getProduct().getProductId())
+                    .orElseThrow(() -> new ProductNotExistException("Product Id : " + cartProduct.getProduct().getProductId() + " does not exist"));
+            cartProduct.setProduct(product);
+            return cartProductRepository.save(cartProduct);
+        }).toList();
+
+        List<CartProductResponse> cartProductResponses = cartProductsUpdated.stream()
                 .map(cartProductMapper::mapCartProductToCartProductResponse)
                 .toList();
+
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<List<CartProductResponse>>()
                 .setStatus(HttpStatus.OK.value())
-                .setMessage("Cart Products are founded")
+                .setMessage("Cart Products found")
                 .setData(cartProductResponses));
     }
     //----------------------------------------------------------------------------------------------------------------------------
+
 
 }

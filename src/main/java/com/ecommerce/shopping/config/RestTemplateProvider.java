@@ -11,7 +11,6 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.client.UnknownContentTypeException;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,16 +31,14 @@ public class RestTemplateProvider {
     private Long clientId;
 
     //---------------------------------------------------------------------------------------------------
-    public Product getProduct(Long productId) {
-        ResponseEntity<ResponseStructure<Product>> responseEntity = restTemplate.exchange(
+    public ResponseEntity<ResponseStructure<Product>> getProduct(Long productId) {
+        return restTemplate.exchange(
                 "http://localhost:8081/api/v1/inventories/" + productId,
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<ResponseStructure<Product>>() {
                 }
         );
-        ResponseStructure<Product> responseStructure = responseEntity.getBody();
-        return responseStructure.getData();
     }
 
     //---------------------------------------------------------------------------------------------------
@@ -112,7 +109,7 @@ public class RestTemplateProvider {
         headers.set("USERNAME", username);
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<ProductRequestDto> entity = new HttpEntity<>(productRequestDto, headers);
-         return restTemplate.exchange(
+        return restTemplate.exchange(
                 "http://localhost:8081/api/v1/clients/1/storages/" + storageId + "/inventories?quantity=" + quantity,
                 HttpMethod.POST,
                 entity,
@@ -141,89 +138,78 @@ public class RestTemplateProvider {
     }
 
     //---------------------------------------------------------------------------------------------------
-    public List<Storage> getStoragesBySellerId(Long sellerId) {
+    public ResponseEntity<ResponseStructure<PagedModel<Storage>>> getStoragesBySellerId(
+            Long sellerId, int page, int size) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("API-KEY", apiKey);
         headers.set("USERNAME", username);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<ResponseStructure<List<Storage>>> responseEntities = restTemplate.exchange(
-                "http://localhost:8081/api/v1/clients/storages/sellers/" + sellerId,
+        return restTemplate.exchange(
+                "http://localhost:8081/api/v1/clients/sellers/" + sellerId + "/storages?page=" + page + "&size=" + size,
                 HttpMethod.GET,
                 entity,
-                new ParameterizedTypeReference<ResponseStructure<List<Storage>>>() {
+                new ParameterizedTypeReference<ResponseStructure<PagedModel<Storage>>>() {
                 }
         );
-        ResponseStructure<List<Storage>> responseStructure = responseEntities.getBody();
-        return responseStructure.getData();
     }
 
     //---------------------------------------------------------------------------------------------------
-    public List<Storage> getStoragesByWareHouseId(Long wareHouseId) {
+    public ResponseEntity<ResponseStructure<PagedModel<Storage>>> getStoragesByWareHouseId(
+            Long wareHouseId, int page, int size) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("API-KEY", apiKey);
         headers.set("USERNAME", username);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<ResponseStructure<List<Storage>>> responseEntities = restTemplate.exchange(
-                "http://localhost:8081/api/v1/clients/storageHouses/" + wareHouseId + "/storages",
+        return restTemplate.exchange(
+                "http://localhost:8081/api/v1/clients/storageHouses/" + wareHouseId + "/storages?page=" + page + "&size=" + size,
                 HttpMethod.GET,
                 entity,
-                new ParameterizedTypeReference<ResponseStructure<List<Storage>>>() {
+                new ParameterizedTypeReference<ResponseStructure<PagedModel<Storage>>>() {
                 }
         );
-        ResponseStructure<List<Storage>> responseStructure = responseEntities.getBody();
-        return responseStructure.getData();
     }
 
     //---------------------------------------------------------------------------------------------------
-    public List<Map<String, Object>> getWareHousesByCity(String city) {
+    public ResponseEntity<ResponseStructure<PagedModel<Map<String, Object>>>> getWareHousesByCity(
+            String city, int page, int size) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("API-KEY", apiKey);
         headers.set("USERNAME", username);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<ResponseStructure<List<Map<String, Object>>>> responseEntity = restTemplate.exchange(
-                "http://localhost:8081/api/v1/client/cities/" + city + "/storehouses",
+        return restTemplate.exchange(
+                "http://localhost:8081/api/v1/clients/cities/" + city + "/storehouses?page=" + page + "&size=" + size,
                 HttpMethod.GET,
                 entity,
-                new ParameterizedTypeReference<ResponseStructure<List<Map<String, Object>>>>() {
+                new ParameterizedTypeReference<ResponseStructure<PagedModel<Map<String, Object>>>>() {
                 }
         );
-        ResponseStructure<List<Map<String, Object>>> responseStructure = responseEntity.getBody();
-        return responseStructure.getData();
     }
 
     //---------------------------------------------------------------------------------------------------
-    public List<Map<String, Object>> getStoreHousesWithAddressForClient() {
-        try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("API-KEY", apiKey);
-            headers.set("USERNAME", username);
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    public ResponseEntity<ResponseStructure<PagedModel<Map<String, Object>>>> getStoreHousesWithAddressForClient(
+            int page, int size) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("API-KEY", apiKey);
+        headers.set("USERNAME", username);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 
-            HttpEntity<String> entity = new HttpEntity<>(headers);
-            ResponseEntity<ResponseStructure<List<Map<String, Object>>>> responseEntity = restTemplate.exchange(
-                    "http://localhost:8081/api/v1/clients/" + clientId + "/storehouses",
-                    HttpMethod.GET,
-                    entity,
-                    new ParameterizedTypeReference<ResponseStructure<List<Map<String, Object>>>>() {
-                    }
-            );
-
-            ResponseStructure<List<Map<String, Object>>> responseStructure = responseEntity.getBody();
-            return responseStructure.getData();
-        } catch (UnknownContentTypeException ex) {
-            // Log the error and handle the HTML response
-            System.err.println("Unexpected content type: " + ex.getMessage());
-            // Handle the response as needed
-            return Collections.emptyList();
-        }
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        return restTemplate.exchange(
+                "http://localhost:8081/api/v1/clients/" + clientId + "/storehouses?page=" + page + "&size=" + size,
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<ResponseStructure<PagedModel<Map<String, Object>>>>() {
+                }
+        );
     }
 
     //---------------------------------------------------------------------------------------------------
-    public ResponseEntity<ResponseStructure<OrderResponseDto>> generatePurchaseOrder(OrderRequestDto orderRequestDto, Long productId) {
+    public ResponseEntity<ResponseStructure<OrderResponseDto>> generatePurchaseOrder(
+            OrderRequestDto orderRequestDto, Long productId) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("API-KEY", apiKey);
         headers.set("USERNAME", username);

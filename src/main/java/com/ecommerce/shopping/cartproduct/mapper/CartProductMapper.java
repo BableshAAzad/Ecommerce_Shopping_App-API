@@ -22,7 +22,7 @@ public class CartProductMapper {
         return CartProductResponse.builder()
                 .cartProductId(cartProduct.getCartProductId())
                 .selectedQuantity(cartProduct.getSelectedQuantity())
-                .product(productMapper.mapProductToProductResponse(cartProduct.getProduct()))
+                .product(productMapper.mapProductToProductResponseCart(cartProduct.getProduct()))
                 .build();
     }
 

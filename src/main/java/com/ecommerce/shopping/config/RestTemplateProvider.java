@@ -2,7 +2,8 @@ package com.ecommerce.shopping.config;
 
 import com.ecommerce.shopping.order.dto.OrderRequestDto;
 import com.ecommerce.shopping.order.dto.OrderResponseDto;
-import com.ecommerce.shopping.product.dto.ProductResponseDto;
+import com.ecommerce.shopping.product.dto.ProductRequestDto;
+import com.ecommerce.shopping.product.dto.ProductResponse;
 import com.ecommerce.shopping.warehouse.dto.*;
 import com.ecommerce.shopping.utility.ResponseStructure;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,42 +32,42 @@ public class RestTemplateProvider {
     private Long clientId;
 
     //---------------------------------------------------------------------------------------------------
-    public ResponseEntity<ResponseStructure<Product>> getProduct(Long productId) {
+    public ResponseEntity<ResponseStructure<Inventory>> getProduct(Long productId) {
         return restTemplate.exchange(
                 "http://localhost:8081/api/v1/inventories/" + productId,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<ResponseStructure<Product>>() {
+                new ParameterizedTypeReference<ResponseStructure<Inventory>>() {
                 }
         );
     }
 
     //---------------------------------------------------------------------------------------------------
-    public ResponseEntity<ResponseStructure<PagedModel<Product>>> getProducts(int page, int size) {
+    public ResponseEntity<ResponseStructure<PagedModel<Inventory>>> getProducts(int page, int size) {
         return restTemplate.exchange(
                 "http://localhost:8081/api/v1/inventories?page=" + page + "&size=" + size,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<ResponseStructure<PagedModel<Product>>>() {
+                new ParameterizedTypeReference<ResponseStructure<PagedModel<Inventory>>>() {
                 }
         );
     }
 
     //---------------------------------------------------------------------------------------------------
     //inventories/search/criteria?page=0&size=10
-    public ResponseEntity<ResponseStructure<PagedModel<Product>>> searchProducts(String query, int page, int size) {
+    public ResponseEntity<ResponseStructure<PagedModel<Inventory>>> searchProducts(String query, int page, int size) {
         return restTemplate.exchange(
                 "http://localhost:8081/api/v1/inventories/search/" + query + "?page=" + page + "&size=" + size,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<ResponseStructure<PagedModel<Product>>>() {
+                new ParameterizedTypeReference<ResponseStructure<PagedModel<Inventory>>>() {
                 }
         );
     }
 
     //---------------------------------------------------------------------------------------------------
     //inventories/filter?page=0&size=10
-    public ResponseEntity<ResponseStructure<PagedModel<Product>>> filterProducts(
+    public ResponseEntity<ResponseStructure<PagedModel<Inventory>>> filterProducts(
             InventorySearchCriteria inventorySearchCriteria, int page, int size) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -76,14 +77,14 @@ public class RestTemplateProvider {
                 "http://localhost:8081/api/v1/inventories/filter" + "?page=" + page + "&size=" + size,
                 HttpMethod.POST,
                 requestEntity,
-                new ParameterizedTypeReference<ResponseStructure<PagedModel<Product>>>() {
+                new ParameterizedTypeReference<ResponseStructure<PagedModel<Inventory>>>() {
                 }
         );
     }
 
     //---------------------------------------------------------------------------------------------------
     //inventories/sellers/sellerId?page=0&size=10
-    public ResponseEntity<ResponseStructure<PagedModel<Product>>> getProductsBySellerId(
+    public ResponseEntity<ResponseStructure<PagedModel<Inventory>>> getProductsBySellerId(
             Long sellerId, int page, int size) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("API-KEY", apiKey);
@@ -94,13 +95,13 @@ public class RestTemplateProvider {
                 "http://localhost:8081/api/v1/inventories/sellers/" + sellerId + "?page=" + page + "&size=" + size,
                 HttpMethod.GET,
                 entity,
-                new ParameterizedTypeReference<ResponseStructure<PagedModel<Product>>>() {
+                new ParameterizedTypeReference<ResponseStructure<PagedModel<Inventory>>>() {
                 }
         );
     }
 
     //---------------------------------------------------------------------------------------------------
-    public ResponseEntity<ResponseStructure<ProductResponseDto>> addProduct(
+    public ResponseEntity<ResponseStructure<ProductResponse>> addProduct(
             Long storageId,
             int quantity,
             ProductRequestDto productRequestDto) {
@@ -113,13 +114,13 @@ public class RestTemplateProvider {
                 "http://localhost:8081/api/v1/clients/1/storages/" + storageId + "/inventories?quantity=" + quantity,
                 HttpMethod.POST,
                 entity,
-                new ParameterizedTypeReference<ResponseStructure<ProductResponseDto>>() {
+                new ParameterizedTypeReference<ResponseStructure<ProductResponse>>() {
                 }
         );
     }
 
     //---------------------------------------------------------------------------------------------------
-    public ResponseEntity<ResponseStructure<ProductResponseDto>> updateProduct(
+    public ResponseEntity<ResponseStructure<ProductResponse>> updateProduct(
             Long productId,
             ProductRequestDto productRequestDto) {
 
@@ -132,7 +133,7 @@ public class RestTemplateProvider {
                 "http://localhost:8081/api/v1/clients/inventories/" + productId,
                 HttpMethod.PUT,
                 entity,
-                new ParameterizedTypeReference<ResponseStructure<ProductResponseDto>>() {
+                new ParameterizedTypeReference<ResponseStructure<ProductResponse>>() {
                 }
         );
     }

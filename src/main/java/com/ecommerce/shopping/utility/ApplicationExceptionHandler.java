@@ -98,6 +98,18 @@ public class ApplicationExceptionHandler {
     public ResponseEntity<ErrorStructure<String>> handleImageNotExist(ImageNotExistException ex){
         return errorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), "Image not found");
     }
+
+    public ResponseEntity<ErrorStructure<String>> handleInvalidFileFormat(InvalidFileFormatException ex){
+        return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "Invalid file format");
+    }
+    public ResponseEntity<ErrorStructure<String>> handleFileSize(FileSizeExceededException ex){
+        return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "File size is to large");
+    }
+
+    public ResponseEntity<ErrorStructure<String>> handleDiscountNotExist(DiscountNotExistException ex){
+        return errorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), "Discount not found");
+    }
+
     @ExceptionHandler
     public ResponseEntity<ErrorStructure<Map<String, String>>> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex) {

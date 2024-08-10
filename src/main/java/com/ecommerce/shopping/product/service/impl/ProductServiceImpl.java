@@ -45,6 +45,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ResponseEntity<ResponseStructure<ProductResponse>> updateProduct(
             Long productId,
+            int quantity,
             MultipartFile productImage,
             ProductRequest productRequest) {
 
@@ -82,13 +83,16 @@ public class ProductServiceImpl implements ProductService {
             if (!images.isEmpty())
                 productRequestDto.setProductImage(images.getFirst().getImage());
         }
+        product = productMapper.mapProductRequestToProduct(productRequest, product);
+        product.setProductQuantity(quantity);
+        product = productRepository.save(product);
         //   update discount
         updateDiscount(productRequest, product);
         //   Update cart-product
         updateCartProduct(product);
 
         productRequestDto.setProductId(productId);
-        return restTemplateProvider.updateProduct(productId, productRequestDto);
+        return restTemplateProvider.updateProduct(productId, quantity, productRequestDto);
     }
 
     //---------------------------------------------------------------------------------------------------
@@ -181,7 +185,8 @@ public class ProductServiceImpl implements ProductService {
     //---------------------------------------------------------------------------------------------------
 // if update product then also update all cart-products
     private void updateCartProduct(Product product) {
-        cartProductRepository.findByProduct(product).forEach(cartProduct -> {
+        List<CartProduct> cartProducts = cartProductRepository.findByProduct(product);
+        cartProducts.forEach(cartProduct -> {
             cartProduct.setProduct(product);
             cartProductRepository.save(cartProduct);
         });

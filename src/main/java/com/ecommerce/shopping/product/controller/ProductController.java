@@ -23,15 +23,18 @@ public class ProductController {
     private final RestTemplateProvider restTemplateProvider;
 
     //---------------------------------------------------------------------------------------------------
-    @PutMapping("/sellers/products/{productId}")
+//    /sellers/products/{productId}/stocks?quantity=5
+    @PutMapping("/sellers/products/{productId}/stocks")
     public ResponseEntity<ResponseStructure<ProductResponse>> updateProduct(
             @PathVariable Long productId,
+            @RequestParam int quantity,
             @RequestParam(value = "productImage", required = false) MultipartFile productImage,
             @Valid @ModelAttribute ProductRequest productRequest) {
-        return productService.updateProduct(productId, productImage, productRequest);
+        return productService.updateProduct(productId, quantity, productImage, productRequest);
     }
 
     //---------------------------------------------------------------------------------------------------
+//  /storages/{storageId}/products?quantity=5
     @PostMapping("/storages/{storageId}/products")
     public ResponseEntity<ResponseStructure<ProductResponse>> addProduct(
             @PathVariable Long storageId,

@@ -12,6 +12,7 @@ public interface ProductService {
 
     ResponseEntity<ResponseStructure<ProductResponse>> updateProduct(
             Long productId,
+            int quantity,
             MultipartFile productImage,
             ProductRequest productRequest);
 

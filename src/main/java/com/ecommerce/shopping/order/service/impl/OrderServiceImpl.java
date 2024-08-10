@@ -106,6 +106,7 @@ public class OrderServiceImpl implements OrderService {
                 .customerId(customerId)
                 .totalQuantity(orderRequest.getTotalQuantity())
                 .totalPrice(orderRequest.getTotalPrice())
+                .discount(orderRequest.getDiscount())
                 .discountPrice(orderRequest.getDiscountPrice())
                 .totalPayableAmount(orderRequest.getTotalPayableAmount())
                 .addressDto(addressDto)

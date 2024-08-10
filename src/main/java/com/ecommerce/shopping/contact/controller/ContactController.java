@@ -15,6 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class ContactController {
     private final ContactService contactService;
+    //-----------------------------------------------------------------------------------------------
 
     @PostMapping("/addresses/{addressId}/contacts")
     public ResponseEntity<ResponseStructure<Contact>> addContact(
@@ -22,6 +23,7 @@ public class ContactController {
             @PathVariable Long addressId) {
         return contactService.addContact(contact, addressId);
     }
+    //-----------------------------------------------------------------------------------------------
 
     @PutMapping("/addresses/{addressId}/contacts/{contactId}")
     public ResponseEntity<ResponseStructure<Contact>> updateContact(
@@ -30,11 +32,13 @@ public class ContactController {
             @RequestBody Contact contact) {
         return contactService.updateContact(addressId, contactId, contact);
     }
+    //-----------------------------------------------------------------------------------------------
 
     @GetMapping("/addresses/{addressId}/contacts")
     public ResponseEntity<ResponseStructure<Set<Contact>>> getContacts(
             @PathVariable Long addressId) {
         return contactService.getContacts(addressId);
     }
+    //-----------------------------------------------------------------------------------------------
 
 }

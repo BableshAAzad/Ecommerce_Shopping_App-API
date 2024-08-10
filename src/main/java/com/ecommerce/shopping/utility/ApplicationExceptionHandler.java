@@ -74,7 +74,7 @@ public class ApplicationExceptionHandler {
 
     @ExceptionHandler
         public ResponseEntity<ErrorStructure<String>> handleContactAlreadyExist(ContactAlReadyExistException ex){
-        return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "2 numbers is already exist in this address");
+        return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "This number is already exist in this address");
     }
 
     @ExceptionHandler

@@ -122,6 +122,7 @@ public class RestTemplateProvider {
     //---------------------------------------------------------------------------------------------------
     public ResponseEntity<ResponseStructure<ProductResponse>> updateProduct(
             Long productId,
+            int quantity,
             ProductRequestDto productRequestDto) {
 
         HttpHeaders headers = new HttpHeaders();
@@ -130,7 +131,7 @@ public class RestTemplateProvider {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<ProductRequestDto> entity = new HttpEntity<>(productRequestDto, headers);
         return restTemplate.exchange(
-                "http://localhost:8081/api/v1/clients/inventories/" + productId,
+                "http://localhost:8081/api/v1/clients/inventories/" + productId+"/stocks?quantity="+quantity,
                 HttpMethod.PUT,
                 entity,
                 new ParameterizedTypeReference<ResponseStructure<ProductResponse>>() {

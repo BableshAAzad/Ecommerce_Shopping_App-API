@@ -18,7 +18,13 @@ public class Discount {
     private Long discountId;
     @Enumerated(EnumType.STRING)
     private DiscountType discountType;
-    private double discountValue=0.0;
+    private double discountValue;
+    private boolean isActive=true;
     @ManyToOne
     private Product product;
+
+    public boolean getIsActive() {
+        return this.isActive;
+    }
+
 }

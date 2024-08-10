@@ -11,6 +11,7 @@ public class OrderMapper {
         order.setTotalQuantity(orderRequestDto.getTotalQuantity());
         order.setTotalPrice(orderRequestDto.getTotalPrice());
         order.setDiscountPrice(orderRequestDto.getDiscountPrice());
+        order.setDiscount(orderRequestDto.getDiscount());
         order.setTotalPayableAmount(orderRequestDto.getTotalPayableAmount());
         return order;
     }

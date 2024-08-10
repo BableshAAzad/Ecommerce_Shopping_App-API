@@ -1,18 +1,16 @@
-package com.ecommerce.shopping.warehouse.dto;
+package com.ecommerce.shopping.product.dto;
 
+import com.ecommerce.shopping.enums.DiscountType;
 import com.ecommerce.shopping.enums.MaterialType;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Builder;
+import lombok.Data;
 
 import java.util.List;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class ProductRequest {
+@Data
+@Builder
+public class ProductRequestDto {
+    private Long productId;
     private Long sellerId;
     private String productTitle;
     private double lengthInMeters;
@@ -23,4 +21,6 @@ public class ProductRequest {
     private String description;
     private String productImage;
     private List<MaterialType> materialTypes;
+    private double discount;
+    private DiscountType discountType;
 }

@@ -26,4 +26,12 @@ public class CacheConfig{
                 .concurrencyLevel(Runtime.getRuntime().availableProcessors())
                 .build();
     }
+
+    @Bean
+    Cache<String, String> secreteKey(){
+        return CacheBuilder.newBuilder()
+                .expireAfterWrite(Duration.ofMinutes(15))
+                .concurrencyLevel(Runtime.getRuntime().availableProcessors())
+                .build();
+    }
 }

@@ -74,7 +74,7 @@ public class ApplicationExceptionHandler {
 
     @ExceptionHandler
         public ResponseEntity<ErrorStructure<String>> handleContactAlreadyExist(ContactAlReadyExistException ex){
-        return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "2 numbers is already exist in this address");
+        return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "This number is already exist in this address");
     }
 
     @ExceptionHandler
@@ -89,6 +89,25 @@ public class ApplicationExceptionHandler {
 
     public ResponseEntity<ErrorStructure<String>> handleOrderNotExist(OrderNotExistException ex){
         return errorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), "Order not found");
+    }
+
+    public ResponseEntity<ErrorStructure<String>> handleProductNotExist(ProductNotExistException ex){
+        return errorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), "Product not found");
+    }
+
+    public ResponseEntity<ErrorStructure<String>> handleImageNotExist(ImageNotExistException ex){
+        return errorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), "Image not found");
+    }
+
+    public ResponseEntity<ErrorStructure<String>> handleInvalidFileFormat(InvalidFileFormatException ex){
+        return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "Invalid file format");
+    }
+    public ResponseEntity<ErrorStructure<String>> handleFileSize(FileSizeExceededException ex){
+        return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "File size is to large");
+    }
+
+    public ResponseEntity<ErrorStructure<String>> handleDiscountNotExist(DiscountNotExistException ex){
+        return errorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), "Discount not found");
     }
 
     @ExceptionHandler

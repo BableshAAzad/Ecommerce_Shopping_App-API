@@ -31,6 +31,36 @@ spring:
             enable: true
             required: true
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_ID}
+            client-secret: ${GOOGLE_SECRET}
+            scope: email, profile
+            redirect-uri: http://localhost:8080/login/oauth2/code/google
+            client-name: google
+            authorization-grant-type: authorization_code
+          github:
+            client-id: ${GITHUB_ID}
+            client-secret: ${GITHUB_SECRET}
+            scope: email, profile
+            redirect-uri: http://localhost:8080/login/oauth2/code/github
+            client-name: github
+            authorization-grant-type: authorization_code
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 3MB
+      max-request-size: 3MB
+
+
 # Application Custom configuration    (3600000 = 1hour and 1296000000 = 15days) in milli
 # (3600 = 1hour and 1296000 = 15days) in seconds
 application:
@@ -43,8 +73,20 @@ application:
     same_site: Lax
     secure: false
   client:
-    api_key: ${API_KEY}
-    username: ${USERNAME}
+    api_key: ${CLIENT_API_KEY}
+    username: ${CLIENT_USERNAME}
     client_id: ${CLIENT_ID}
 
 #debug: true
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+
+#Cloudinary configuration for image upload
+cloudinary:
+  cloud:
+    name: ${CLOUDINARY_CLOUD_NAME}
+  api:
+    key: ${CLOUDINARY_API_KEY}
+    secret: ${CLOUDINARY_API_SECRET}

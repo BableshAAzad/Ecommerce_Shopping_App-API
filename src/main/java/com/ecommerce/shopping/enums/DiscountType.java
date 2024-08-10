@@ -1,10 +1,15 @@
 package com.ecommerce.shopping.enums;
 
 public enum DiscountType {
-    NEW,
-    SPECIAL,
+    // Seasonal Discounts
     DIWALI,
     NEWYEAR,
+
+    // Special Event Discounts
+    NEW,
+    SPECIAL,
+
+    // Discount Methods
     PERCENTAGE,
     FLAT
 }

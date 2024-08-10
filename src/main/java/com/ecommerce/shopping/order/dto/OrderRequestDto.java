@@ -12,6 +12,7 @@ public class OrderRequestDto {
     private Long customerId;
     private int totalQuantity;
     private double totalPrice;
+    private double discount;
     private double discountPrice;
     private double totalPayableAmount;
 

@@ -8,6 +8,7 @@ import lombok.Setter;
 public class OrderRequest {
     private int totalQuantity;
     private double totalPrice;
+    private double discount;
     private double discountPrice;
     private double totalPayableAmount;
 }

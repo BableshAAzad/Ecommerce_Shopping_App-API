@@ -18,6 +18,7 @@ public class Order {
     private Long orderId;
     private int totalQuantity=0;
     private double totalPrice=0.0;
+    private double discount=0.0;
     private double discountPrice=0.0;
     private double totalPayableAmount=0.0;
     @ManyToOne

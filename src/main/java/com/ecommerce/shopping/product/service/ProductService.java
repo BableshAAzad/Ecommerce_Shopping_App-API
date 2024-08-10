@@ -1,22 +1,25 @@
 package com.ecommerce.shopping.product.service;
 
 
-import com.ecommerce.shopping.product.dto.ProductResponseDto;
+import com.ecommerce.shopping.product.dto.ProductResponse;
 import com.ecommerce.shopping.utility.ResponseStructure;
-import com.ecommerce.shopping.warehouse.dto.ProductRequest;
+import com.ecommerce.shopping.product.dto.ProductRequest;
+import com.ecommerce.shopping.warehouse.dto.Inventory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface ProductService {
 
-    ResponseEntity<ResponseStructure<ProductResponseDto>> updateProduct(
+    ResponseEntity<ResponseStructure<ProductResponse>> updateProduct(
             Long productId,
+            int quantity,
             MultipartFile productImage,
             ProductRequest productRequest);
 
-    ResponseEntity<ResponseStructure<ProductResponseDto>> addProduct(
+    ResponseEntity<ResponseStructure<ProductResponse>> addProduct(
             Long storageId,
             int quantity,
             MultipartFile productImage,
             ProductRequest productRequest);
+
 }

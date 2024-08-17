@@ -5,6 +5,7 @@ import com.ecommerce.shopping.order.dto.OrderResponseDto;
 import com.ecommerce.shopping.product.dto.ProductRequestDto;
 import com.ecommerce.shopping.product.dto.ProductResponse;
 import com.ecommerce.shopping.warehouse.dto.*;
+import com.ecommerce.shopping.enums.BaseUrl;
 import com.ecommerce.shopping.utility.ResponseStructure;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -34,7 +35,7 @@ public class RestTemplateProvider {
     //---------------------------------------------------------------------------------------------------
     public ResponseEntity<ResponseStructure<Inventory>> getProduct(Long productId) {
         return restTemplate.exchange(
-                "http://localhost:8081/api/v1/inventories/" + productId,
+                BaseUrl.BASE_URL + "inventories/" + productId,
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<ResponseStructure<Inventory>>() {
@@ -45,7 +46,7 @@ public class RestTemplateProvider {
     //---------------------------------------------------------------------------------------------------
     public ResponseEntity<ResponseStructure<PagedModel<Inventory>>> getProducts(int page, int size) {
         return restTemplate.exchange(
-                "http://localhost:8081/api/v1/inventories?page=" + page + "&size=" + size,
+                BaseUrl.BASE_URL + "inventories?page=" + page + "&size=" + size,
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<ResponseStructure<PagedModel<Inventory>>>() {
@@ -57,7 +58,7 @@ public class RestTemplateProvider {
     //inventories/search/criteria?page=0&size=10
     public ResponseEntity<ResponseStructure<PagedModel<Inventory>>> searchProducts(String query, int page, int size) {
         return restTemplate.exchange(
-                "http://localhost:8081/api/v1/inventories/search/" + query + "?page=" + page + "&size=" + size,
+                BaseUrl.BASE_URL + "inventories/search/" + query + "?page=" + page + "&size=" + size,
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<ResponseStructure<PagedModel<Inventory>>>() {
@@ -74,7 +75,7 @@ public class RestTemplateProvider {
 
         HttpEntity<InventorySearchCriteria> requestEntity = new HttpEntity<>(inventorySearchCriteria, headers);
         return restTemplate.exchange(
-                "http://localhost:8081/api/v1/inventories/filter" + "?page=" + page + "&size=" + size,
+                BaseUrl.BASE_URL + "inventories/filter" + "?page=" + page + "&size=" + size,
                 HttpMethod.POST,
                 requestEntity,
                 new ParameterizedTypeReference<ResponseStructure<PagedModel<Inventory>>>() {
@@ -92,7 +93,7 @@ public class RestTemplateProvider {
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         return restTemplate.exchange(
-                "http://localhost:8081/api/v1/inventories/sellers/" + sellerId + "?page=" + page + "&size=" + size,
+                BaseUrl.BASE_URL + "inventories/sellers/" + sellerId + "?page=" + page + "&size=" + size,
                 HttpMethod.GET,
                 entity,
                 new ParameterizedTypeReference<ResponseStructure<PagedModel<Inventory>>>() {
@@ -111,7 +112,7 @@ public class RestTemplateProvider {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<ProductRequestDto> entity = new HttpEntity<>(productRequestDto, headers);
         return restTemplate.exchange(
-                "http://localhost:8081/api/v1/clients/1/storages/" + storageId + "/inventories?quantity=" + quantity,
+                BaseUrl.BASE_URL + "clients/1/storages/" + storageId + "/inventories?quantity=" + quantity,
                 HttpMethod.POST,
                 entity,
                 new ParameterizedTypeReference<ResponseStructure<ProductResponse>>() {
@@ -131,7 +132,7 @@ public class RestTemplateProvider {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<ProductRequestDto> entity = new HttpEntity<>(productRequestDto, headers);
         return restTemplate.exchange(
-                "http://localhost:8081/api/v1/clients/inventories/" + productId+"/stocks?quantity="+quantity,
+                BaseUrl.BASE_URL + "clients/inventories/" + productId + "/stocks?quantity=" + quantity,
                 HttpMethod.PUT,
                 entity,
                 new ParameterizedTypeReference<ResponseStructure<ProductResponse>>() {
@@ -148,7 +149,7 @@ public class RestTemplateProvider {
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         return restTemplate.exchange(
-                "http://localhost:8081/api/v1/clients/sellers/" + sellerId + "/storages?page=" + page + "&size=" + size,
+                BaseUrl.BASE_URL + "clients/sellers/" + sellerId + "/storages?page=" + page + "&size=" + size,
                 HttpMethod.GET,
                 entity,
                 new ParameterizedTypeReference<ResponseStructure<PagedModel<Storage>>>() {
@@ -165,7 +166,7 @@ public class RestTemplateProvider {
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         return restTemplate.exchange(
-                "http://localhost:8081/api/v1/clients/storageHouses/" + wareHouseId + "/storages?page=" + page + "&size=" + size,
+                BaseUrl.BASE_URL + "clients/storageHouses/" + wareHouseId + "/storages?page=" + page + "&size=" + size,
                 HttpMethod.GET,
                 entity,
                 new ParameterizedTypeReference<ResponseStructure<PagedModel<Storage>>>() {
@@ -182,7 +183,7 @@ public class RestTemplateProvider {
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         return restTemplate.exchange(
-                "http://localhost:8081/api/v1/clients/cities/" + city + "/storehouses?page=" + page + "&size=" + size,
+                BaseUrl.BASE_URL + "clients/cities/" + city + "/storehouses?page=" + page + "&size=" + size,
                 HttpMethod.GET,
                 entity,
                 new ParameterizedTypeReference<ResponseStructure<PagedModel<Map<String, Object>>>>() {
@@ -201,7 +202,7 @@ public class RestTemplateProvider {
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         return restTemplate.exchange(
-                "http://localhost:8081/api/v1/clients/" + clientId + "/storehouses?page=" + page + "&size=" + size,
+                BaseUrl.BASE_URL + "clients/" + clientId + "/storehouses?page=" + page + "&size=" + size,
                 HttpMethod.GET,
                 entity,
                 new ParameterizedTypeReference<ResponseStructure<PagedModel<Map<String, Object>>>>() {
@@ -219,7 +220,7 @@ public class RestTemplateProvider {
 
         HttpEntity<OrderRequestDto> entity = new HttpEntity<>(orderRequestDto, headers);
         return restTemplate.exchange(
-                "http://localhost:8081/api/v1/clients/inventories/" + productId + "/purchase-orders",
+                BaseUrl.BASE_URL + "clients/inventories/" + productId + "/purchase-orders",
                 HttpMethod.POST,
                 entity,
                 new ParameterizedTypeReference<ResponseStructure<OrderResponseDto>>() {
@@ -237,7 +238,7 @@ public class RestTemplateProvider {
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         return restTemplate.exchange(
-                "http://localhost:8081/api/v1/clients/purchase-orders/customers/" + customerId,
+                BaseUrl.BASE_URL + "clients/purchase-orders/customers/" + customerId,
                 HttpMethod.GET,
                 entity,
                 new ParameterizedTypeReference<ResponseStructure<List<OrderResponseDto>>>() {
@@ -254,7 +255,7 @@ public class RestTemplateProvider {
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
-        return restTemplate.exchange("http://localhost:8081/api/v1/clients/purchase-orders/invoice/" + orderId,
+        return restTemplate.exchange(BaseUrl.BASE_URL + "clients/purchase-orders/invoice/" + orderId,
                 HttpMethod.GET,
                 entity,
                 new ParameterizedTypeReference<byte[]>() {

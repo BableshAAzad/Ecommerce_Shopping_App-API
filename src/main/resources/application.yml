@@ -105,4 +105,4 @@ cloudinary:
 #app:
 #  s3:
 #    bucket: ecommerceshoppingbucket
-#////////////
+#/////////

@@ -36,18 +36,6 @@ import java.util.Random;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private final UserRepository userRepository;
-    private final UserMapper userMapper;
-    private final PasswordEncoder passwordEncoder;
-    private final Cache<String, User> userCache;
-    private final Cache<String, String> otpCache;
-    private final Cache<String, String> secreteKey;
-    private final Random random;
-    private final MailService mailService;
-    private final AuthenticationManager authenticationManager;
-    private final JwtService jwtService;
-    private final AccessTokenRepository accessTokenRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
 
     @Value("${application.jwt.access_expiry_seconds}")
     private long accessExpirySeconds;
@@ -64,6 +52,18 @@ public class UserServiceImpl implements UserService {
     @Value("${application.cookie.secure}")
     private boolean secure;
 
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
+    private final Cache<String, User> userCache;
+    private final Cache<String, String> otpCache;
+    private final Cache<String, String> secreteKey;
+    private final Random random;
+    private final MailService mailService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
+    private final AccessTokenRepository accessTokenRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     public UserServiceImpl(UserRepository userRepository,
                            UserMapper userMapper,
@@ -197,11 +197,11 @@ public class UserServiceImpl implements UserService {
                 user = userRepository.save(user);
                 //            Send mail to user for confirmation
                 mailSend(user.getEmail(), "Email Verification done", "<h3>Your account is created in EcommerceShoppingApp</h3></br><h4>Your username is : " + userGen + " and UserRole is : " + user.getUserRole() + "</h4>");
-            } else if(user.getPassword() != null){
+            } else if (user.getPassword() != null) {
                 user.setPassword(passwordEncoder.encode(user.getPassword()));
                 user = userRepository.save(user);
                 mailSend(user.getEmail(), "Profile successfully updated", "<h3>Your account is updated in EcommerceShoppingApp</h3></br><h4>Your username is : " + user.getUsername() + " and UserRole is : " + user.getUserRole() + "</h4>");
-            }else{
+            } else {
                 return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<UserResponse>()
                         .setStatus(HttpStatus.OK.value())
                         .setMessage("User verified")
@@ -311,12 +311,12 @@ public class UserServiceImpl implements UserService {
         int otp = random.nextInt(100000, 999999);
         otpCache.put(user.getEmail(), otp + "");
         int key = random.nextInt(100000, 999999);
-        secreteKey.put(user.getEmail(), key+"");
+        secreteKey.put(user.getEmail(), key + "");
 
         String otpExpired = otpExpirationTimeCalculate(5);
 //                Send otp in mail
         mailSend(user.getEmail(), "OTP verification for EcommerceShoppingApp",
-                STR."<h3>Welcome to Ecommerce Shopping Application</h3></br><h4>Otp : \{otp}</h4></br><p>\{otpExpired}</p></br><h4>Secret Key for password reset : \{key}</h4>");
+                "<h3>Welcome to Ecommerce Shopping Application</h3></br><h4>Otp : " + otp + "</h4></br><p>" + otpExpired + "</p></br><h4>Secret Key for password reset : " + key + "</h4>");
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ResponseStructure<UserResponse>()
                         .setStatus(HttpStatus.OK.value())
@@ -329,13 +329,13 @@ public class UserServiceImpl implements UserService {
     public ResponseEntity<ResponseStructure<UserResponse>> passwordResetByEmailVerification(UserRequest userRequest, String secrete) {
         User cacheUser = userCache.getIfPresent(userRequest.getEmail());
         User existUser = userRepository.findByEmail(userRequest.getEmail())
-                .orElseThrow(() -> new UserNotExistException(STR."Email Id : \{userRequest.getEmail()}, is not exist"));
+                .orElseThrow(() -> new UserNotExistException("Email Id : " + userRequest.getEmail() + ", is not exist"));
         String key = secreteKey.getIfPresent(userRequest.getEmail());
         if (cacheUser != null && key != null && key.equals(secrete)) {
             existUser.setPassword(passwordEncoder.encode(userRequest.getPassword()));
             existUser = userRepository.save(existUser);
             mailSend(existUser.getEmail(), "Password reset done at EcommerceShoppingApp",
-                    STR."<h3>Welcome to Ecommerce Shopping Applicationa</h3></br><p>Your password reset successfully done</p></br><h4>Your Username is : \{existUser.getUsername()}</h4>");
+                    "<h3>Welcome to Ecommerce Shopping Applicationa</h3></br><p>Your password reset successfully done</p></br><h4>Your Username is : " + existUser.getUsername() + "</h4>");
             return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseStructure<UserResponse>()
                             .setStatus(HttpStatus.OK.value())
@@ -502,7 +502,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<LogoutResponse> logoutFromAllDevices(String refreshToken, String accessToken) {
         String username = jwtService.extractUserName(refreshToken);
-        User user = userRepository.findByUsername(username).get();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotExistException("Username : " + ", is not exist"));
 
         List<RefreshToken> listRT = refreshTokenRepository.findByUserAndIsBlocked(user, false);
         List<AccessToken> listAT = accessTokenRepository.findByUserAndIsBlocked(user, false);

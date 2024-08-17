@@ -22,7 +22,6 @@ import com.ecommerce.shopping.product.service.ProductService;
 import com.ecommerce.shopping.utility.ResponseStructure;
 import com.ecommerce.shopping.product.dto.ProductRequest;
 import com.ecommerce.shopping.product.dto.ProductRequestDto;
-import com.ecommerce.shopping.warehouse.dto.Inventory;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

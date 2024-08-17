@@ -19,7 +19,7 @@ public class Discount {
     @Enumerated(EnumType.STRING)
     private DiscountType discountType;
     private double discountValue;
-    private boolean isActive=true;
+    private boolean isActive;
     @ManyToOne
     private Product product;
 

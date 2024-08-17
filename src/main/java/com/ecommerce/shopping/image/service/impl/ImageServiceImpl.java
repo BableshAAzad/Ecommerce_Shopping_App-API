@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -25,9 +27,10 @@ public class ImageServiceImpl implements ImageService {
             byte[] data = new byte[productImage.getInputStream().available()];
             productImage.getInputStream().read(data);   // set data in array
 
-            cloudinary.uploader().upload(data, ObjectUtils.asMap(
-                    "public_id", filename
-            ));
+            Map<String, String> config = new HashMap<String, String>();
+            config.put("public_id", filename);
+
+            cloudinary.uploader().upload(data, config);
 
             return this.getUrlFromPublicId(filename);
         } catch (IOException e) {

@@ -16,11 +16,11 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
-    private int totalQuantity=0;
-    private double totalPrice=0.0;
-    private double discount=0.0;
-    private double discountPrice=0.0;
-    private double totalPayableAmount=0.0;
+    private int totalQuantity;
+    private double totalPrice;
+    private double discount;
+    private double discountPrice;
+    private double totalPayableAmount;
     @ManyToOne
     private Product product;
     @ManyToOne

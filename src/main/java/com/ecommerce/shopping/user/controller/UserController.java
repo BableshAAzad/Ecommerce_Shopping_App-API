@@ -22,13 +22,15 @@ public class UserController {
 
     //------------------------------------------------------------------------------------------------------------------------
     @PostMapping("/sellers/register")
-    public ResponseEntity<ResponseStructure<UserResponse>> addSeller(@Valid @RequestBody UserRequest userRequest) {
+    public ResponseEntity<ResponseStructure<UserResponse>> addSeller(
+            @Valid @RequestBody UserRequest userRequest) {
         return userService.saveUser(userRequest, UserRole.SELLER);
     }
 
     //------------------------------------------------------------------------------------------------------------------------
     @PostMapping("/customers/register")
-    public ResponseEntity<ResponseStructure<UserResponse>> addCustomer(@Valid @RequestBody UserRequest userRequest) {
+    public ResponseEntity<ResponseStructure<UserResponse>> addCustomer(
+            @Valid @RequestBody UserRequest userRequest) {
         return userService.saveUser(userRequest, UserRole.CUSTOMER);
     }
 
@@ -132,10 +134,9 @@ public class UserController {
     //------------------------------------------------------------------------------------------------------------------------
 
 
-//    @GetMapping("/test")
-//    public String test() {
-//        RestTemplateProvider restTemplate = new RestTemplateProvider();
-//        return restTemplate.getTest();
-//    }
+    @GetMapping("/test")
+    public String test() {
+        return  "Welcome To Ecommerce Shopping app";
+    }
 
 }

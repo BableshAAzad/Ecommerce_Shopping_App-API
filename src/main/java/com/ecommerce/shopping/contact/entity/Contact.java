@@ -14,7 +14,7 @@ public class Contact {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long contactId;
-    private Long contactNumber=0L;
+    private Long contactNumber;
     @Enumerated(EnumType.STRING)
     private Priority priority;
 }

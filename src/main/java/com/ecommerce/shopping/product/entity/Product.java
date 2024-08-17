@@ -21,8 +21,8 @@ public class Product {
     private Long productId;
     private String productTitle;
     private String productDescription;
-    private double productPrice = 0;
-    private int productQuantity = 0;
+    private double productPrice;
+    private int productQuantity;
     @Enumerated(EnumType.STRING)
     private AvailabilityStatus availabilityStatus;
 

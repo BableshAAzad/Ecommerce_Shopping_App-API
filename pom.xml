@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.ecommerce.shopping</groupId>
@@ -83,18 +83,27 @@
             <version>2.5.0</version>
         </dependency>
 
-<!--    for pagination PageModel    -->
+        <!--    for pagination PageModel    -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-hateoas</artifactId>
         </dependency>
 
-<!--   image upload in cloud -> cloudinary.com     -->
+        <!--   image upload in cloud -> cloudinary.com     -->
         <dependency>
             <groupId>com.cloudinary</groupId>
             <artifactId>cloudinary-http44</artifactId>
             <version>1.36.0</version>
         </dependency>
+
+        <!-- for aws s3 images upload -->
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-s3</artifactId>
+            <version>1.12.769</version>
+        </dependency>
+
+
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -172,6 +181,7 @@
                 </configuration>
             </plugin>
         </plugins>
+        <finalName>ecommerce-shopping-app</finalName>
     </build>
 
 </project>

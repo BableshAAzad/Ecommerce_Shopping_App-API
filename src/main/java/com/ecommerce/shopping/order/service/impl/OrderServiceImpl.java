@@ -11,7 +11,6 @@ import com.ecommerce.shopping.customer.repository.CustomerRepository;
 import com.ecommerce.shopping.exception.AddressNotExistException;
 import com.ecommerce.shopping.exception.CartProductNotExistException;
 import com.ecommerce.shopping.exception.CustomerNotExistException;
-import com.ecommerce.shopping.mail.service.MailService;
 import com.ecommerce.shopping.order.dto.*;
 import com.ecommerce.shopping.order.entity.Order;
 import com.ecommerce.shopping.order.mapper.OrderMapper;
@@ -38,10 +37,10 @@ public class OrderServiceImpl implements OrderService {
     private final CustomerRepository customerRepository;
     private final AddressRepository addressRepository;
     private final ProductRepository productRepository;
+    private final CartProductRepository cartProductRepository;
     private final OrderMapper orderMapper;
     private final RestTemplateProvider restTemplateProvider;
     private final UserService userService;
-    private final CartProductRepository cartProductRepository;
 
     @Override
     public ResponseEntity<ResponseStructure<OrderResponseDto>> generatePurchaseOrder(
@@ -111,8 +110,10 @@ public class OrderServiceImpl implements OrderService {
                 .totalPayableAmount(orderRequest.getTotalPayableAmount())
                 .addressDto(addressDto)
                 .build();
+
         userService.mailSend(customer.getEmail(), "Successfully order generate in EcommerceShoppingApp",
-                STR."<h3>Your Order Id : \{order.getOrderId()}</h3></br><p>Track Your Order in below link \uD83D\uDC47</p></br><a href='/'>Track order</a></br></br><a href='/'>Download invoice</a>");
+                "<h3>Your Order Id : " + order.getOrderId() + "</h3></br><p>Track Your Order in below link</p></br><p>Track order</p></br></br><p>Download invoice</p>");
+        
         return restTemplateProvider.generatePurchaseOrder(orderRequestDto, productId);
     }
 //---------------------------------------------------------------------------------------------------------------------------------

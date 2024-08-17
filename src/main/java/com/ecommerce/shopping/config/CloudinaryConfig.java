@@ -1,10 +1,12 @@
 package com.ecommerce.shopping.config;
 
 import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 public class CloudinaryConfig {
@@ -20,12 +22,10 @@ public class CloudinaryConfig {
 
     @Bean
     Cloudinary cloudinary() {
-        return new Cloudinary(
-                ObjectUtils.asMap(
-                        "cloud_name", cloudinaryCloudName,
-                        "api_key", cloudinaryApiKey,
-                        "api_secret", cloudinaryApiSecret
-                )
-        );
+        Map<String, String> config = new HashMap<String, String>();
+        config.put("cloud_name", cloudinaryCloudName);
+        config.put("api_key", cloudinaryApiKey);
+        config.put("api_secret", cloudinaryApiSecret);
+        return new Cloudinary(config);
     }
 }

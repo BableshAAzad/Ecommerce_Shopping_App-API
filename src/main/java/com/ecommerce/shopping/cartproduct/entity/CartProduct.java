@@ -14,7 +14,7 @@ public class CartProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cartProductId;
-    private int selectedQuantity=0;
+    private int selectedQuantity;
     @ManyToOne
     private Product product;
 }

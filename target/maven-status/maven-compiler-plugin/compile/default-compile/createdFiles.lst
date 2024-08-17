@@ -142,6 +142,7 @@ com\ecommerce\shopping\security\UserDetailServiceImpl.class
 com\ecommerce\shopping\order\service\impl\OrderServiceImpl.class
 com\ecommerce\shopping\utility\ResponseStructure.class
 com\ecommerce\shopping\user\dto\UserResponse.class
+com\ecommerce\shopping\enums\BaseUrl.class
 com\ecommerce\shopping\order\service\OrderService.class
 com\ecommerce\shopping\exception\IllegalOperationException.class
 com\ecommerce\shopping\product\controller\ProductController.class

@@ -4,10 +4,10 @@ spring:
 
     #  DataSource configuration
   datasource:
-    url: jdbc:mysql://localhost:3306/ecommerce_shopping_app
-    username: root
-    password: root
-  #      driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST_NAME:localhost}:${DB_PORT:3306}/ecommerce_shopping_app
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}
+    river-class-name: com.mysql.cj.jdbc.Driver
 
   #  JPA Configuration
   jpa:
@@ -17,14 +17,14 @@ spring:
     properties:
       hibernate:
         format_sql: true
-      dialect: org.hibernate.dialect.MySQL8Dialect
+        dialect: org.hibernate.dialect.MySQL8Dialect
 
   # SMTP configuration
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
+    username: ${MAIL_USERNAME:xyz}
+    password: ${MAIL_PASSWORD:123xyz}
     properties:
       mail:
         smtp:
@@ -37,15 +37,15 @@ spring:
       client:
         registration:
           google:
-            client-id: ${GOOGLE_ID}
-            client-secret: ${GOOGLE_SECRET}
+            client-id: ${GOOGLE_ID:abc}
+            client-secret: ${GOOGLE_SECRET:123abc}
             scope: email, profile
             redirect-uri: http://localhost:8080/login/oauth2/code/google
             client-name: google
             authorization-grant-type: authorization_code
           github:
-            client-id: ${GITHUB_ID}
-            client-secret: ${GITHUB_SECRET}
+            client-id: ${GITHUB_ID:def}
+            client-secret: ${GITHUB_SECRET:123def}
             scope: email, profile
             redirect-uri: http://localhost:8080/login/oauth2/code/github
             client-name: github
@@ -66,7 +66,7 @@ spring:
 # (3600 = 1hour and 1296000 = 15days) in seconds
 application:
   jwt:
-    secrete: ${JWT_SECRET}
+    secrete: ${JWT_SECRET:lmn}
     access_expiry_seconds: 3600
     refresh_expiry_seconds: 1296000
   cookie:
@@ -74,20 +74,34 @@ application:
     same_site: Lax
     secure: false
   client:
-    api_key: ${CLIENT_API_KEY}
-    username: ${CLIENT_USERNAME}
-    client_id: ${CLIENT_ID}
+    api_key: ${CLIENT_API_KEY:opq}
+    username: ${CLIENT_USERNAME:rst}
+    client_id: ${CLIENT_ID:123}
 
-debug: true
-logging:
-  level:
-    org.springframework.security: DEBUG
-    org.springframework.web: DEBUG
+#debug: true
+#logging:
+#  level:
+#    org.springframework.security: DEBUG
+#    org.springframework.web: DEBUG
 
 #Cloudinary configuration for image upload
 cloudinary:
   cloud:
-    name: dpaf0bjfx
+    name: ${CLOUDINARY_CLOUD_NAME:lmn}
   api:
-    key: 462744961297589
-    secret: iJQgQm3vak_KZ8qLX_STMthRL1E
+    key: ${CLOUDINARY_API_KEY:lmn123}
+    secret: ${CLOUDINARY_API_SECRET:123mmm}
+
+# aws configuration
+#cloud:
+#  aws:
+#    credentials:
+#      access-key: ${AWS_S3_ACCESS_KEY:123abc}
+#      secrete-key: ${AWS_S3_SECRETE_KEY:123eee}
+#    region:
+#      static: ap-south-1
+#    stack:
+#      auto: false
+#app:
+#  s3:
+#    bucket: ecommerceshoppingbucket

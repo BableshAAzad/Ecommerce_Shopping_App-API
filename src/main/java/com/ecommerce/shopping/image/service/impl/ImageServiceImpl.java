@@ -2,7 +2,6 @@ package com.ecommerce.shopping.image.service.impl;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.Transformation;
-import com.cloudinary.utils.ObjectUtils;
 import com.ecommerce.shopping.enums.ImageConstant;
 import com.ecommerce.shopping.image.service.ImageService;
 import lombok.AllArgsConstructor;
@@ -45,9 +44,9 @@ public class ImageServiceImpl implements ImageService {
                 .url()
                 .transformation(
                         new Transformation()
-                        .width(ImageConstant.PRODUCT_IMAGE_WIDTH)
-                        .height(ImageConstant.PRODUCT_IMAGE_HEIGHT)
-                        .crop(ImageConstant.PRODUCT_IMAGE_CROP)
+                                .width(ImageConstant.PRODUCT_IMAGE_WIDTH)
+                                .height(ImageConstant.PRODUCT_IMAGE_HEIGHT)
+                                .crop(ImageConstant.PRODUCT_IMAGE_CROP)
                 )
                 .generate(publicId);
     }

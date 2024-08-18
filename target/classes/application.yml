@@ -4,7 +4,7 @@ spring:
 
     #  DataSource configuration
   datasource:
-    url: jdbc:mysql://${DB_HOST_NAME:localhost}:${DB_PORT:3306}/ecommerce_shopping_app
+    url: jdbc:mysql://${DB_HOST_NAME:localhost}:${DB_PORT:3306}/${DB_NAME:ecommerce_shopping_app}
     username: ${DB_USERNAME:root}
     password: ${DB_PASSWORD:root}
     river-class-name: com.mysql.cj.jdbc.Driver
@@ -105,5 +105,8 @@ cloudinary:
 #app:
 #  s3:
 #    bucket: ecommerceshoppingbucket
+#/////////
 
-# test commit
+
+
+#test commit 5b

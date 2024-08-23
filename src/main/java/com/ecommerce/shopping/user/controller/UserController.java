@@ -37,13 +37,14 @@ public class UserController {
 
     @PostMapping("/users/otpVerification")
     public ResponseEntity<ResponseStructure<UserResponse>> verifyUser(
-            @RequestBody OtpVerificationRequest otpVerificationRequest) {
+          @Valid @RequestBody OtpVerificationRequest otpVerificationRequest) {
         return userService.verifyUserOtp(otpVerificationRequest);
     }
 
     //------------------------------------------------------------------------------------------------------------------------
     @PostMapping("/users/resendOtp")
-    public ResponseEntity<ResponseStructure<UserResponse>> resendOtp(@Valid @RequestBody UserRequest userRequest) {
+    public ResponseEntity<ResponseStructure<UserResponse>> resendOtp(
+            @Valid @RequestBody UserRequest userRequest) {
         return userService.resendOtp(userRequest);
     }
 
@@ -58,21 +59,22 @@ public class UserController {
 
     @PutMapping("/users/update/{email}")
     public ResponseEntity<ResponseStructure<UserResponse>> passwordResetByEmail(
-            @PathVariable String email) {
+            @Valid  @PathVariable String email) {
         return userService.passwordResetByEmail(email);
     }
 
     @PutMapping("/users/update")
     public ResponseEntity<ResponseStructure<UserResponse>> passwordResetByEmailVerification(
-            @RequestBody UserRequest userRequest,
-            @RequestParam String secrete) {
+            @Valid  @RequestBody UserRequest userRequest,
+            @Valid @RequestParam String secrete) {
         return userService.passwordResetByEmailVerification(userRequest, secrete);
     }
 
     //------------------------------------------------------------------------------------------------------------------------
     @GetMapping("/users/{userId}")
     @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")
-    public ResponseEntity<ResponseStructure<UserResponse>> findUser(@Valid @PathVariable Long userId) {
+    public ResponseEntity<ResponseStructure<UserResponse>> findUser(
+            @Valid @PathVariable Long userId) {
         return userService.findUser(userId);
     }
 
@@ -85,11 +87,10 @@ public class UserController {
 
     //------------------------------------------------------------------------------------------------------------------------
     @PostMapping("/login")
-    public ResponseEntity<ResponseStructure<AuthResponse>> login(@RequestBody AuthRequest authRequest) {
-        System.out.println(authRequest);
+    public ResponseEntity<ResponseStructure<AuthResponse>> login(
+            @Valid @RequestBody AuthRequest authRequest) {
         return userService.login(authRequest);
     }
-
 
 //    @PostMapping("/login/oauth2/code/google")
 //    public String loginGoogle(@RequestBody AuthRequest authRequest) {
@@ -102,7 +103,8 @@ public class UserController {
     //------------------------------------------------------------------------------------------------------------------------
     @PostMapping("/refreshLogin")
     @PreAuthorize("hasAuthority('CUSTOMER') OR hasAuthority('SELLER')")
-    public ResponseEntity<ResponseStructure<AuthResponse>> refreshLogin(@CookieValue(value = "rt", required = false) String refreshToken) {
+    public ResponseEntity<ResponseStructure<AuthResponse>> refreshLogin(
+            @CookieValue(value = "rt", required = false) String refreshToken) {
         return userService.refreshLogin(refreshToken);
     }
 

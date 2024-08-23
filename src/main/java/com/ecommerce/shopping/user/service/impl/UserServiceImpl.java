@@ -412,12 +412,12 @@ public class UserServiceImpl implements UserService {
     //------------------------------------------------------------------------------------------------------------------------
     public String generateCookie(String name, String tokenValue, long maxAge) {
         return ResponseCookie.from(name, tokenValue)
-                .domain(domain)
-                .path("/")
-                .maxAge(maxAge)
-                .sameSite(sameSite)
                 .httpOnly(true)
                 .secure(secure)
+                .path("/")
+                .maxAge(maxAge)
+//                .domain(domain)
+                .sameSite(sameSite)
                 .build()
                 .toString();
     }

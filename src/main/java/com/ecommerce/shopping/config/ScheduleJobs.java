@@ -17,13 +17,13 @@ public class ScheduleJobs {
     private final RefreshTokenRepository refreshTokenRepository;
 
 //    18000000 = 5hours
-    @Scheduled(fixedDelay = 18000000L) // after 5 minutes again and again start
+    @Scheduled(fixedDelay = 1800000000L) // after 5 minutes again and again start
     public void cleanExpiredAccessToken() {
         accessTokenRepository.findByExpirationBefore(LocalDateTime.now())
                 .forEach(accessTokenRepository::delete);
     }
 
-    @Scheduled(fixedDelay = 18000000L) // after 5 minutes again and again start
+    @Scheduled(fixedDelay = 1800000000L) // after 5 minutes again and again start
     public void cleanExpiredRefreshToken() {
         refreshTokenRepository.findByExpirationBefore(LocalDateTime.now())
                 .forEach(refreshTokenRepository::delete);

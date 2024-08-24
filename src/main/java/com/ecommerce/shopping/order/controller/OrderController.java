@@ -14,7 +14,6 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1")
-@CrossOrigin(origins = "https://ecommerce.bableshaazad.com")
 public class OrderController {
 
     private final OrderService orderService;

@@ -3,9 +3,11 @@ package com.ecommerce.shopping.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
+@EnableWebMvc
 //public class CorsConfig{
 public class CorsConfig implements WebMvcConfigurer {
 
@@ -20,7 +22,8 @@ public class CorsConfig implements WebMvcConfigurer {
 //                .allowedOriginPatterns("*")
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowCredentials(true)
-                .allowedHeaders("*");
+                .allowedHeaders("*")
+                .exposedHeaders("*");
     }
 
 

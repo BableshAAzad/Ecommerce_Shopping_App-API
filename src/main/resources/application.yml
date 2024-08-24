@@ -71,7 +71,7 @@ application:
     refresh_expiry_seconds: 1296000
   cookie:
     domain: localhost
-    same_site: None    #.same_site("Lax")
+    same_site: Lax    #.same_site("None")
     secure: true
   client:
     api_key: ${CLIENT_API_KEY:opq}

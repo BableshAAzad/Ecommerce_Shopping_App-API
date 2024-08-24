@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -39,10 +40,13 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder(12);
     }
 
+
     @Bean
     @Order(3)
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity.csrf(AbstractHttpConfigurer::disable)
+        return httpSecurity
+                .cors(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
                 .securityMatchers(match -> match.requestMatchers("/api/v1/**"))
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -53,7 +57,9 @@ public class SecurityConfig {
     @Bean
     @Order(2)
     SecurityFilterChain securityFilterChainRefreshFilter(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity.csrf(AbstractHttpConfigurer::disable)
+        return httpSecurity
+                .cors(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
                 .securityMatchers(match -> match.requestMatchers("/api/v1/refreshLogin/**"))
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -64,7 +70,9 @@ public class SecurityConfig {
     @Bean
     @Order(1)
     SecurityFilterChain securityFilterChainCheckLogin(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity.csrf(AbstractHttpConfigurer::disable)
+        return httpSecurity
+                .cors(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
                 .securityMatchers(match -> match.requestMatchers("/api/v1/login/**",
                         "/api/v1/users/update/**",
                         "/api/v1/users/otpVerification/**",

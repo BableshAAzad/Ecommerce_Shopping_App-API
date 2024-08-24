@@ -15,7 +15,8 @@ public class CorsConfig implements WebMvcConfigurer {
                 .allowedOriginPatterns(
                         "https://ecommerce.bableshaazad.com",
                         "https://www.ecommerce.bableshaazad.com",
-                        "http://localhost:5173")
+                        "http://localhost:5173"
+                )
 //                .allowedOriginPatterns("*")
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowCredentials(true)

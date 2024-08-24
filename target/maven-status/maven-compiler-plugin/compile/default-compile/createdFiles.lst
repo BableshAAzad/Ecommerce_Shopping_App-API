@@ -54,7 +54,6 @@ com\ecommerce\shopping\exception\CartProductNotExistException.class
 com\ecommerce\shopping\image\entity\Image$ImageBuilder.class
 com\ecommerce\shopping\order\dto\OrderResponseDto.class
 com\ecommerce\shopping\utility\ApplicationExceptionHandler.class
-com\ecommerce\shopping\config\CorsConfig$1.class
 com\ecommerce\shopping\enums\UserRole.class
 com\ecommerce\shopping\config\RestTemplateProvider$12.class
 com\ecommerce\shopping\cartproduct\entity\CartProduct$CartProductBuilder.class

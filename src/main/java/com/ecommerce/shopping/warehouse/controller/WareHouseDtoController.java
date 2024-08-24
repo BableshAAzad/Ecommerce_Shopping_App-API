@@ -14,6 +14,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1")
 @AllArgsConstructor
+@CrossOrigin(origins = "https://ecommerce.bableshaazad.com")
 public class WareHouseDtoController {
 
     private final RestTemplateProvider restTemplateProvider;

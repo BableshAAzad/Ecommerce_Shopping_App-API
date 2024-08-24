@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/v1")
 @AllArgsConstructor
+@CrossOrigin(origins = "https://ecommerce.bableshaazad.com")
 public class ProductController {
 
     private final ProductService productService;

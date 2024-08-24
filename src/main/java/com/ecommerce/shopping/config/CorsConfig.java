@@ -15,8 +15,8 @@ public class CorsConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOriginPatterns(
-                        "https://ecommerce.bableshaazad.com",
-                        "https://www.ecommerce.bableshaazad.com",
+                        "https://*.bableshaazad.com",
+                        "https://bableshaazad.com",
                         "http://localhost:5173"
                 )
 //                .allowedOriginPatterns("*")

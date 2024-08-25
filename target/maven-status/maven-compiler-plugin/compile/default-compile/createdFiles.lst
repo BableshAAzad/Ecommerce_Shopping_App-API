@@ -5,7 +5,6 @@ com\ecommerce\shopping\customer\cotroller\CustomerController.class
 com\ecommerce\shopping\cache\CacheConfig.class
 com\ecommerce\shopping\enums\AvailabilityStatus.class
 com\ecommerce\shopping\cartproduct\dto\CartProductResponse.class
-com\ecommerce\shopping\config\CorsConfig.class
 com\ecommerce\shopping\exception\UserNotExistException.class
 com\ecommerce\shopping\enums\ImageConstant.class
 com\ecommerce\shopping\discount\service\DiscountService.class

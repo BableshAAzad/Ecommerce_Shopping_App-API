@@ -16,10 +16,10 @@ C:\AAzad\a. programming\java\Intelije_Ide\Ecommerce_Shopping_App\src\main\java\c
 C:\AAzad\a. programming\java\Intelije_Ide\Ecommerce_Shopping_App\src\main\java\com\ecommerce\shopping\cartproduct\service\CartProductService.java
 C:\AAzad\a. programming\java\Intelije_Ide\Ecommerce_Shopping_App\src\main\java\com\ecommerce\shopping\cartproduct\service\impl\CartProductServiceImpl.java
 C:\AAzad\a. programming\java\Intelije_Ide\Ecommerce_Shopping_App\src\main\java\com\ecommerce\shopping\config\CloudinaryConfig.java
-C:\AAzad\a. programming\java\Intelije_Ide\Ecommerce_Shopping_App\src\main\java\com\ecommerce\shopping\config\RestTemplateConfig.java
-C:\AAzad\a. programming\java\Intelije_Ide\Ecommerce_Shopping_App\src\main\java\com\ecommerce\shopping\config\RestTemplateProvider.java
 C:\AAzad\a. programming\java\Intelije_Ide\Ecommerce_Shopping_App\src\main\java\com\ecommerce\shopping\config\ScheduleJobs.java
 C:\AAzad\a. programming\java\Intelije_Ide\Ecommerce_Shopping_App\src\main\java\com\ecommerce\shopping\config\UtilityBeanConfig.java
+C:\AAzad\a. programming\java\Intelije_Ide\Ecommerce_Shopping_App\src\main\java\com\ecommerce\shopping\config\WebClientConfig.java
+C:\AAzad\a. programming\java\Intelije_Ide\Ecommerce_Shopping_App\src\main\java\com\ecommerce\shopping\config\WebClientProvider.java
 C:\AAzad\a. programming\java\Intelije_Ide\Ecommerce_Shopping_App\src\main\java\com\ecommerce\shopping\contact\controller\ContactController.java
 C:\AAzad\a. programming\java\Intelije_Ide\Ecommerce_Shopping_App\src\main\java\com\ecommerce\shopping\contact\entity\Contact.java
 C:\AAzad\a. programming\java\Intelije_Ide\Ecommerce_Shopping_App\src\main\java\com\ecommerce\shopping\contact\repository\ContactRepository.java

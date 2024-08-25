@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,12 +22,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.Arrays;
-import java.util.List;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
@@ -47,18 +42,18 @@ public class SecurityConfig {
     }
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource(){
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(
-                "https://*.bableshaazad.com",
-                        "https://bableshaazad.com",
-                        "http://localhost:5173"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
-        configuration.setAllowCredentials(true);
-        configuration.setAllowedHeaders(List.of("*"));
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
+    WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/greeting-javaconfig")
+                        .allowedOrigins(
+                                "https://*.bableshaazad.com",
+                                "https://bableshaazad.com",
+                                "http://localhost:5173"
+                        );
+            }
+        };
     }
 
 
@@ -66,7 +61,7 @@ public class SecurityConfig {
     @Order(3)
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                .cors(cors-> cors.configurationSource(corsConfigurationSource()))
+//                .cors(cors-> cors.configurationSource(corsConfigurer()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .securityMatchers(match -> match.requestMatchers("/api/v1/**"))
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
@@ -79,7 +74,7 @@ public class SecurityConfig {
     @Order(2)
     SecurityFilterChain securityFilterChainRefreshFilter(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                .cors(cors-> cors.configurationSource(corsConfigurationSource()))
+//                .cors(cors-> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .securityMatchers(match -> match.requestMatchers("/api/v1/refreshLogin/**"))
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
@@ -92,7 +87,7 @@ public class SecurityConfig {
     @Order(1)
     SecurityFilterChain securityFilterChainCheckLogin(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                .cors(cors-> cors.configurationSource(corsConfigurationSource()))
+//                .cors(cors-> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .securityMatchers(match -> match.requestMatchers("/api/v1/login/**",
                         "/api/v1/users/update/**",

@@ -172,4 +172,5 @@ com\ecommerce\shopping\config\ScheduleJobs.class
 com\ecommerce\shopping\discount\repository\DiscountRepository.class
 com\ecommerce\shopping\order\dto\OrderRequestDto$OrderRequestDtoBuilder.class
 com\ecommerce\shopping\product\entity\Product.class
+com\ecommerce\shopping\security\SecurityConfig$1.class
 com\ecommerce\shopping\user\entity\User.class

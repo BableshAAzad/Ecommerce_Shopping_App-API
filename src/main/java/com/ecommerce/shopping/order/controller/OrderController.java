@@ -1,13 +1,13 @@
 package com.ecommerce.shopping.order.controller;
 
-import com.ecommerce.shopping.config.RestTemplateProvider;
+import com.ecommerce.shopping.config.WebClientProvider;
 import com.ecommerce.shopping.order.dto.OrderRequest;
 import com.ecommerce.shopping.order.dto.OrderResponseDto;
 import com.ecommerce.shopping.order.service.OrderService;
 import com.ecommerce.shopping.utility.ResponseStructure;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -17,10 +17,10 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
-    private final RestTemplateProvider restTemplateProvider;
+    private final WebClientProvider webClientProvider;
 
     @PostMapping("/customers/{customerId}/addresses/{addressId}/products/{productId}/purchase-orders")
-    public ResponseEntity<ResponseStructure<OrderResponseDto>> generatePurchaseOrder(
+    public Mono<ResponseStructure<OrderResponseDto>> generatePurchaseOrder(
             @RequestBody OrderRequest orderRequest,
             @PathVariable Long productId,
             @PathVariable Long customerId,
@@ -29,15 +29,15 @@ public class OrderController {
     }
 
     @GetMapping("/customers/{customerId}/purchase-orders")
-    public ResponseEntity<ResponseStructure<List<OrderResponseDto>>> findPurchaseOrders(
+    public Mono<ResponseStructure<List<OrderResponseDto>>> findPurchaseOrders(
             @PathVariable Long customerId) {
-        return restTemplateProvider.getPurchaseOrders(customerId);
+        return webClientProvider.getPurchaseOrders(customerId);
     }
 
     @GetMapping("/customers/purchase-orders/{orderId}")
-    public ResponseEntity<byte[]> getOrderInvoice(
+    public Mono<byte[]> getOrderInvoice(
             @PathVariable Long orderId) {
-        return restTemplateProvider.getOrderInvoice(orderId);
+        return webClientProvider.getOrderInvoice(orderId);
     }
 }
 

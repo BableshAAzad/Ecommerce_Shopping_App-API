@@ -1,6 +1,6 @@
 package com.ecommerce.shopping.product.controller;
 
-import com.ecommerce.shopping.config.RestTemplateProvider;
+import com.ecommerce.shopping.config.WebClientProvider;
 import com.ecommerce.shopping.product.dto.ProductResponse;
 import com.ecommerce.shopping.product.service.ProductService;
 import com.ecommerce.shopping.utility.ResponseStructure;
@@ -10,9 +10,9 @@ import com.ecommerce.shopping.warehouse.dto.InventorySearchCriteria;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.hateoas.PagedModel;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -20,12 +20,12 @@ import org.springframework.web.multipart.MultipartFile;
 public class ProductController {
 
     private final ProductService productService;
-    private final RestTemplateProvider restTemplateProvider;
+    private final WebClientProvider webClientProvider;
 
     //---------------------------------------------------------------------------------------------------
-//    /sellers/products/{productId}/stocks?quantity=5
+    // /sellers/products/{productId}/stocks?quantity=5
     @PutMapping("/sellers/products/{productId}/stocks")
-    public ResponseEntity<ResponseStructure<ProductResponse>> updateProduct(
+    public Mono<ResponseStructure<ProductResponse>> updateProduct(
             @PathVariable Long productId,
             @RequestParam int quantity,
             @RequestParam(value = "productImage", required = false) MultipartFile productImage,
@@ -34,9 +34,9 @@ public class ProductController {
     }
 
     //---------------------------------------------------------------------------------------------------
-//  /storages/{storageId}/products?quantity=5
+    // /storages/{storageId}/products?quantity=5
     @PostMapping("/storages/{storageId}/products")
-    public ResponseEntity<ResponseStructure<ProductResponse>> addProduct(
+    public Mono<ResponseStructure<ProductResponse>> addProduct(
             @PathVariable Long storageId,
             @RequestParam int quantity,
             @RequestParam("productImage") MultipartFile productImage,
@@ -46,43 +46,43 @@ public class ProductController {
 
     //---------------------------------------------------------------------------------------------------
     @GetMapping("/products/{productId}")
-    public ResponseEntity<ResponseStructure<Inventory>> findProduct(@PathVariable Long productId) {
-        return restTemplateProvider.getProduct(productId);
+    public Mono<ResponseStructure<Inventory>> findProduct(@PathVariable Long productId) {
+        return webClientProvider.getProduct(productId);
     }
 
     //---------------------------------------------------------------------------------------------------
     @GetMapping("/products") // GET /products?page=0&size=10
-    public ResponseEntity<ResponseStructure<PagedModel<Inventory>>> findProducts(
+    public Mono<ResponseStructure<PagedModel<Inventory>>> findProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return restTemplateProvider.getProducts(page, size);
+        return webClientProvider.getProducts(page, size);
     }
 
     //---------------------------------------------------------------------------------------------------
-    @GetMapping("/products/search/{query}") //products/search/query?page=0&size=10
-    public ResponseEntity<ResponseStructure<PagedModel<Inventory>>> searchProducts(
+    @GetMapping("/products/search/{query}") // products/search/query?page=0&size=10
+    public Mono<ResponseStructure<PagedModel<Inventory>>> searchProducts(
             @PathVariable String query,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return restTemplateProvider.searchProducts(query, page, size);
+        return webClientProvider.searchProducts(query, page, size);
     }
 
     //---------------------------------------------------------------------------------------------------
-    @PostMapping("/products/filter") //products/filter?page=0&size=10
-    public ResponseEntity<ResponseStructure<PagedModel<Inventory>>> filterProducts(
+    @PostMapping("/products/filter") // products/filter?page=0&size=10
+    public Mono<ResponseStructure<PagedModel<Inventory>>> filterProducts(
             @RequestBody InventorySearchCriteria inventorySearchCriteria,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return restTemplateProvider.filterProducts(inventorySearchCriteria, page, size);
+        return webClientProvider.filterProducts(inventorySearchCriteria, page, size);
     }
 
     //---------------------------------------------------------------------------------------------------
-    @GetMapping("/sellers/{sellerId}/products") //sellers/sellerId/products?page=0&size=10
-    public ResponseEntity<ResponseStructure<PagedModel<Inventory>>> findProductsBySellerId(
+    @GetMapping("/sellers/{sellerId}/products") // sellers/sellerId/products?page=0&size=10
+    public Mono<ResponseStructure<PagedModel<Inventory>>> findProductsBySellerId(
             @PathVariable Long sellerId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return restTemplateProvider.getProductsBySellerId(sellerId, page, size);
+        return webClientProvider.getProductsBySellerId(sellerId, page, size);
     }
 
     //---------------------------------------------------------------------------------------------------

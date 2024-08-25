@@ -1,6 +1,5 @@
 package com.ecommerce.shopping.user.controller;
 
-import com.ecommerce.shopping.config.RestTemplateProvider;
 import com.ecommerce.shopping.enums.UserRole;
 import com.ecommerce.shopping.user.dto.*;
 import com.ecommerce.shopping.user.service.UserService;

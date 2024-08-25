@@ -4,7 +4,7 @@ import com.ecommerce.shopping.address.entity.Address;
 import com.ecommerce.shopping.address.repository.AddressRepository;
 import com.ecommerce.shopping.cartproduct.entity.CartProduct;
 import com.ecommerce.shopping.cartproduct.repository.CartProductRepository;
-import com.ecommerce.shopping.config.RestTemplateProvider;
+import com.ecommerce.shopping.config.WebClientProvider;
 import com.ecommerce.shopping.contact.entity.Contact;
 import com.ecommerce.shopping.customer.entity.Customer;
 import com.ecommerce.shopping.customer.repository.CustomerRepository;
@@ -21,8 +21,8 @@ import com.ecommerce.shopping.product.repository.ProductRepository;
 import com.ecommerce.shopping.user.service.UserService;
 import com.ecommerce.shopping.utility.ResponseStructure;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -39,11 +39,11 @@ public class OrderServiceImpl implements OrderService {
     private final ProductRepository productRepository;
     private final CartProductRepository cartProductRepository;
     private final OrderMapper orderMapper;
-    private final RestTemplateProvider restTemplateProvider;
+    private final WebClientProvider webClientProvider;
     private final UserService userService;
 
     @Override
-    public ResponseEntity<ResponseStructure<OrderResponseDto>> generatePurchaseOrder(
+    public Mono<ResponseStructure<OrderResponseDto>> generatePurchaseOrder(
             OrderRequest orderRequest,
             Long productId,
             Long customerId,
@@ -114,7 +114,7 @@ public class OrderServiceImpl implements OrderService {
         userService.mailSend(customer.getEmail(), "Successfully order generate in EcommerceShoppingApp",
                 "<h3>Your Order Id : " + order.getOrderId() + "</h3></br><p>Track Your Order in below link</p></br><p>Track order</p></br></br><p>Download invoice</p>");
         
-        return restTemplateProvider.generatePurchaseOrder(orderRequestDto, productId);
+        return webClientProvider.generatePurchaseOrder(orderRequestDto, productId);
     }
 //---------------------------------------------------------------------------------------------------------------------------------
 

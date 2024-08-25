@@ -103,6 +103,12 @@
 <!--            <version>1.12.769</version>-->
 <!--        </dependency>-->
 
+        <!-- WebFlux for WebClient -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+
 
 
         <dependency>

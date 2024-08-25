@@ -2,7 +2,7 @@ package com.ecommerce.shopping.product.service.impl;
 
 import com.ecommerce.shopping.cartproduct.entity.CartProduct;
 import com.ecommerce.shopping.cartproduct.repository.CartProductRepository;
-import com.ecommerce.shopping.config.RestTemplateProvider;
+import com.ecommerce.shopping.config.WebClientProvider;
 import com.ecommerce.shopping.discount.entity.Discount;
 import com.ecommerce.shopping.discount.repository.DiscountRepository;
 import com.ecommerce.shopping.enums.AvailabilityStatus;
@@ -23,9 +23,9 @@ import com.ecommerce.shopping.utility.ResponseStructure;
 import com.ecommerce.shopping.product.dto.ProductRequest;
 import com.ecommerce.shopping.product.dto.ProductRequestDto;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -36,13 +36,13 @@ public class ProductServiceImpl implements ProductService {
     private final ProductMapper productMapper;
     private final ImageService imageService;
     private final ProductRepository productRepository;
-    private final RestTemplateProvider restTemplateProvider;
+    private final WebClientProvider restTemplateProvider;
     private final ImageRepository imageRepository;
     private final DiscountRepository discountRepository;
     private final CartProductRepository cartProductRepository;
 
     @Override
-    public ResponseEntity<ResponseStructure<ProductResponse>> updateProduct(
+    public Mono<ResponseStructure<ProductResponse>> updateProduct(
             Long productId,
             int quantity,
             MultipartFile productImage,
@@ -96,7 +96,7 @@ public class ProductServiceImpl implements ProductService {
 
     //---------------------------------------------------------------------------------------------------
     @Override
-    public ResponseEntity<ResponseStructure<ProductResponse>> addProduct(
+    public Mono<ResponseStructure<ProductResponse>> addProduct(
             Long storageId,
             int quantity,
             MultipartFile productImage,

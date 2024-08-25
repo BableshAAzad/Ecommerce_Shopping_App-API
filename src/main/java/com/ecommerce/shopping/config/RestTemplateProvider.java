@@ -21,7 +21,7 @@ import java.util.Map;
 @Component
 public class RestTemplateProvider {
 
-    RestTemplate restTemplate = new RestTemplate();
+   private final RestTemplate restTemplate;
 
     @Value("${application.client.api_key}")
     private String apiKey;
@@ -31,6 +31,10 @@ public class RestTemplateProvider {
 
     @Value("${application.client.client_id}")
     private Long clientId;
+
+   public RestTemplateProvider(RestTemplate restTemplate){
+       this.restTemplate = restTemplate;
+   }
 
     //---------------------------------------------------------------------------------------------------
     public ResponseEntity<ResponseStructure<Inventory>> getProduct(Long productId) {

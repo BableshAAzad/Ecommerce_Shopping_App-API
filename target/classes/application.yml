@@ -76,7 +76,7 @@ application:
   client:
     api_key: ${CLIENT_API_KEY:opq}
     username: ${CLIENT_USERNAME:rst}
-    client_id: ${CLIENT_ID:123}
+    client_id: ${CLIENT_ID:1}
 
 #debug: true
 #logging:

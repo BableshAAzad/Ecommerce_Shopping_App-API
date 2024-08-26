@@ -13,7 +13,6 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Map;
@@ -39,37 +38,40 @@ public class WebClientProvider {
     }
 
     //---------------------------------------------------------------------------------------------------
-    public Mono<ResponseStructure<Inventory>> getProduct(Long productId) {
+    public ResponseStructure<Inventory> getProduct(Long productId) {
         return webClient.get()
                 .uri("inventories/{productId}", productId)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<ResponseStructure<Inventory>>() {});
+                .bodyToMono(new ParameterizedTypeReference<ResponseStructure<Inventory>>() {})
+                .block();
     }
 
     //---------------------------------------------------------------------------------------------------
-    public Mono<ResponseStructure<PagedModel<Inventory>>> getProducts(int page, int size) {
+    public ResponseStructure<PagedModel<Inventory>> getProducts(int page, int size) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder.path("inventories")
                         .queryParam("page", page)
                         .queryParam("size", size)
                         .build())
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<ResponseStructure<PagedModel<Inventory>>>() {});
+                .bodyToMono(new ParameterizedTypeReference<ResponseStructure<PagedModel<Inventory>>>() {})
+                .block();
     }
 
     //---------------------------------------------------------------------------------------------------
-    public Mono<ResponseStructure<PagedModel<Inventory>>> searchProducts(String query, int page, int size) {
+    public ResponseStructure<PagedModel<Inventory>> searchProducts(String query, int page, int size) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder.path("inventories/search/{query}")
                         .queryParam("page", page)
                         .queryParam("size", size)
                         .build(query))
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<ResponseStructure<PagedModel<Inventory>>>() {});
+                .bodyToMono(new ParameterizedTypeReference<ResponseStructure<PagedModel<Inventory>>>() {})
+                .block();
     }
 
     //---------------------------------------------------------------------------------------------------
-    public Mono<ResponseStructure<PagedModel<Inventory>>> filterProducts(InventorySearchCriteria inventorySearchCriteria, int page, int size) {
+    public ResponseStructure<PagedModel<Inventory>> filterProducts(InventorySearchCriteria inventorySearchCriteria, int page, int size) {
         return webClient.post()
                 .uri(uriBuilder -> uriBuilder.path("inventories/filter")
                         .queryParam("page", page)
@@ -77,11 +79,12 @@ public class WebClientProvider {
                         .build())
                 .bodyValue(inventorySearchCriteria)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<ResponseStructure<PagedModel<Inventory>>>() {});
+                .bodyToMono(new ParameterizedTypeReference<ResponseStructure<PagedModel<Inventory>>>() {})
+                .block();
     }
 
     //---------------------------------------------------------------------------------------------------
-    public Mono<ResponseStructure<PagedModel<Inventory>>> getProductsBySellerId(Long sellerId, int page, int size) {
+    public ResponseStructure<PagedModel<Inventory>> getProductsBySellerId(Long sellerId, int page, int size) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder.path("inventories/sellers/{sellerId}")
                         .queryParam("page", page)
@@ -90,11 +93,12 @@ public class WebClientProvider {
                 .header("API-KEY", apiKey)
                 .header("USERNAME", username)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<ResponseStructure<PagedModel<Inventory>>>() {});
+                .bodyToMono(new ParameterizedTypeReference<ResponseStructure<PagedModel<Inventory>>>() {})
+                .block();
     }
 
     //---------------------------------------------------------------------------------------------------
-    public Mono<ResponseStructure<ProductResponse>> addProduct(Long storageId, int quantity, ProductRequestDto productRequestDto) {
+    public ResponseStructure<ProductResponse> addProduct(Long storageId, int quantity, ProductRequestDto productRequestDto) {
         return webClient.post()
                 .uri(uriBuilder -> uriBuilder.path("clients/1/storages/{storageId}/inventories")
                         .queryParam("quantity", quantity)
@@ -103,11 +107,12 @@ public class WebClientProvider {
                 .header("USERNAME", username)
                 .bodyValue(productRequestDto)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<ResponseStructure<ProductResponse>>() {});
+                .bodyToMono(new ParameterizedTypeReference<ResponseStructure<ProductResponse>>() {})
+                .block();
     }
 
     //---------------------------------------------------------------------------------------------------
-    public Mono<ResponseStructure<ProductResponse>> updateProduct(Long productId, int quantity, ProductRequestDto productRequestDto) {
+    public ResponseStructure<ProductResponse> updateProduct(Long productId, int quantity, ProductRequestDto productRequestDto) {
         return webClient.put()
                 .uri(uriBuilder -> uriBuilder.path("clients/inventories/{productId}/stocks")
                         .queryParam("quantity", quantity)
@@ -116,11 +121,12 @@ public class WebClientProvider {
                 .header("USERNAME", username)
                 .bodyValue(productRequestDto)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<ResponseStructure<ProductResponse>>() {});
+                .bodyToMono(new ParameterizedTypeReference<ResponseStructure<ProductResponse>>() {})
+                .block();
     }
 
     //---------------------------------------------------------------------------------------------------
-    public Mono<ResponseStructure<PagedModel<Storage>>> getStoragesBySellerId(Long sellerId, int page, int size) {
+    public ResponseStructure<PagedModel<Storage>> getStoragesBySellerId(Long sellerId, int page, int size) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder.path("clients/sellers/{sellerId}/storages")
                         .queryParam("page", page)
@@ -129,11 +135,12 @@ public class WebClientProvider {
                 .header("API-KEY", apiKey)
                 .header("USERNAME", username)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<ResponseStructure<PagedModel<Storage>>>() {});
+                .bodyToMono(new ParameterizedTypeReference<ResponseStructure<PagedModel<Storage>>>() {})
+                .block();
     }
 
     //---------------------------------------------------------------------------------------------------
-    public Mono<ResponseStructure<PagedModel<Storage>>> getStoragesByWareHouseId(Long wareHouseId, int page, int size) {
+    public ResponseStructure<PagedModel<Storage>> getStoragesByWareHouseId(Long wareHouseId, int page, int size) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder.path("clients/storageHouses/{wareHouseId}/storages")
                         .queryParam("page", page)
@@ -142,11 +149,13 @@ public class WebClientProvider {
                 .header("API-KEY", apiKey)
                 .header("USERNAME", username)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<ResponseStructure<PagedModel<Storage>>>() {});
+                .bodyToMono(new ParameterizedTypeReference<ResponseStructure<PagedModel<Storage>>>() {})
+                .block();
     }
 
     //---------------------------------------------------------------------------------------------------
-    public Mono<ResponseStructure<PagedModel<Map<String, Object>>>> getWareHousesByCity(String city, int page, int size) {
+    public ResponseStructure<PagedModel<Map<String, Object>>> getWareHousesByCity(
+            String city, int page, int size) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder.path("clients/cities/{city}/storehouses")
                         .queryParam("page", page)
@@ -155,11 +164,13 @@ public class WebClientProvider {
                 .header("API-KEY", apiKey)
                 .header("USERNAME", username)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<ResponseStructure<PagedModel<Map<String, Object>>>>() {});
+                .bodyToMono(new ParameterizedTypeReference<ResponseStructure<PagedModel<Map<String, Object>>>>() {})
+                .block();
     }
 
     //---------------------------------------------------------------------------------------------------
-    public Mono<ResponseStructure<PagedModel<Map<String, Object>>>> getStoreHousesWithAddressForClient(int page, int size) {
+    public ResponseStructure<PagedModel<Map<String, Object>>> getStoreHousesWithAddressForClient(
+            int page, int size) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder.path("clients/{clientId}/storehouses")
                         .queryParam("page", page)
@@ -168,11 +179,12 @@ public class WebClientProvider {
                 .header("API-KEY", apiKey)
                 .header("USERNAME", username)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<ResponseStructure<PagedModel<Map<String, Object>>>>() {});
+                .bodyToMono(new ParameterizedTypeReference<ResponseStructure<PagedModel<Map<String, Object>>>>() {})
+                .block();
     }
 
     //---------------------------------------------------------------------------------------------------
-    public Mono<ResponseStructure<OrderResponseDto>> generatePurchaseOrder(OrderRequestDto orderRequestDto, Long productId) {
+    public ResponseStructure<OrderResponseDto> generatePurchaseOrder(OrderRequestDto orderRequestDto, Long productId) {
         return webClient.post()
                 .uri(uriBuilder -> uriBuilder.path("clients/inventories/{productId}/purchase-orders")
                         .build(productId))
@@ -180,22 +192,24 @@ public class WebClientProvider {
                 .header("USERNAME", username)
                 .bodyValue(orderRequestDto)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<ResponseStructure<OrderResponseDto>>() {});
+                .bodyToMono(new ParameterizedTypeReference<ResponseStructure<OrderResponseDto>>() {})
+                .block();
     }
 
     //---------------------------------------------------------------------------------------------------
-    public Mono<ResponseStructure<List<OrderResponseDto>>> getPurchaseOrders(Long customerId) {
+    public ResponseStructure<List<OrderResponseDto>> getPurchaseOrders(Long customerId) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder.path("clients/purchase-orders/customers/{customerId}")
                         .build(customerId))
                 .header("API-KEY", apiKey)
                 .header("USERNAME", username)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<ResponseStructure<List<OrderResponseDto>>>() {});
+                .bodyToMono(new ParameterizedTypeReference<ResponseStructure<List<OrderResponseDto>>>() {})
+                .block();
     }
 
     //---------------------------------------------------------------------------------------------------
-    public Mono<byte[]> getOrderInvoice(Long orderId) {
+    public byte[] getOrderInvoice(Long orderId) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder.path("clients/purchase-orders/invoice/{orderId}")
                         .build(orderId))
@@ -203,7 +217,8 @@ public class WebClientProvider {
                 .header("USERNAME", username)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<byte[]>() {});
+                .bodyToMono(new ParameterizedTypeReference<byte[]>() {})
+                .block();
     }
 
     //---------------------------------------------------------------------------------------------------

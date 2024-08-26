@@ -16,7 +16,7 @@ public class UserRequest {
     private String email;
 
     @Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$", message = "Password must"
-            + " contain at least one letter, one number, one special character")
+            + " contain at least one Capital letter, one small letter, one number, one special character")
     @NotBlank(message = "Password can not be blank")
     private String password;
 }

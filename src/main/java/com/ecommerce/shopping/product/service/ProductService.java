@@ -15,7 +15,7 @@ public interface ProductService {
             MultipartFile productImage,
             ProductRequest productRequest);
 
-    Mono<ResponseStructure<ProductResponse>> addProduct(
+    ResponseStructure<ProductResponse> addProduct(
             Long storageId,
             int quantity,
             MultipartFile productImage,

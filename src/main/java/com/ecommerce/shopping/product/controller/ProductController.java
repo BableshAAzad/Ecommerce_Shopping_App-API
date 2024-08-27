@@ -36,7 +36,7 @@ public class ProductController {
     //---------------------------------------------------------------------------------------------------
     // /storages/{storageId}/products?quantity=5
     @PostMapping("/storages/{storageId}/products")
-    public Mono<ResponseStructure<ProductResponse>> addProduct(
+    public ResponseStructure<ProductResponse> addProduct(
             @PathVariable Long storageId,
             @RequestParam int quantity,
             @RequestParam("productImage") MultipartFile productImage,
@@ -46,13 +46,13 @@ public class ProductController {
 
     //---------------------------------------------------------------------------------------------------
     @GetMapping("/products/{productId}")
-    public Mono<ResponseStructure<Inventory>> findProduct(@PathVariable Long productId) {
+    public ResponseStructure<Inventory> findProduct(@PathVariable Long productId) {
         return webClientProvider.getProduct(productId);
     }
 
     //---------------------------------------------------------------------------------------------------
     @GetMapping("/products") // GET /products?page=0&size=10
-    public Mono<ResponseStructure<PagedModel<Inventory>>> findProducts(
+    public ResponseStructure<PagedModel<Inventory>> findProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         return webClientProvider.getProducts(page, size);
@@ -60,7 +60,7 @@ public class ProductController {
 
     //---------------------------------------------------------------------------------------------------
     @GetMapping("/products/search/{query}") // products/search/query?page=0&size=10
-    public Mono<ResponseStructure<PagedModel<Inventory>>> searchProducts(
+    public ResponseStructure<PagedModel<Inventory>> searchProducts(
             @PathVariable String query,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -69,7 +69,7 @@ public class ProductController {
 
     //---------------------------------------------------------------------------------------------------
     @PostMapping("/products/filter") // products/filter?page=0&size=10
-    public Mono<ResponseStructure<PagedModel<Inventory>>> filterProducts(
+    public ResponseStructure<PagedModel<Inventory>> filterProducts(
             @RequestBody InventorySearchCriteria inventorySearchCriteria,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -78,7 +78,7 @@ public class ProductController {
 
     //---------------------------------------------------------------------------------------------------
     @GetMapping("/sellers/{sellerId}/products") // sellers/sellerId/products?page=0&size=10
-    public Mono<ResponseStructure<PagedModel<Inventory>>> findProductsBySellerId(
+    public ResponseStructure<PagedModel<Inventory>> findProductsBySellerId(
             @PathVariable Long sellerId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {

@@ -22,7 +22,6 @@ import com.ecommerce.shopping.user.service.UserService;
 import com.ecommerce.shopping.utility.ResponseStructure;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -43,7 +42,7 @@ public class OrderServiceImpl implements OrderService {
     private final UserService userService;
 
     @Override
-    public Mono<ResponseStructure<OrderResponseDto>> generatePurchaseOrder(
+    public ResponseStructure<OrderResponseDto> generatePurchaseOrder(
             OrderRequest orderRequest,
             Long productId,
             Long customerId,

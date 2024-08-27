@@ -96,7 +96,7 @@ public class ProductServiceImpl implements ProductService {
 
     //---------------------------------------------------------------------------------------------------
     @Override
-    public Mono<ResponseStructure<ProductResponse>> addProduct(
+    public ResponseStructure<ProductResponse> addProduct(
             Long storageId,
             int quantity,
             MultipartFile productImage,

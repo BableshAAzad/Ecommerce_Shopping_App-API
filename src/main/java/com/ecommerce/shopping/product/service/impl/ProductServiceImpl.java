@@ -25,6 +25,7 @@ import com.ecommerce.shopping.product.dto.ProductRequestDto;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -41,7 +42,7 @@ public class ProductServiceImpl implements ProductService {
     private final CartProductRepository cartProductRepository;
 
     @Override
-    public ResponseStructure<ProductResponse> updateProduct(
+    public Mono<ResponseStructure<ProductResponse>> updateProduct(
             Long productId,
             int quantity,
             MultipartFile productImage,

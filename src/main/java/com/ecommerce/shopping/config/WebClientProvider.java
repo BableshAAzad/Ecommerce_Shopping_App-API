@@ -13,7 +13,10 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +37,7 @@ public class WebClientProvider {
     public WebClientProvider(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder.baseUrl(BaseUrl.BASE_URL)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .defaultUriVariables(Collections.singletonMap("url", BaseUrl.BASE_URL))
                 .build();
     }
 
@@ -112,7 +116,7 @@ public class WebClientProvider {
     }
 
     //---------------------------------------------------------------------------------------------------
-    public ResponseStructure<ProductResponse> updateProduct(Long productId, int quantity, ProductRequestDto productRequestDto) {
+    public Mono<ResponseStructure<ProductResponse>> updateProduct(Long productId, int quantity, ProductRequestDto productRequestDto) {
         return webClient.put()
                 .uri(uriBuilder -> uriBuilder.path("clients/inventories/{productId}/stocks")
                         .queryParam("quantity", quantity)
@@ -122,11 +126,11 @@ public class WebClientProvider {
                 .bodyValue(productRequestDto)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<ResponseStructure<ProductResponse>>() {})
-                .block();
+                .onErrorResume(e -> Mono.empty());
     }
 
     //---------------------------------------------------------------------------------------------------
-    public ResponseStructure<PagedModel<Storage>> getStoragesBySellerId(Long sellerId, int page, int size) {
+    public ResponseStructure<PagedModel<Map<String, Object>>> getStoragesBySellerId(Long sellerId, int page, int size) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder.path("clients/sellers/{sellerId}/storages")
                         .queryParam("page", page)
@@ -135,12 +139,12 @@ public class WebClientProvider {
                 .header("API-KEY", apiKey)
                 .header("USERNAME", username)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<ResponseStructure<PagedModel<Storage>>>() {})
+                .bodyToMono(new ParameterizedTypeReference<ResponseStructure<PagedModel<Map<String, Object>>>>() {})
                 .block();
     }
 
     //---------------------------------------------------------------------------------------------------
-    public ResponseStructure<PagedModel<Storage>> getStoragesByWareHouseId(Long wareHouseId, int page, int size) {
+    public ResponseStructure<PagedModel<Map<String, Object>>> getStoragesByWareHouseId(Long wareHouseId, int page, int size) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder.path("clients/storageHouses/{wareHouseId}/storages")
                         .queryParam("page", page)
@@ -149,13 +153,12 @@ public class WebClientProvider {
                 .header("API-KEY", apiKey)
                 .header("USERNAME", username)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<ResponseStructure<PagedModel<Storage>>>() {})
+                .bodyToMono(new ParameterizedTypeReference<ResponseStructure<PagedModel<Map<String, Object>>>>() {})
                 .block();
     }
 
     //---------------------------------------------------------------------------------------------------
-    public ResponseStructure<PagedModel<Map<String, Object>>> getWareHousesByCity(
-            String city, int page, int size) {
+    public ResponseStructure<PagedModel<Map<String, Object>>> getWareHousesByCity(String city, int page, int size) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder.path("clients/cities/{city}/storehouses")
                         .queryParam("page", page)
@@ -169,8 +172,7 @@ public class WebClientProvider {
     }
 
     //---------------------------------------------------------------------------------------------------
-    public ResponseStructure<PagedModel<Map<String, Object>>> getStoreHousesWithAddressForClient(
-            int page, int size) {
+    public ResponseStructure<PagedModel<Map<String, Object>>> getStoreHousesWithAddressForClient(int page, int size) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder.path("clients/{clientId}/storehouses")
                         .queryParam("page", page)
@@ -207,7 +209,6 @@ public class WebClientProvider {
                 .bodyToMono(new ParameterizedTypeReference<ResponseStructure<List<OrderResponseDto>>>() {})
                 .block();
     }
-
     //---------------------------------------------------------------------------------------------------
     public byte[] getOrderInvoice(Long orderId) {
         return webClient.get()
@@ -219,6 +220,7 @@ public class WebClientProvider {
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<byte[]>() {})
                 .block();
+
     }
 
     //---------------------------------------------------------------------------------------------------

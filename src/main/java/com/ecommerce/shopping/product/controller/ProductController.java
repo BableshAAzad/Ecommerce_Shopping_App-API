@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -24,7 +25,7 @@ public class ProductController {
     //---------------------------------------------------------------------------------------------------
     // /sellers/products/{productId}/stocks?quantity=5
     @PutMapping("/sellers/products/{productId}/stocks")
-    public ResponseStructure<ProductResponse> updateProduct(
+    public Mono<ResponseStructure<ProductResponse>> updateProduct(
             @PathVariable Long productId,
             @RequestParam int quantity,
             @RequestParam(value = "productImage", required = false) MultipartFile productImage,

@@ -3,7 +3,6 @@ package com.ecommerce.shopping.warehouse.controller;
 import com.ecommerce.shopping.config.WebClientProvider;
 import com.ecommerce.shopping.image.service.ImageService;
 import com.ecommerce.shopping.utility.ResponseStructure;
-import com.ecommerce.shopping.warehouse.dto.*;
 import lombok.AllArgsConstructor;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +20,7 @@ public class WareHouseDtoController {
     //---------------------------------------------------------------------------------------------------
     // /storages/sellers/{sellerId}?page=0&size=10
     @GetMapping("/sellers/{sellerId}/storages")
-    public ResponseStructure<PagedModel<Storage>> findStoragesBySellerId(
+    public ResponseStructure<PagedModel<Map<String, Object>>> findStoragesBySellerId(
             @PathVariable Long sellerId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -31,7 +30,7 @@ public class WareHouseDtoController {
     //---------------------------------------------------------------------------------------------------
 //    /wareHouses/{wareHouseId}/storages?page=0&size=10
     @GetMapping("/wareHouses/{wareHouseId}/storages")
-    public ResponseStructure<PagedModel<Storage>> findStoragesByWareHouseId(
+    public ResponseStructure<PagedModel<Map<String, Object>>> findStoragesByWareHouseId(
             @PathVariable Long wareHouseId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {

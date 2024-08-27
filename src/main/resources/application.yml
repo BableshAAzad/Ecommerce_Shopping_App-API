@@ -60,7 +60,8 @@ spring:
       enabled: true
       max-file-size: 3MB
       max-request-size: 3MB
-
+  main:
+    allow-bean-definition-overriding: true
 
 # Application Custom configuration    (3600000 = 1hour and 1296000000 = 15days) in milli
 # (3600 = 1hour and 1296000 = 15days) in seconds

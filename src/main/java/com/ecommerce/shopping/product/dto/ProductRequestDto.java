@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @Builder
 public class ProductRequestDto {
-    private Long productId;
+    private Long inventoryId;
     private Long sellerId;
     private String productTitle;
     private double lengthInMeters;

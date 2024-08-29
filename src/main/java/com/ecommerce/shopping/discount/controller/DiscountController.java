@@ -7,6 +7,7 @@ import com.ecommerce.shopping.utility.ResponseStructure;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,11 +27,13 @@ public class DiscountController {
     }
     //---------------------------------------------------------------------------------------------------
 
-    @PutMapping("/products/discounts/{discountId}")
+    @PreAuthorize("hasAuthority('SELLER')")
+    @PutMapping("/sellers/{sellerId}/discounts/{discountId}")
     public ResponseEntity<ResponseStructure<DiscountResponse>> updateDiscount(
+            @PathVariable Long sellerId,
             @PathVariable Long discountId,
             @Valid @RequestBody DiscountRequest discountRequest) {
-        return discountService.updateDiscount(discountId, discountRequest);
+        return discountService.updateDiscount(sellerId, discountId, discountRequest);
     }
     //---------------------------------------------------------------------------------------------------
 

@@ -5,6 +5,7 @@ import com.ecommerce.shopping.image.service.ImageService;
 import com.ecommerce.shopping.utility.ResponseStructure;
 import lombok.AllArgsConstructor;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -19,6 +20,7 @@ public class WareHouseDtoController {
 
     //---------------------------------------------------------------------------------------------------
     // /storages/sellers/{sellerId}?page=0&size=10
+    @PreAuthorize("hasAuthority('SELLER')")
     @GetMapping("/sellers/{sellerId}/storages")
     public ResponseStructure<PagedModel<Map<String, Object>>> findStoragesBySellerId(
             @PathVariable Long sellerId,
@@ -29,6 +31,7 @@ public class WareHouseDtoController {
 
     //---------------------------------------------------------------------------------------------------
 //    /wareHouses/{wareHouseId}/storages?page=0&size=10
+    @PreAuthorize("hasAuthority('SELLER')")
     @GetMapping("/wareHouses/{wareHouseId}/storages")
     public ResponseStructure<PagedModel<Map<String, Object>>> findStoragesByWareHouseId(
             @PathVariable Long wareHouseId,
@@ -39,6 +42,7 @@ public class WareHouseDtoController {
 
     //---------------------------------------------------------------------------------------------------
 //  /addresses/{city}/wareHouses?page=0&size=10
+    @PreAuthorize("hasAuthority('SELLER')")
     @GetMapping("/addresses/{city}/wareHouses")
     public ResponseStructure<PagedModel<Map<String, Object>>> findWareHousesByCity(
             @PathVariable String city,
@@ -49,6 +53,7 @@ public class WareHouseDtoController {
 
     //---------------------------------------------------------------------------------------------------
 //    /wareHouses-with-address?page=0&size=10
+    @PreAuthorize("hasAuthority('SELLER')")
     @GetMapping("/wareHouses-with-address")
     public ResponseStructure<PagedModel<Map<String, Object>>> findStoreHousesWithAddressForClient(
             @RequestParam(defaultValue = "0") int page,

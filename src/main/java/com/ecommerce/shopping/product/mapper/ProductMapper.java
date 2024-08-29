@@ -30,6 +30,10 @@ public class ProductMapper {
     public ProductResponseCart mapProductToProductResponseCart(Product product) {
         List<Image> images = imageRepository.findByProduct(product);
         List<Discount> discounts = discountRepository.findByProductAndIsActiveTrue(product);
+        String image = images.isEmpty() ?
+                "https://bableshaazad.com/static/media/bob.a2ca1510718f08b5313d.jpg"
+                : images.getFirst().getImage();
+        Double discount = discounts.isEmpty() ? 0.0 : discounts.getFirst().getDiscountValue();
         return ProductResponseCart.builder()
                 .productId(product.getProductId())
                 .productTitle(product.getProductTitle())
@@ -37,8 +41,8 @@ public class ProductMapper {
                 .productPrice(product.getProductPrice())
                 .productQuantity(product.getProductQuantity())
                 .availabilityStatus(product.getAvailabilityStatus())
-                .productImage(images.getFirst().getImage())
-                .discount(discounts.getFirst().getDiscountValue())
+                .productImage(image)
+                .discount(discount)
                 .build();
     }
 

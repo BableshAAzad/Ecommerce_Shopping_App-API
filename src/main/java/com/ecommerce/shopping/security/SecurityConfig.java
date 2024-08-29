@@ -55,11 +55,7 @@ public class SecurityConfig {
         configuration.setAllowedHeaders(Arrays.asList(
                 "Authorization",
                 "Cache-Control",
-                "Content-Type",
-                "API-KEY",
-                "USERNAME",
-                "at",
-                "rt"));
+                "Content-Type"));
         configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
@@ -109,7 +105,7 @@ public class SecurityConfig {
                         "/api/v1/products/**",
                         "/login/**",
                         "/oauth2/**",
-                        "/api/v1/test/**"))
+                        "/"))
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new LoginFilter(), UsernamePasswordAuthenticationFilter.class)

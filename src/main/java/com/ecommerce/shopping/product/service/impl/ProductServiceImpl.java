@@ -90,7 +90,7 @@ public class ProductServiceImpl implements ProductService {
         //   Update cart-product
         updateCartProduct(product);
 
-        productRequestDto.setProductId(productId);
+        productRequestDto.setInventoryId(productId);
         return restTemplateProvider.updateProduct(productId, quantity, productRequestDto);
     }
 
@@ -137,7 +137,7 @@ public class ProductServiceImpl implements ProductService {
         //  save Discount object
         saveDiscount(productRequest, product);
 
-        productRequestDto.setProductId(product.getProductId());
+        productRequestDto.setInventoryId(product.getProductId());
         return restTemplateProvider.addProduct(storageId, quantity, productRequestDto);
     }
 
@@ -157,6 +157,7 @@ public class ProductServiceImpl implements ProductService {
         } else {
             discount.setDiscountValue(0.0);
         }
+        discount.setActive(true);
         discountRepository.save(discount);
     }
 
@@ -175,10 +176,12 @@ public class ProductServiceImpl implements ProductService {
 //    Update discount
     private void updateDiscount(ProductRequest productRequest, Product product) {
         List<Discount> discounts = discountRepository.findByProductAndIsActiveTrue(product);
-        Discount discount = discounts.getFirst();
-        discount.setDiscountValue(productRequest.getDiscount());
-        discount.setDiscountType(productRequest.getDiscountType());
-        discountRepository.save(discount);
+        if(!discounts.isEmpty()){
+            Discount discount = discounts.getFirst();
+            discount.setDiscountValue(productRequest.getDiscount());
+            discount.setDiscountType(productRequest.getDiscountType());
+            discountRepository.save(discount);
+        }
     }
 
     //---------------------------------------------------------------------------------------------------

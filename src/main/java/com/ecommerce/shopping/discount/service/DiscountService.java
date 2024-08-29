@@ -11,5 +11,7 @@ public interface DiscountService {
     ResponseEntity<ResponseStructure<List<DiscountResponse>>> getDiscounts(Long productId);
 
     ResponseEntity<ResponseStructure<DiscountResponse>> updateDiscount(
-            Long discountId, DiscountRequest discountRequest);
+            Long sellerId,
+            Long discountId,
+            DiscountRequest discountRequest);
 }

@@ -13,7 +13,6 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Collections;
@@ -37,7 +36,7 @@ public class WebClientProvider {
     public WebClientProvider(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder.baseUrl(BaseUrl.BASE_URL)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultUriVariables(Collections.singletonMap("url", BaseUrl.BASE_URL))
+//                .defaultUriVariables(Collections.singletonMap("url", BaseUrl.BASE_URL))
                 .build();
     }
 

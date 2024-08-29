@@ -46,6 +46,7 @@ public class DiscountServiceImpl implements DiscountService {
 
     @Override
     public ResponseEntity<ResponseStructure<DiscountResponse>> updateDiscount(
+            Long sellerId,
             Long discountId,
             DiscountRequest discountRequest) {
 
@@ -58,7 +59,7 @@ public class DiscountServiceImpl implements DiscountService {
 
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<DiscountResponse>()
                 .setStatus(HttpStatus.OK.value())
-                .setMessage("Discounts are founded")
+                .setMessage("Discounts is Updated")
                 .setData(discountMapper.mapDiscountToDiscountResponse(discount)));
     }
     //---------------------------------------------------------------------------------------------------

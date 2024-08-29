@@ -6,6 +6,7 @@ import com.ecommerce.shopping.cartproduct.service.CartProductService;
 import com.ecommerce.shopping.utility.ResponseStructure;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public class CartProductController {
     private final CartProductService cartProductService;
 
     //-----------------------------------------------------------------------------------------------
+    @PreAuthorize("hasAuthority('CUSTOMER')")
     @PostMapping("/customers/{customerId}/cart-products")
     private ResponseEntity<ResponseStructure<CartProductResponse>> addToProductInCart(
             @RequestBody CartProductRequest cartProductRequest,
@@ -26,6 +28,7 @@ public class CartProductController {
     }
 
     //-----------------------------------------------------------------------------------------------
+    @PreAuthorize("hasAuthority('CUSTOMER')")
     @PutMapping("/customers/cart-products/{cartProductId}")
     private ResponseEntity<ResponseStructure<CartProductResponse>> updateCartProduct(
             @RequestParam int selectedQuantity,
@@ -34,6 +37,7 @@ public class CartProductController {
     }
 
     //-----------------------------------------------------------------------------------------------
+    @PreAuthorize("hasAuthority('CUSTOMER')")
     @DeleteMapping("/customers/{customerId}/cart-products/{cartProductId}")
     private ResponseEntity<ResponseStructure<CartProductResponse>> removeCartProduct(
             @PathVariable Long customerId,
@@ -42,6 +46,7 @@ public class CartProductController {
     }
 
     //-----------------------------------------------------------------------------------------------
+    @PreAuthorize("hasAuthority('CUSTOMER')")
     @DeleteMapping("/customers/{customerId}/cart-products")
     private ResponseEntity<ResponseStructure<String>> removeAllCartProduct(
             @PathVariable Long customerId) {
@@ -49,6 +54,7 @@ public class CartProductController {
     }
 
     //-----------------------------------------------------------------------------------------------
+    @PreAuthorize("hasAuthority('CUSTOMER')")
     @GetMapping("/customers/{customerId}/cart-products")
     private ResponseEntity<ResponseStructure<List<CartProductResponse>>> getCartProducts(
             @PathVariable Long customerId) {

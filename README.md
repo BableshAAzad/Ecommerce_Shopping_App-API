@@ -27,7 +27,7 @@
 
 **🧑‍💻 Technologies Used:**
 
-`Spring Boot` `Spring Security` `RESTful API` `MySQL` `Spring Data JPA` `OpenAPI Documentation` `Validation` `OpenPDF` `HATEOAS` `Mail` `OAuth2 Client` `Google Guava` `Hateoas` `Cloudinary` `WebFlux`
+`Spring Boot` `Spring Security` `RESTful API` `MySQL` `Spring Data JPA` `OpenAPI Documentation` `Validation` `OpenPDF` `Mail` `OAuth2 Client` `Google Guava` `Hateoas` `Cloudinary` `WebFlux`
 
 ---
 

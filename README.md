@@ -49,37 +49,37 @@
 - For swagger documentation `http;//localhost:8081/swagger-ui.html`
 
 #### 🔐 Environment Variables:
-<u>For Database:</u>
-1. `DB_HOST_NAME`= localhost
-2. `DB_NAME`= ecommerce-shopping-application
-3. `DB_PASSWORD`= root
-4. `DB_PORT`= 3306
-5. `DB_USERNAME`= root
+<u>For Database: your DB info </u>
+>1. `DB_HOST_NAME`= localhost
+>2. `DB_NAME`= ecommerce-shopping-application
+>3. `DB_PASSWORD`= root
+>4. `DB_PORT`= 3306
+>5. `DB_USERNAME`= root
 
-<u>For Storehouse Management System App Connection:</u>
-6. `CLIENT_API_KEY`= keyReceivedAtTheTimeRegistration
-7. `CLIENT_ID`= 1
-8. `CLIENT_USERNAME`= aazad@bableshaazad.org
+<u>For Storehouse-management-system app connection </u>
+>6. `CLIENT_API_KEY`= keyReceivedAtTheTimeOfRegistration
+>7. `CLIENT_ID`= 1
+>8. `CLIENT_USERNAME`= aazad@bableshaazad.org
 
-<u>For Storing Images in Cloudinary:</u>
-9. `CLOUDINARY_API_KEY`= 123YourKey
-10. `CLOUDINARY_API_SECRET`= abcdeYourPassword
-11. `CLOUDINARY_CLOUD_NAME`= abcdYourName
+<u>For Storing Images in Cloud using Cloudinary </u>
+>9. `CLOUDINARY_API_KEY`= 123YourKey
+>10. `CLOUDINARY_API_SECRET`= abcdeYourPassword
+>11. `CLOUDINARY_CLOUD_NAME`= abcdYourName
 
-<u>For GitHub OAuth2 Connection:</u>
-12. `GITHUB_ID`= 12345YourID
-13. `GITHUB_SECRET`= dummyKey12345
+<u>For GitHub OAuth2 Connection </u>
+>12. `GITHUB_ID`= 12345YourID
+>13. `GITHUB_SECRET`= dummyKey12345
 
-<u>For Google OAuth2 Connection:</u>
-14. `GOOGLE_ID`= YourGoogleIDxyz
-15. `GOOGLE_SECRET`= googleSecret
+<u>For Google OAuth2 Connection </u>
+>14. `GOOGLE_ID`= YourGoogleIDxyz
+>15. `GOOGLE_SECRET`= googleSecret
 
-<u>For JWT Secret (Using HS512):</u> [Generate your secret here](https://8gwifi.org/jwsgen.jsp)
-16. `JWT_SECRET`= jwtSecret1234567890
+<u>Your JWT Secret: Here I am using HS512 code generated at </u> [https://8gwifi.org/jwsgen.jsp](https://8gwifi.org/jwsgen.jsp)
+>16. `JWT_SECRET`= jwtSecret1234567890
 
-<u>For Sending Emails (During Registration, Purchase Order, Password Recovery):</u>
-17. `MAIL_PASSWORD`= mailPassword
-18. `MAIL_USERNAME`= yourMail@gmail.com
+<u>For Sending Mail during Registration, Purchase Order, and Password Reset </u>
+>17. `MAIL_PASSWORD`= mailPassword
+>18. `MAIL_USERNAME`= yourMail@gmail.com
 
 ---
 

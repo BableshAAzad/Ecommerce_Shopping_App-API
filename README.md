@@ -46,6 +46,7 @@
 - Import the project into your IDE and ensure JDK 21 is installed.
 - Set the following environment variables 👇.
 - Refer to the API documentation for guidance on sending requests and handling responses: [ecommerce-shopping-app](https://documenter.getpostman.com/view/32067662/2sAXjJ4sFv).
+- For swagger documentation `http;//localhost:8081/swagger-ui.html`
 
 #### 🔐 Environment Variables:
 <u>For Database:</u>
